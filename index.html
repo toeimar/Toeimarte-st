@@ -1,0 +1,1721 @@
+```html
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>ออมทองพรีเมียม - ระบบออมเงินเพื่อรับทอง</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #D4AF37;
+    --gold-light: #F4E5B3;
+    --gold-dark: #AA8B2B;
+    --black: #1A1A1A;
+    --gray-dark: #4A4A4A;
+    --gray: #8A8A8A;
+    --gray-light: #F3F4F6;
+    --bg-color: #FAFAFB;
+    --white: #FFFFFF;
+    --red: #EF4444;
+    --green: #10B981;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+    --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+    --radius: 16px;
+  }
+
+  * { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: 'Sarabun', sans-serif; 
+    -webkit-tap-highlight-color: transparent; 
+  }
+  
+  body { 
+    background: var(--bg-color); 
+    color: var(--black); 
+    overflow-x: hidden;
+    overscroll-behavior-y: none;
+  }
+  h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
+  
+  .hidden { display: none !important; }
+  .flex { display: flex; }
+  .grid { display: grid; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+  .justify-center { justify-content: center; }
+  .gap-2 { gap: 8px; } .gap-4 { gap: 16px; }
+  .mt-4 { margin-top: 16px; } .mb-4 { margin-bottom: 16px; }
+  .text-center { text-align: center; }
+  
+  /* Buttons - Touch Friendly */
+  .btn { 
+    padding: 14px 20px; 
+    border-radius: 14px; 
+    border: none; 
+    font-weight: 600; 
+    font-size: 15px; 
+    cursor: pointer; 
+    transition: all 0.2s; 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 8px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .btn-primary { background: var(--gold); color: white; box-shadow: 0 4px 12px rgba(212,175,55,0.3); }
+  .btn-primary:active { transform: scale(0.96); opacity: 0.9; } 
+  .btn-outline { background: white; border: 1.5px solid var(--gold); color: var(--gold); }
+  .btn-outline:active { transform: scale(0.96); background: var(--gold-light); }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-danger:active { transform: scale(0.96); opacity: 0.9; }
+  .btn-success { background: var(--green); color: white; }
+  .btn-success:active { transform: scale(0.96); opacity: 0.9; }
+  .btn-sm { padding: 10px 16px; font-size: 13px; border-radius: 10px; }
+  
+  /* Inputs */
+  .form-group { margin-bottom: 20px; text-align: left; }
+  .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-dark); margin-bottom: 8px; }
+  .form-control { 
+    width: 100%; 
+    padding: 14px 16px; 
+    border: 1.5px solid #E5E7EB; 
+    border-radius: 14px; 
+    font-size: 16px; 
+    outline: none; 
+    transition: 0.2s; 
+    background: white; 
+    appearance: none;
+  }
+  .form-control:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-light); }
+  .form-control:disabled, .form-control[readonly] { background: var(--gray-light); color: var(--gray); cursor: not-allowed; }
+  
+  /* Cards */
+  .card { 
+    background: white; 
+    border-radius: var(--radius); 
+    padding: 20px; 
+    box-shadow: var(--shadow-sm); 
+    margin-bottom: 20px; 
+    border: 1px solid #F3F4F6; 
+  }
+  .card-title { font-size: 18px; font-weight: 700; color: var(--black); margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+  
+  /* Badges */
+  .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .bg-green { background: #D1FAE5; color: #065F46; }
+  .bg-red { background: #FEE2E2; color: #991B1B; }
+  .bg-yellow { background: #FEF3C7; color: #92400E; }
+  .bg-gold { background: var(--gold-light); color: var(--gold-dark); }
+
+  /* Login Page */
+  #page-login { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: linear-gradient(135deg, #FAFAFB 0%, var(--gold-light) 100%); }
+  .login-box { width: 100%; max-width: 400px; background: white; padding: 40px 30px; border-radius: 24px; box-shadow: var(--shadow-md); text-align: center; }
+  .login-logo { width: 80px; height: 80px; background: var(--gold-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 20px; overflow: hidden; box-shadow: var(--shadow-sm); }
+  
+  /* Customer Nav Elements */
+  .app-header { 
+    background: rgba(255,255,255,0.85); 
+    backdrop-filter: blur(12px); 
+    -webkit-backdrop-filter: blur(12px); 
+    padding: calc(16px + env(safe-area-inset-top)) 20px 16px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    box-shadow: 0 1px 0 rgba(0,0,0,0.05); 
+    position: sticky; 
+    top: 0; 
+    z-index: 50; 
+  }
+  .app-container { padding: 20px; padding-bottom: 140px; max-width: 600px; margin: 0 auto; }
+  
+  /* Shared Bottom Nav Styles */
+  .bottom-nav, .admin-bottom-nav { 
+    position: fixed; 
+    bottom: 0; 
+    left: 0; 
+    right: 0; 
+    background: rgba(255,255,255,0.9); 
+    backdrop-filter: blur(12px); 
+    -webkit-backdrop-filter: blur(12px); 
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.04); 
+    display: flex; 
+    justify-content: space-around; 
+    padding: 12px 10px calc(16px + env(safe-area-inset-bottom)); 
+    border-top-left-radius: 24px; 
+    border-top-right-radius: 24px; 
+    z-index: 100; 
+    max-width: 600px; 
+    margin: 0 auto; 
+    border-top: 1px solid rgba(0,0,0,0.05);
+  }
+  .nav-item { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    color: var(--gray); 
+    font-size: 11px; 
+    font-weight: 600; 
+    gap: 4px; 
+    cursor: pointer; 
+    transition: 0.2s; 
+    padding: 8px;
+    border-radius: 12px;
+    user-select: none;
+    -webkit-user-select: none;
+    position: relative;
+    flex: 1;
+  }
+  .nav-item:active { transform: scale(0.9); background: rgba(0,0,0,0.03); }
+  .nav-item.active { color: var(--gold); }
+  .nav-icon { font-size: 24px; margin-bottom: 2px; }
+
+  /* Device Specific Displays */
+  .desktop-only { display: block; }
+  .mobile-only { display: none !important; }
+
+  /* Admin Layout Base */
+  .admin-layout { display: flex; min-height: 100vh; }
+  .admin-sidebar { 
+    width: 280px; 
+    background: white; 
+    border-right: 1px solid #E5E7EB; 
+    display: flex; 
+    flex-direction: column; 
+    position: fixed; 
+    height: 100vh; 
+    z-index: 1001; 
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+  }
+  .admin-content { flex: 1; margin-left: 280px; padding: 32px; max-width: 1200px; padding-bottom: 60px; }
+  .admin-nav-item { 
+    padding: 16px 24px; 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    color: var(--gray-dark); 
+    font-weight: 500; 
+    cursor: pointer; 
+    border-left: 4px solid transparent; 
+    user-select: none;
+  }
+  .admin-nav-item:active { background: var(--gray-light); }
+  .admin-nav-item.active { background: var(--gold-light); color: var(--gold-dark); border-left-color: var(--gold); }
+  
+  /* Tables */
+  .table-responsive { 
+    overflow-x: auto; 
+    -webkit-overflow-scrolling: touch; 
+    width: 100%; 
+    padding-bottom: 10px; 
+  }
+  .table-responsive::-webkit-scrollbar { height: 6px; }
+  .table-responsive::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 8px; }
+  .table-responsive::-webkit-scrollbar-thumb { background: #ddd; border-radius: 8px; }
+  
+  table { width: 100%; border-collapse: collapse; min-width: 650px; }
+  th, td { padding: 16px; text-align: left; border-bottom: 1px solid #E5E7EB; white-space: nowrap; vertical-align: middle; }
+  th { font-size: 13px; color: var(--gray); font-weight: 600; text-transform: uppercase; background: #F9FAFB; position: sticky; top: 0; }
+  td { font-size: 14px; }
+  
+  /* Slips & Images */
+  .img-preview { width: 100%; max-height: 250px; object-fit: contain; border-radius: 16px; border: 1px dashed var(--gray); margin-top: 10px; background: #f9f9f9; }
+  .avatar-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold-light); margin-top: 10px; }
+  .qr-box { background: var(--gray-light); padding: 24px; border-radius: 20px; text-align: center; margin-bottom: 24px; }
+  .qr-box img { max-width: 100%; height: auto; max-height: 250px; border-radius: 12px; margin-bottom: 12px; object-fit: contain; }
+  
+  /* Utilities */
+  .balance-card { 
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark)); 
+    color: white; 
+    padding: 36px 24px; 
+    border-radius: 28px; 
+    text-align: center; 
+    margin-bottom: 24px; 
+    box-shadow: 0 12px 32px rgba(212,175,55,0.4); 
+    position: relative; 
+    overflow: hidden; 
+  }
+  .balance-card::after { content: '✨'; position: absolute; right: -10px; top: -10px; font-size: 100px; opacity: 0.1; }
+  .toast { position: fixed; top: env(safe-area-inset-top, 20px); left: 50%; transform: translateX(-50%); background: var(--black); color: white; padding: 14px 28px; border-radius: 30px; font-size: 14px; font-weight: 500; z-index: 9999; display: none; box-shadow: var(--shadow-md); text-align: center; white-space: normal; line-height: 1.5; max-width: 90%; }
+
+  /* --- MOBILE & IPAD RESPONSIVE OVERRIDES (ขยายครอบคลุม 1366px สำหรับ iPad Pro) --- */
+  @media (max-width: 1366px) {
+    .desktop-only { display: none !important; }
+    .mobile-only { display: flex !important; } 
+
+    .admin-layout { flex-direction: column; }
+    .admin-sidebar { display: none !important; } 
+    
+    .admin-content { margin-left: 0; padding: 16px; padding-bottom: 120px; max-width: 100%; }
+    
+    .admin-topbar { 
+      position: sticky; 
+      top: 0; 
+      background: rgba(255,255,255,0.95); 
+      backdrop-filter: blur(10px); 
+      -webkit-backdrop-filter: blur(10px); 
+      padding: calc(16px + env(safe-area-inset-top)) 20px 16px; 
+      margin: -16px -16px 20px -16px; 
+      z-index: 900; 
+      border-bottom: 1px solid rgba(0,0,0,0.05); 
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .grid { grid-template-columns: 1fr 1fr; gap: 16px; } 
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; } 
+    }
+    .card { padding: 16px; }
+    
+    .tx-item-history { flex-wrap: wrap; }
+    .tx-amount-col { text-align: right; min-width: 90px; }
+  }
+
+  /* Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+  .modal { background: white; width: 100%; max-width: 400px; border-radius: 28px; padding: 28px; animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; }
+  @keyframes pop { from { transform: scale(0.85) translateY(20px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+
+</style>
+</head>
+<body>
+
+<!-- Script ตรวจสอบการเปิดไฟล์ผิดวิธี -->
+<script>
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      var loader = document.getElementById('loading');
+      if (loader && loader.style.display !== 'none') {
+        loader.innerHTML = '<div style="background:white; padding:24px; border-radius:24px; color:#333; max-width:90%; text-align:center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"><div style="font-size:50px; margin-bottom:10px;">⚠️</div><h3 style="color:#e74c3c; margin-bottom:10px; font-family:\'Sarabun\', sans-serif;">เกิดข้อผิดพลาดในการโหลด</h3><p style="font-size:15px; color:#666; font-family:\'Sarabun\', sans-serif;">หากคุณเห็นข้อความนี้แปลว่าระบบถูกบล็อก ให้อัปโหลดไฟล์นี้ขึ้นระบบเซิร์ฟเวอร์ (เช่น GitHub Pages) แล้วเข้าใช้งานผ่านลิงก์เว็บแทนการดับเบิลคลิกเปิดจากเครื่องครับ</p></div>';
+      }
+    }, 4000);
+  });
+</script>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast"></div>
+
+<!-- Loading Overlay -->
+<div id="loading" class="modal-overlay" style="z-index: 9999; flex-direction: column; display: flex;">
+  <div style="font-size: 48px; animation: spin 1s linear infinite;">⏳</div>
+  <div style="color: white; margin-top: 16px; font-weight: 600; letter-spacing: 1px;" id="loading-text">กำลังเชื่อมต่อระบบ...</div>
+</div>
+
+<!-- PAGE: LOGIN / REGISTER -->
+<div id="page-login" class="hidden">
+  <div class="login-box">
+    <!-- โลโก้จะเปลี่ยนตามหน้าร้านอัตโนมัติ -->
+    <div class="login-logo" id="login-logo-container">
+      <img id="login-logo-img" src="" alt="โลโก้ร้าน" style="display:none; width: 100%; height: 100%; object-fit: cover;">
+      <span id="login-logo-fallback">✨</span>
+    </div>
+    <h1 class="serif" style="margin-bottom: 8px;" id="login-shop-name">พรีเมียมออมทอง</h1>
+    <p style="color: var(--gray); margin-bottom: 24px; font-size: 14px;">ระบบสะสมเงินออมเพื่อรับทองคำ</p>
+    
+    <div class="flex gap-2 mb-4" style="background: var(--gray-light); padding: 4px; border-radius: 14px;">
+      <button class="btn btn-sm" style="flex: 1; background: white; box-shadow: var(--shadow-sm); border-radius: 10px;" id="tab-login" onclick="switchAuthTab('login')">เข้าสู่ระบบ</button>
+      <button class="btn btn-sm" style="flex: 1; background: transparent; color: var(--gray); border-radius: 10px;" id="tab-register" onclick="switchAuthTab('register')">สมัครสมาชิก</button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="form-login">
+      <div class="form-group">
+        <label>เบอร์โทรศัพท์</label>
+        <input type="tel" id="login-phone" class="form-control" placeholder="08x-xxx-xxxx">
+      </div>
+      <div class="form-group">
+        <label>รหัสผ่าน</label>
+        <input type="password" id="login-pass" class="form-control" placeholder="••••••">
+      </div>
+      <button class="btn btn-primary" style="width: 100%; margin-top: 8px;" onclick="handleLogin()">เข้าสู่ระบบ</button>
+    </div>
+
+    <!-- Register Form -->
+    <div id="form-register" class="hidden">
+      <div class="form-group">
+        <label>ชื่อ - นามสกุล</label>
+        <input type="text" id="reg-name" class="form-control" placeholder="ชื่อ นามสกุล">
+      </div>
+      <div class="form-group">
+        <label>เบอร์โทรศัพท์</label>
+        <input type="tel" id="reg-phone" class="form-control" placeholder="08x-xxx-xxxx">
+      </div>
+      <div class="form-group">
+        <label>รหัสผ่าน</label>
+        <input type="password" id="reg-pass" class="form-control" placeholder="ตั้งรหัสผ่าน">
+      </div>
+      <div class="form-group" id="secret-code-group">
+        <label>รหัสลับ (สำหรับผู้ดูแลระบบคนแรกเท่านั้น)</label>
+        <input type="text" id="reg-secret" class="form-control" placeholder="ปล่อยว่างหากเป็นลูกค้า">
+      </div>
+      <button class="btn btn-primary" style="width: 100%; margin-top: 8px;" onclick="handleRegister()">ลงทะเบียน</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- PAGE: CUSTOMER APP -->
+<div id="page-customer" class="hidden">
+  <div class="app-header">
+    <div class="flex items-center gap-3">
+      <img id="cust-header-logo" src="" alt="โลโก้" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); box-shadow: var(--shadow-sm); display: none;">
+      <div id="cust-header-logo-fallback" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); display:flex; align-items:center; justify-content:center; color:white; font-size:12px; font-weight: bold; box-shadow: var(--shadow-sm);">ร้าน</div>
+      <h3 class="serif" id="cust-header-name" style="font-size: 18px;">ร้านทองพรีเมียม</h3>
+    </div>
+    <div class="flex gap-2 items-center">
+      <button id="btn-switch-admin" class="btn btn-sm btn-primary hidden" style="border-radius: 20px; font-size: 12px; padding: 6px 14px;" onclick="switchToAdminView()">กลับหน้าแอดมิน</button>
+      <button class="btn btn-sm btn-outline" style="border-radius: 20px; font-size: 12px; padding: 6px 14px;" onclick="logout()">ออกจากระบบ</button>
+    </div>
+  </div>
+
+  <!-- Content: Home -->
+  <div class="app-container" id="cust-content-home">
+    <div class="balance-card">
+      <div style="font-size: 15px; opacity: 0.9; font-weight: 500;">ยอดเงินออมสะสมทั้งหมด</div>
+      <div class="serif" style="font-size: 44px; font-weight: 700; margin: 10px 0; letter-spacing: -1px;">฿<span id="cust-balance">0.00</span></div>
+      <div class="badge bg-gold" style="display:inline-block; padding: 6px 14px; font-size: 13px;">พร้อมแลกทอง</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span>รายการล่าสุด</span>
+        <span style="font-size: 14px; color: var(--gold); font-weight: 600; cursor: pointer;" onclick="navCust('history')">ดูทั้งหมด</span>
+      </div>
+      <div id="cust-recent-tx">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Content: Deposit -->
+  <div class="app-container hidden" id="cust-content-deposit">
+    <div class="card text-center">
+      <h3 class="serif mb-4" style="color: var(--gold-dark);">ฝากออมเงิน</h3>
+      <div class="qr-box">
+        <img id="cust-qr-img" src="" alt="QR Code" style="display:none; width: 100%;">
+        <div id="cust-qr-placeholder" style="color: var(--gray); font-size: 14px;">ไม่มีข้อมูล QR Code</div>
+        <div class="mt-4" style="text-align: left; background: white; padding: 16px; border-radius: 16px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+          <div style="font-size: 12px; color: var(--gray);">ธนาคาร</div>
+          <div class="font-bold" id="cust-bank-name" style="font-size: 15px; margin-bottom: 8px;">-</div>
+          <div style="font-size: 12px; color: var(--gray);">ชื่อบัญชี</div>
+          <div class="font-bold" id="cust-bank-accname" style="font-size: 15px; margin-bottom: 8px;">-</div>
+          <div style="font-size: 12px; color: var(--gray);">เลขบัญชี</div>
+          <div class="font-bold serif" id="cust-bank-accno" style="font-size: 24px; color: var(--gold-dark); letter-spacing: 2px; font-family: 'Sarabun', sans-serif;">-</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>จำนวนเงินที่โอน (บาท)</label>
+        <input type="number" id="dep-amount" class="form-control" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label>หมายเหตุ</label>
+        <input type="text" id="dep-remark" class="form-control" placeholder="เช่น ออมครั้งที่ 1">
+      </div>
+      <div class="form-group">
+        <label>แนบสลิปโอนเงิน</label>
+        <input type="file" id="dep-slip" class="form-control" accept="image/*" onchange="previewImage(this, 'dep-preview')">
+        <img id="dep-preview" class="img-preview hidden">
+      </div>
+      <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="submitDeposit()">ยืนยันการฝากออม</button>
+    </div>
+  </div>
+
+  <!-- Content: Withdraw -->
+  <div class="app-container hidden" id="cust-content-withdraw">
+    <div class="card">
+      <h3 class="serif mb-4" style="color: var(--gold-dark);">ถอนเงินออม / แลกทอง</h3>
+      <div style="background: var(--gold-light); padding: 20px; border-radius: 16px; margin-bottom: 24px; text-align: center;">
+        <div style="font-size: 14px; color: var(--gold-dark); font-weight: 500;">ยอดเงินที่ใช้ถอนได้สูงสุด</div>
+        <div class="serif" style="font-size: 32px; font-weight: 700; color: var(--gold-dark); margin-top: 4px;">฿<span id="cust-withdraw-max">0.00</span></div>
+      </div>
+      <div class="form-group">
+        <label>จำนวนเงินที่ต้องการนำไปแลก (บาท)</label>
+        <input type="number" id="wit-amount" class="form-control" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label>หมายเหตุ</label>
+        <input type="text" id="wit-remark" class="form-control" placeholder="เช่น ต้องการทองแท่ง / มารับหน้าร้าน">
+      </div>
+      
+      <!-- แยกส่วนติดต่อร้าน -->
+      <div class="form-group" style="background: #FEF3C7; padding: 20px; border-radius: 16px; margin-top: 24px; text-align:center;">
+        <label style="color: #92400E; font-size: 14px; margin-bottom: 12px; display:block;">📞 ติดต่อร้านทองเพื่อยืนยันการถอน</label>
+        <div id="cust-shop-contact-details" style="font-size: 15px; font-weight: 600; color: #92400E; line-height: 1.8; margin-bottom: 12px;">
+          <!-- ข้อมูลเบอร์ และ ID จะถูกแทรกที่นี่ -->
+        </div>
+        <div id="cust-shop-contact-btn">
+          <!-- ปุ่มลิงก์คลิกเพิ่มเพื่อนจะแทรกที่นี่ -->
+        </div>
+      </div>
+      
+      <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="submitWithdraw()">ส่งคำขอถอนเงินออม</button>
+    </div>
+  </div>
+
+  <!-- Content: History -->
+  <div class="app-container hidden" id="cust-content-history">
+    <h3 class="serif mb-4" style="padding: 0 4px;">ประวัติการทำรายการ</h3>
+    <div class="card" style="padding: 12px 20px;">
+      <div id="cust-all-history"></div>
+    </div>
+  </div>
+
+  <!-- Content: Profile -->
+  <div class="app-container hidden" id="cust-content-profile">
+    <div class="card text-center">
+      <img id="pro-avatar-img" src="" alt="โปรไฟล์" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 0 auto 16px; box-shadow: var(--shadow-sm); display: none;">
+      <div id="pro-avatar-fallback" style="width: 80px; height: 80px; background: var(--gray-light); border-radius: 50%; display: flex; align-items:center; justify-content:center; font-size:36px; margin: 0 auto 16px;">👤</div>
+      <h3 class="serif" id="pro-name" style="font-size: 22px;">ชื่อ นามสกุล</h3>
+      <div class="badge bg-gold mt-4" id="pro-role" style="padding: 6px 16px; font-size: 13px;">ลูกค้า</div>
+    </div>
+    <div class="card">
+      <div class="card-title">ข้อมูลส่วนตัว</div>
+      <div class="form-group">
+        <label>อัปโหลดรูปโปรไฟล์ใหม่</label>
+        <input type="file" id="edit-profile-pic" class="form-control" accept="image/*" style="padding: 10px;" onchange="previewImage(this, 'profile-preview')">
+        <img id="profile-preview" class="avatar-preview hidden">
+      </div>
+      <div class="form-group"><label>ชื่อ-นามสกุล</label><input type="text" id="edit-name" class="form-control"></div>
+      <div class="form-group"><label>เบอร์โทรศัพท์ (ใช้เข้าระบบ)</label><input type="text" id="edit-phone" class="form-control" disabled style="background: var(--gray-light); color: var(--gray);"></div>
+      <div class="form-group"><label>อีเมล (เพิ่มเติม)</label><input type="email" id="edit-email" class="form-control"></div>
+      <button class="btn btn-primary mt-4" style="width:100%" onclick="updateProfile()">บันทึกข้อมูล</button>
+    </div>
+    <div class="card">
+      <div class="card-title">เปลี่ยนรหัสผ่าน</div>
+      <div class="form-group"><label>รหัสผ่านใหม่</label><input type="password" id="edit-pass" class="form-control"></div>
+      <button class="btn btn-outline" style="width:100%" onclick="updatePassword()">อัปเดตรหัสผ่าน</button>
+    </div>
+  </div>
+
+  <!-- Bottom App Navigation (Customer) -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="navCust('home')"><span class="nav-icon">🏠</span>หน้าแรก</div>
+    <div class="nav-item" onclick="navCust('deposit')"><span class="nav-icon">📥</span>ฝาก</div>
+    <div class="nav-item" onclick="navCust('withdraw')"><span class="nav-icon">📤</span>ถอน</div>
+    <div class="nav-item" onclick="navCust('history')"><span class="nav-icon">📋</span>ประวัติ</div>
+    <div class="nav-item" onclick="navCust('profile')"><span class="nav-icon">👤</span>โปรไฟล์</div>
+  </div>
+</div>
+
+
+<!-- PAGE: ADMIN APP -->
+<div id="admin-sidebar-backdrop" onclick="toggleAdminSidebar()"></div>
+<div id="page-admin" class="hidden admin-layout">
+  
+  <!-- Sidebar for Desktop (> 1366px) -->
+  <div class="admin-sidebar desktop-only" id="admin-sidebar">
+    <div style="padding: calc(24px + env(safe-area-inset-top)) 24px 24px; border-bottom: 1px solid #E5E7EB;">
+      <h2 class="serif" style="color: var(--gold-dark); font-size: 20px;">Admin Panel</h2>
+      <div style="font-size: 13px; color: var(--gray); margin-top: 4px;" id="admin-shop-name-sidebar">ร้านทองพรีเมียม</div>
+    </div>
+    <div style="padding: 16px 0; flex: 1; overflow-y: auto;">
+      <div class="admin-nav-item active" onclick="navAdmin('dashboard')"><span style="font-size: 20px; width: 24px;">📊</span> ภาพรวม</div>
+      <div class="admin-nav-item" onclick="navAdmin('transactions')"><span style="font-size: 20px; width: 24px;">📋</span> ธุรกรรม & อนุมัติ <span id="admin-badge-tx" class="badge bg-red hidden" style="margin-left:auto; font-size: 11px;">0</span></div>
+      <div class="admin-nav-item" onclick="navAdmin('users')"><span style="font-size: 20px; width: 24px;">👥</span> จัดการลูกค้า</div>
+      <div class="admin-nav-item" id="nav-settings" onclick="navAdmin('settings')"><span style="font-size: 20px; width: 24px;">⚙️</span> ตั้งค่าร้านค้า</div>
+      <div class="admin-nav-item" onclick="switchToCustomerView()"><span style="font-size: 20px; width: 24px;">📱</span> มุมมองลูกค้า</div>
+    </div>
+    <div style="padding: 24px calc(24px + env(safe-area-inset-bottom)); border-top: 1px solid #E5E7EB;">
+      <button class="btn btn-outline" style="width: 100%; border-color: #E5E7EB; color: var(--gray-dark);" onclick="logout()">ออกจากระบบ</button>
+    </div>
+  </div>
+
+  <div class="admin-content" id="admin-content-area">
+    <!-- Topbar for iPad & Mobile (<= 1366px) -->
+    <div class="admin-topbar mobile-only">
+      <h2 class="serif" id="admin-page-title-mobile" style="font-size: 20px; margin: 0; color: var(--gold-dark);">ภาพรวมระบบ</h2>
+      <button class="btn btn-sm btn-outline" style="border-radius: 20px; font-size: 12px; padding: 6px 14px;" onclick="logout()">ออกจากระบบ</button>
+    </div>
+
+    <!-- Title for Desktop -->
+    <div class="flex items-center gap-3 mb-4 desktop-only" style="margin-bottom: 24px;">
+      <h2 class="serif" id="admin-page-title" style="font-size: 22px;">ภาพรวมระบบ</h2>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-sec-dashboard">
+      <div class="grid">
+        <div class="card" style="border-left: 4px solid var(--gold);">
+          <div style="font-size: 14px; color: var(--gray); font-weight: 500;">ยอดเงินออมรวมในระบบ</div>
+          <div class="serif" style="font-size: 36px; font-weight: 700; margin-top: 8px;">฿<span id="stat-total-balance">0</span></div>
+        </div>
+        <div class="card" style="border-left: 4px solid var(--black);">
+          <div style="font-size: 14px; color: var(--gray); font-weight: 500;">จำนวนสมาชิกทั้งหมด</div>
+          <div class="serif" style="font-size: 36px; font-weight: 700; margin-top: 8px;"><span id="stat-total-users">0</span> <span style="font-size: 16px; color: var(--gray); font-weight: 400; font-family: 'Sarabun', sans-serif;">คน</span></div>
+        </div>
+        <div class="card" style="border-left: 4px solid var(--red);">
+          <div style="font-size: 14px; color: var(--gray); font-weight: 500;">รายการรออนุมัติ</div>
+          <div class="serif" style="font-size: 36px; font-weight: 700; margin-top: 8px; color: var(--red);"><span id="stat-pending">0</span> <span style="font-size: 16px; color: var(--gray); font-weight: 400; font-family: 'Sarabun', sans-serif;">รายการ</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Transactions -->
+    <div id="admin-sec-transactions" class="hidden">
+      <div class="card" style="padding: 0;">
+        <div class="card-title" style="padding: 20px 20px 0;">
+          รายการฝาก-ถอน
+          <button class="btn btn-sm btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="exportData('transactions')">📥 Export Excel</button>
+        </div>
+        <div class="table-responsive" style="padding: 0 20px 20px;">
+          <table id="table-tx">
+            <thead>
+              <tr><th>วันที่</th><th>ลูกค้า</th><th>ประเภท</th><th>ยอดเงิน</th><th>หมายเหตุ</th><th>สถานะ</th><th>จัดการ</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Users -->
+    <div id="admin-sec-users" class="hidden">
+      <div class="card" style="padding: 0;">
+        <div class="card-title" style="padding: 20px 20px 0;">
+          รายชื่อผู้ใช้งาน
+          <button class="btn btn-sm btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="exportData('users')">📥 Export Excel</button>
+        </div>
+        <div class="table-responsive" style="padding: 0 20px 20px;">
+          <table id="table-users">
+            <thead>
+              <tr><th>โปรไฟล์</th><th>ชื่อ-นามสกุล</th><th>เบอร์โทร</th><th>สิทธิ์</th><th>ยอดสะสม</th><th>จัดการ</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Settings -->
+    <div id="admin-sec-settings" class="hidden">
+      <div class="card" style="max-width: 600px;">
+        <div class="card-title">ข้อมูลร้านค้า และ บัญชีรับโอน</div>
+        
+        <div class="form-group">
+          <label>อัปโหลดรูปร้านค้า (โลโก้)</label>
+          <input type="file" class="form-control" accept="image/*" style="padding: 10px;" id="set-shop-logo" onchange="previewImage(this, 'set-logo-preview')">
+          <img id="set-logo-preview" class="avatar-preview hidden">
+        </div>
+
+        <div class="form-group"><label>ชื่อร้าน</label><input type="text" id="set-shopname" class="form-control"></div>
+        <div class="form-group"><label>เบอร์โทรติดต่อ</label><input type="text" id="set-phone" class="form-control"></div>
+        
+        <!-- แยกไอดีและลิงก์ไลน์ ตามที่รีเควส -->
+        <div class="form-group"><label>Line ID (ไอดีไลน์ - แสดงเฉยๆ ไม่คลิก)</label><input type="text" id="set-line-id" class="form-control" placeholder="เช่น @goldshop"></div>
+        <div class="form-group"><label>ลิงก์เพิ่มเพื่อน Line (URL - สำหรับทำปุ่มคลิก)</label><input type="text" id="set-line-link" class="form-control" placeholder="เช่น https://line.me/ti/p/..."></div>
+        
+        <h4 class="mt-6 mb-4" style="color: var(--gold-dark); border-bottom: 1px solid #eee; padding-bottom: 8px;">บัญชีธนาคารรับฝากออม</h4>
+        <div class="form-group"><label>ชื่อธนาคาร</label><input type="text" id="set-bankname" class="form-control"></div>
+        <div class="form-group"><label>ชื่อบัญชี</label><input type="text" id="set-bankaccname" class="form-control"></div>
+        <div class="form-group"><label>เลขบัญชี</label><input type="text" id="set-bankaccno" class="form-control"></div>
+        
+        <div class="form-group">
+          <label>อัปโหลดรูป QR Code รับเงิน</label>
+          <input type="file" class="form-control" accept="image/*" style="padding: 10px;" id="set-qr-code" onchange="previewImage(this, 'set-qr-preview')">
+          <img id="set-qr-preview" class="img-preview hidden">
+        </div>
+
+        <h4 class="mt-6 mb-4" style="color: var(--gold-dark); border-bottom: 1px solid #eee; padding-bottom: 8px;">Telegram Backup & Notifications</h4>
+        <div class="form-group">
+          <label>Bot Token (ล็อกอัตโนมัติ ห้ามเปลี่ยน)</label>
+          <input type="text" id="set-tg-token" class="form-control" value="8731749401:AAEmA6wiK5o4NM0CcjJnmgt_827PbyMtPYw" readonly disabled style="opacity: 0.7;">
+        </div>
+        <div class="form-group"><label>Chat ID</label><input type="text" id="set-tg-chatid" class="form-control" value="-1003963635991"></div>
+        
+        <div class="grid gap-3 mt-6">
+          <button class="btn btn-primary" style="width: 100%;" onclick="saveSettings()">💾 บันทึกตั้งค่า</button>
+          <button class="btn btn-outline" style="width: 100%;" onclick="testTelegram()">ทดสอบแจ้งเตือน</button>
+          <button class="btn btn-outline" style="width: 100%; border-color:var(--green); color:var(--green);" onclick="backupToTelegram()">Backup ข้อมูลเดี๋ยวนี้</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav for Admin (iPad & Mobile Only) -->
+  <div class="admin-bottom-nav mobile-only">
+    <div class="nav-item active" onclick="navAdmin('dashboard')"><span class="nav-icon">📊</span>หน้าแรก</div>
+    <div class="nav-item" onclick="navAdmin('transactions')">
+      <span class="nav-icon">📋</span>ธุรกรรม
+      <span id="admin-badge-tx-mobile" class="badge bg-red hidden" style="position: absolute; top: 0; right: 0; padding: 2px 6px; font-size: 9px; transform: translate(20%, -20%);">0</span>
+    </div>
+    <div class="nav-item" onclick="navAdmin('users')"><span class="nav-icon">👥</span>ลูกค้า</div>
+    <div class="nav-item" id="nav-settings-mobile" onclick="navAdmin('settings')"><span class="nav-icon">⚙️</span>ตั้งค่า</div>
+    <div class="nav-item" onclick="switchToCustomerView()"><span class="nav-icon">📱</span>หน้าลูกค้า</div>
+  </div>
+</div>
+
+<!-- Modal: Edit Withdraw Amount -->
+<div id="modal-edit-withdraw" class="modal-overlay">
+  <div class="modal">
+    <h3 class="serif mb-4">ตรวจสอบและแก้ไขยอดถอน</h3>
+    <p style="font-size: 14px; color: var(--gray); margin-bottom: 20px;">ยอดที่ลูกค้าขอถอน: <b id="mw-req-amt" style="color: var(--black); font-size: 16px;">0</b> บาท</p>
+    <div class="form-group">
+      <label>ยอดเงินสุทธิที่อนุมัติให้หัก (บาท)</label>
+      <input type="number" id="mw-app-amt" class="form-control" style="font-size: 20px; font-weight: bold; color: var(--gold-dark);">
+    </div>
+    <div class="flex gap-2 mt-6">
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal('modal-edit-withdraw')">ยกเลิก</button>
+      <button class="btn btn-success" style="flex:1" onclick="confirmApproveWithdraw()">อนุมัติยอดนี้</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: View Slip -->
+<div id="modal-view-slip" class="modal-overlay">
+  <div class="modal text-center" style="padding: 16px; background: transparent; box-shadow: none;">
+    <h3 class="serif mb-4" style="color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">หลักฐานการโอนเงิน</h3>
+    <img id="slip-image-full" src="" style="width: 100%; border-radius: 16px; margin-bottom: 16px; box-shadow: var(--shadow-md);">
+    <button class="btn btn-primary" style="width: 100%; background: white; color: var(--black);" onclick="closeModal('modal-view-slip')">ปิดรูปภาพ</button>
+  </div>
+</div>
+
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+  import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+  import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+  // System Helpers
+  const getEl = (id) => document.getElementById(id);
+  const hideEl = (id) => { const el = getEl(id); if(el) el.classList.add('hidden'); };
+  const showEl = (id) => { const el = getEl(id); if(el) el.classList.remove('hidden'); };
+  const getVal = (id) => { const el = getEl(id); return el ? el.value : ''; };
+  const setVal = (id, val) => { const el = getEl(id); if(el) el.value = val; };
+  const setText = (id, txt) => { const el = getEl(id); if(el) el.textContent = txt; };
+
+  const fallbackConfig = {
+    apiKey: "AIzaSyD1GnYInbXZHxjX91E25ki2WP-R0a9pWTU",
+    authDomain: "gold-savings-517d2.firebaseapp.com",
+    projectId: "gold-savings-517d2",
+    storageBucket: "gold-savings-517d2.firebasestorage.app",
+    messagingSenderId: "1039204885436",
+    appId: "1:1039204885436:web:046afe73cf7c98f556c1b9",
+    measurementId: "G-H6H6GL3NW6"
+  };
+  
+  const safeParseJSON = (str, fallback) => {
+    try { return str ? JSON.parse(str) : fallback; } catch (e) { return fallback; }
+  };
+  
+  const firebaseConfig = typeof __firebase_config !== 'undefined' ? safeParseJSON(__firebase_config, fallbackConfig) : fallbackConfig;
+  const appId = typeof __app_id !== 'undefined' ? __app_id : 'gold-savings-app';
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  
+  const getCol = (name) => collection(db, 'artifacts', appId, 'public', 'data', name);
+  const getDocRef = (colName, docId) => doc(db, 'artifacts', appId, 'public', 'data', colName, docId);
+
+  window.appState = {
+    currentUser: null,
+    users: safeParseJSON(localStorage.getItem('cache_users'), []) || [],
+    transactions: safeParseJSON(localStorage.getItem('cache_txs'), []) || [],
+    settings: safeParseJSON(localStorage.getItem('cache_settings'), null) || {
+      shopName: 'ร้านทองพรีเมียม', phone: '', lineId: '', lineLink: '', bankName: '', bankAccName: '', bankAccNo: '', qrBase64: '', shopLogoBase64: '', 
+      tgToken: '8731749401:AAEmA6wiK5o4NM0CcjJnmgt_827PbyMtPYw', tgChatId: '-1003963635991', hasSuperAdmin: false
+    },
+  };
+
+  let pendingTxId = null;
+  let isListenersSetup = false;
+
+  window.showToast = (msg, isError = false) => {
+    const t = getEl('toast');
+    if(!t) return;
+    t.textContent = msg;
+    t.style.background = isError ? "var(--red)" : "var(--black)";
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 5000);
+  };
+  
+  window.showLoading = (show) => {
+    const el = getEl('loading');
+    if(el) {
+       el.style.display = show ? 'flex' : 'none';
+       const txt = getEl('loading-text');
+       if(txt) txt.textContent = "กำลังเชื่อมต่อระบบ...";
+    }
+  };
+  
+  window.closeModal = (id) => {
+    const el = getEl(id);
+    if(el) el.style.display = 'none';
+  };
+  
+  window.openModal = (id) => {
+    const el = getEl(id);
+    if(el) el.style.display = 'flex';
+  };
+  
+  const genId = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
+
+  window.previewImage = (input, imgId) => {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const MAX_WIDTH = 800;
+          let width = img.width; let height = img.height;
+          if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+          canvas.width = width; canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+          const el = getEl(imgId);
+          if(el) {
+             el.src = dataUrl;
+             el.classList.remove('hidden');
+          }
+          input.dataset.base64 = dataUrl;
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  };
+
+  const ensureAuth = async () => {
+    if (auth.currentUser) return true;
+    return new Promise(resolve => {
+      const unsub = onAuthStateChanged(auth, user => {
+        if (user) { unsub(); resolve(true); }
+      });
+      setTimeout(() => { unsub(); resolve(!!auth.currentUser); }, 5000);
+    });
+  };
+
+  const initApp = async () => {
+    try {
+      const savedUserStr = localStorage.getItem('goldAppUser');
+      if (savedUserStr) {
+         window.appState.currentUser = JSON.parse(savedUserStr);
+      }
+    } catch(e) {}
+    
+    updateSettingsUI();
+    routeUser(); 
+
+    onAuthStateChanged(auth, (user) => {
+      if (user && !isListenersSetup) {
+        isListenersSetup = true;
+        setupListeners();
+      }
+    });
+
+    try {
+      if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+        await signInWithCustomToken(auth, __initial_auth_token);
+      } else {
+        await signInAnonymously(auth);
+      }
+    } catch (e) {
+      console.error("Auth Error:", e);
+      let errMsg = "ไม่ได้เปิด Anonymous Auth";
+      if(e.code === 'auth/unauthorized-domain') errMsg = "โดเมนไม่ได้รับอนุญาตใน Firebase";
+      if(e.code === 'auth/operation-not-allowed') errMsg = "กรุณาเปิด Anonymous ใน Firebase";
+      showToast("⚠️ คำเตือน: " + errMsg, true);
+    }
+
+    setInterval(() => checkAndRunBackup(), 3600000);
+  };
+
+  const setupListeners = () => {
+    if(!auth.currentUser) return;
+    
+    onSnapshot(getDocRef('settings', 'global'), (doc) => {
+      if(doc.exists()) {
+        window.appState.settings = {...window.appState.settings, ...doc.data()};
+        try { localStorage.setItem('cache_settings', JSON.stringify(window.appState.settings)); } catch(e){}
+        updateSettingsUI();
+      }
+    }, (err) => {
+        console.error(err);
+        showToast("⚠️ Firebase Error: ไม่สามารถอ่านการตั้งค่า (ตรวจสอบ Rules)", true);
+    });
+
+    onSnapshot(getCol('appUsers'), (snap) => {
+      if (!snap.empty) {
+         window.appState.users = snap.docs.map(d => ({id: d.id, ...d.data()}));
+         try { localStorage.setItem('cache_users', JSON.stringify(window.appState.users)); } catch(e){}
+      }
+      
+      if(window.appState.currentUser) {
+        const updatedMe = window.appState.users.find(u => u.id === window.appState.currentUser.id);
+        if(updatedMe) {
+          window.appState.currentUser = updatedMe;
+          try { localStorage.setItem('goldAppUser', JSON.stringify(updatedMe)); } catch(e){}
+          updateProfileUI();
+        }
+      }
+      renderAdminUsers();
+      updateDashboardStats();
+    }, (err) => console.error("Users Sync Error:", err));
+
+    onSnapshot(getCol('transactions'), (snap) => {
+      if (!snap.empty) {
+         window.appState.transactions = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.date - a.date);
+         try { localStorage.setItem('cache_txs', JSON.stringify(window.appState.transactions)); } catch(e){}
+      }
+      
+      renderCustomerHistory();
+      renderAdminTransactions();
+      updateDashboardStats();
+    }, (err) => console.error("Transactions Sync Error:", err));
+  };
+
+  window.switchAuthTab = (tab) => {
+    const formLogin = getEl('form-login');
+    if(formLogin) formLogin.classList.toggle('hidden', tab !== 'login');
+    
+    const formReg = getEl('form-register');
+    if(formReg) formReg.classList.toggle('hidden', tab !== 'register');
+    
+    const tabLog = getEl('tab-login');
+    if(tabLog) tabLog.style.background = tab === 'login' ? 'white' : 'transparent';
+    
+    const tabReg = getEl('tab-register');
+    if(tabReg) tabReg.style.background = tab === 'register' ? 'white' : 'transparent';
+    
+    if(tab === 'register') {
+      const secGroup = getEl('secret-code-group');
+      const s = window.appState.settings || {};
+      if(secGroup) secGroup.classList.toggle('hidden', s.hasSuperAdmin);
+    }
+  };
+
+  window.switchToCustomerView = () => {
+    hideEl('page-admin');
+    showEl('page-customer');
+    showEl('btn-switch-admin');
+    navCust('home');
+  };
+
+  window.switchToAdminView = () => {
+    hideEl('page-customer');
+    showEl('page-admin');
+    navAdmin('dashboard');
+  };
+
+  const routeUser = () => {
+    hideEl('page-login');
+    hideEl('page-customer');
+    hideEl('page-admin');
+    
+    showLoading(false);
+
+    if(!window.appState.currentUser) {
+      showEl('page-login');
+      return;
+    }
+
+    const role = window.appState.currentUser.role;
+    updateProfileUI();
+
+    if(role === 'superadmin' || role === 'subadmin') {
+      showEl('page-admin');
+      
+      const navSet = getEl('nav-settings');
+      if(navSet) navSet.classList.toggle('hidden', role !== 'superadmin');
+      
+      const navSetMob = getEl('nav-settings-mobile');
+      if(navSetMob) navSetMob.classList.toggle('hidden', role !== 'superadmin');
+      
+      showEl('btn-switch-admin');
+      navAdmin('dashboard');
+    } else {
+      showEl('page-customer');
+      hideEl('btn-switch-admin');
+      navCust('home');
+    }
+  };
+
+  window.logout = () => {
+    window.appState.currentUser = null;
+    try { localStorage.removeItem('goldAppUser'); } catch(e){}
+    routeUser();
+  };
+
+  window.handleRegister = async () => {
+    const name = getVal('reg-name').trim();
+    const phone = getVal('reg-phone').trim();
+    const pass = getVal('reg-pass');
+    const secret = getVal('reg-secret').trim();
+
+    if(!name || !phone || !pass) return showToast("กรุณากรอกข้อมูลให้ครบถ้วน", true);
+    
+    let isUsed = false;
+    if(window.appState.users && window.appState.users.length > 0) {
+       for(let i=0; i<window.appState.users.length; i++) {
+          if(window.appState.users[i].phone === phone) isUsed = true;
+       }
+    }
+    if(isUsed) return showToast("เบอร์โทรนี้ถูกใช้งานแล้ว", true);
+
+    showLoading(true);
+    
+    const isAuthed = await ensureAuth();
+    if(!isAuthed) {
+       showToast("⚠️ ไม่สามารถเชื่อมต่อฐานข้อมูลได้ กรุณาไปแก้ Firebase", true);
+       showLoading(false);
+       return;
+    }
+    
+    let role = 'customer';
+    const s = window.appState.settings || {};
+    
+    if(secret === '9999' && !s.hasSuperAdmin) {
+      role = 'superadmin';
+      window.appState.settings.hasSuperAdmin = true;
+      try { await setDoc(getDocRef('settings', 'global'), { hasSuperAdmin: true }, { merge: true }); } catch(e) {}
+    } else if (secret === '9999') {
+      showToast("รหัสลับถูกใช้ไปแล้ว ไม่สามารถเป็น Super Admin ได้อีก", true);
+      showLoading(false);
+      return;
+    }
+
+    const docId = genId();
+    const newUser = { id: docId, phone: phone, password: pass, name: name, role: role, email: '', balance: 0, profilePicBase64: '', createdAt: Date.now() };
+    
+    try {
+      await setDoc(getDocRef('appUsers', docId), newUser);
+      
+      window.appState.users.push(newUser);
+      try {
+         localStorage.setItem('cache_users', JSON.stringify(window.appState.users));
+         localStorage.setItem('goldAppUser', JSON.stringify(newUser));
+      } catch(e){}
+      window.appState.currentUser = newUser;
+      
+      showToast("สมัครสมาชิกสำเร็จ!");
+      routeUser();
+    } catch (err) {
+      console.error("Firebase Write Error:", err);
+      showToast("❌ สมัครไม่สำเร็จ: ฐานข้อมูลไม่อนุญาต (โปรดเช็คสิทธิ์ Firebase)", true);
+    } finally {
+      showLoading(false);
+    }
+  };
+
+  window.handleLogin = () => {
+    const phone = getVal('login-phone').trim();
+    const pass = getVal('login-pass');
+    
+    let user = null;
+    if(window.appState.users && window.appState.users.length > 0) {
+       for(let i=0; i<window.appState.users.length; i++) {
+          if(window.appState.users[i].phone === phone && window.appState.users[i].password === pass) {
+             user = window.appState.users[i];
+             break;
+          }
+       }
+    }
+    
+    if(user) {
+      window.appState.currentUser = user;
+      try { localStorage.setItem('goldAppUser', JSON.stringify(user)); } catch(e){}
+      showToast("เข้าสู่ระบบสำเร็จ");
+      routeUser();
+    } else {
+      showToast("เบอร์โทรหรือรหัสผ่านไม่ถูกต้อง", true);
+    }
+  };
+
+  const updateProfileUI = () => {
+    const u = window.appState.currentUser;
+    if(!u) return;
+    
+    const bal = u.balance || 0;
+    setText('pro-name', u.name);
+    setVal('edit-name', u.name);
+    setVal('edit-phone', u.phone);
+    setVal('edit-email', u.email || '');
+    
+    let rText = u.role === 'superadmin' ? 'ผู้ดูแลระบบหลัก' : (u.role === 'subadmin' ? 'ผู้ช่วยผู้ดูแล' : 'ลูกค้า');
+    setText('pro-role', rText);
+    setText('cust-balance', bal.toLocaleString());
+    setText('cust-withdraw-max', bal.toLocaleString());
+
+    if(u.profilePicBase64) {
+      const img1 = getEl('pro-avatar-img');
+      if(img1) { img1.src = u.profilePicBase64; img1.style.display = 'block'; }
+      
+      const imgFallback = getEl('pro-avatar-fallback');
+      if(imgFallback) imgFallback.style.display = 'none';
+      
+      const imgPrev = getEl('profile-preview');
+      if(imgPrev) { imgPrev.src = u.profilePicBase64; imgPrev.classList.remove('hidden'); }
+    }
+  };
+
+  window.updateProfile = async () => {
+    const name = getVal('edit-name');
+    const email = getVal('edit-email');
+    const picInput = getEl('edit-profile-pic');
+    
+    showLoading(true);
+    const isAuthed = await ensureAuth();
+    if(!isAuthed) { showLoading(false); return showToast("ออฟไลน์: ไม่สามารถบันทึกขึ้นเซิร์ฟเวอร์", true); }
+    
+    let updateData = { name: name, email: email };
+    if(picInput && picInput.dataset && picInput.dataset.base64) {
+      updateData.profilePicBase64 = picInput.dataset.base64;
+      window.appState.currentUser.profilePicBase64 = picInput.dataset.base64;
+    }
+    
+    window.appState.currentUser.name = name;
+    window.appState.currentUser.email = email;
+    
+    try {
+       await updateDoc(getDocRef('appUsers', window.appState.currentUser.id), updateData);
+       showToast("บันทึกโปรไฟล์สำเร็จ");
+       updateProfileUI();
+    } catch(e) {
+       console.error(e);
+       showToast("❌ บันทึกไม่สำเร็จ (ตรวจสอบสิทธิ์ Firebase)", true);
+    }
+    showLoading(false);
+  };
+
+  window.updatePassword = async () => {
+    const pass = getVal('edit-pass');
+    if(!pass) return showToast("กรุณากรอกรหัสผ่านใหม่", true);
+    
+    showLoading(true);
+    const isAuthed = await ensureAuth();
+    if(!isAuthed) { showLoading(false); return showToast("ออฟไลน์: ไม่สามารถเปลี่ยนรหัส", true); }
+    
+    window.appState.currentUser.password = pass;
+    try {
+       await updateDoc(getDocRef('appUsers', window.appState.currentUser.id), { password: pass });
+       showToast("เปลี่ยนรหัสผ่านสำเร็จ");
+       setVal('edit-pass', '');
+    } catch(e) {
+       showToast("❌ บันทึกไม่สำเร็จ", true);
+    }
+    showLoading(false);
+  };
+
+  window.navCust = (tab) => {
+    document.querySelectorAll('#page-customer .app-container').forEach(e => e.classList.add('hidden'));
+    document.querySelectorAll('#page-customer .bottom-nav .nav-item').forEach(e => e.classList.remove('active'));
+    
+    showEl(`cust-content-${tab}`);
+    const navItem = document.querySelector(`#page-customer .bottom-nav .nav-item[onclick="navCust('${tab}')"]`);
+    if(navItem) navItem.classList.add('active');
+    window.scrollTo(0, 0); 
+  };
+
+  window.submitDeposit = async () => {
+    const amtEl = getEl('dep-amount');
+    const amount = amtEl ? parseFloat(amtEl.value) : 0;
+    const remark = getVal('dep-remark');
+    const slipInput = getEl('dep-slip');
+    const slipBase64 = (slipInput && slipInput.dataset) ? slipInput.dataset.base64 : '';
+
+    if(!amount || amount <= 0) return showToast("กรุณาระบุยอดเงินที่ถูกต้อง", true);
+    if(!slipBase64) return showToast("กรุณาแนบสลิปโอนเงิน", true);
+
+    showLoading(true);
+    const isAuthed = await ensureAuth();
+    if(!isAuthed) { showLoading(false); return showToast("⚠️ ออฟไลน์โหมด ส่งข้อมูลไม่ได้", true); }
+
+    const tx = {
+      id: genId(), 
+      userId: window.appState.currentUser ? window.appState.currentUser.id : '', 
+      userName: window.appState.currentUser ? window.appState.currentUser.name : '',
+      type: 'deposit', 
+      amount: amount, 
+      remark: remark, 
+      slipBase64: slipBase64, 
+      status: 'pending', 
+      date: Date.now()
+    };
+    
+    try {
+      await setDoc(getDocRef('transactions', tx.id), tx);
+      
+      if(!window.appState.transactions) window.appState.transactions = [];
+      window.appState.transactions.unshift(tx);
+      try { localStorage.setItem('cache_txs', JSON.stringify(window.appState.transactions)); } catch(e){}
+      
+      sendTgMsg(`📥 <b>แจ้งเตือนฝากออม</b>\nจาก: ${tx.userName}\nยอดเงิน: ฿${amount.toLocaleString()}\nสถานะ: รอตรวจสอบ`);
+      
+      setVal('dep-amount', '');
+      setVal('dep-remark', '');
+      const prev = getEl('dep-preview');
+      if(prev) prev.classList.add('hidden');
+      if(slipInput) { slipInput.value = ''; slipInput.dataset.base64 = ''; }
+      
+      showToast("ส่งคำขอฝากออมสำเร็จ รอตรวจสอบ");
+      renderCustomerHistory();
+      navCust('history');
+    } catch(e) {
+      console.error(e);
+      showToast("❌ ส่งคำขอไม่สำเร็จ (ระบบเชื่อมต่อขัดข้อง)", true);
+    }
+    showLoading(false);
+  };
+
+  window.submitWithdraw = async () => {
+    const amtEl = getEl('wit-amount');
+    const amount = amtEl ? parseFloat(amtEl.value) : 0;
+    const remark = getVal('wit-remark');
+    const max = (window.appState.currentUser && window.appState.currentUser.balance) ? window.appState.currentUser.balance : 0;
+
+    if(!amount || amount <= 0) return showToast("กรุณาระบุยอดเงินที่ถูกต้อง", true);
+    if(amount > max) return showToast("ยอดเงินออมไม่เพียงพอ", true);
+
+    showLoading(true);
+    const isAuthed = await ensureAuth();
+    if(!isAuthed) { showLoading(false); return showToast("⚠️ ออฟไลน์โหมด", true); }
+
+    const tx = {
+      id: genId(), 
+      userId: window.appState.currentUser ? window.appState.currentUser.id : '', 
+      userName: window.appState.currentUser ? window.appState.currentUser.name : '',
+      type: 'withdraw', 
+      amount: amount, 
+      remark: remark, 
+      status: 'pending', 
+      date: Date.now()
+    };
+    
+    try {
+      await setDoc(getDocRef('transactions', tx.id), tx);
+      
+      if(!window.appState.transactions) window.appState.transactions = [];
+      window.appState.transactions.unshift(tx);
+      try { localStorage.setItem('cache_txs', JSON.stringify(window.appState.transactions)); } catch(e){}
+      
+      sendTgMsg(`📤 <b>แจ้งเตือนขอถอนเงิน/แลกทอง</b>\nจาก: ${tx.userName}\nยอดเงิน: ฿${amount.toLocaleString()}\nหมายเหตุ: ${remark}\nสถานะ: รอตรวจสอบ`);
+      
+      setVal('wit-amount', '');
+      setVal('wit-remark', '');
+      
+      showToast("ส่งคำขอถอนสำเร็จ รอร้านยืนยัน");
+      renderCustomerHistory();
+      navCust('history');
+    } catch(e) {
+      console.error(e);
+      showToast("❌ ส่งคำขอไม่สำเร็จ (ระบบเชื่อมต่อขัดข้อง)", true);
+    }
+    showLoading(false);
+  };
+
+  const renderCustomerHistory = () => {
+    let txs = [];
+    const myId = window.appState.currentUser ? window.appState.currentUser.id : null;
+    
+    if(window.appState.transactions) {
+       for(let i=0; i<window.appState.transactions.length; i++) {
+          if(window.appState.transactions[i].userId === myId) txs.push(window.appState.transactions[i]);
+       }
+    }
+
+    const renderList = (containerId, limit = 0) => {
+      const el = getEl(containerId);
+      if(!el) return;
+      el.innerHTML = '';
+      
+      let list = txs;
+      if(limit > 0 && txs.length > limit) {
+         list = txs.slice(0, limit);
+      }
+      
+      if(list.length === 0) { el.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">ยังไม่มีรายการธุรกรรม</div>'; return; }
+
+      list.forEach(t => {
+        let icon = t.type==='deposit' ? '📥' : '📤';
+        let color = t.type==='deposit' ? 'var(--green)' : 'var(--red)';
+        let statusBadge = t.status==='approved' ? '<span class="badge bg-green">สำเร็จ</span>' : (t.status==='rejected' ? '<span class="badge bg-red">ถูกปฏิเสธ</span>' : '<span class="badge bg-yellow">รออนุมัติ</span>');
+        let d = new Date(t.date).toLocaleString('th-TH');
+        
+        let amt = t.amount ? t.amount : 0;
+        
+        el.innerHTML += `
+          <div class="flex justify-between items-center tx-item-history" style="padding: 14px 0; border-bottom: 1px solid #eee;">
+            <div class="flex items-center gap-3">
+              <div style="font-size: 20px; background:var(--gray-light); padding:12px; border-radius:14px; flex-shrink:0;">${icon}</div>
+              <div style="min-width: 0;">
+                <div style="font-weight:600; font-size:15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${t.type==='deposit' ? 'ฝากออม' : 'ถอนแลกทอง'}</div>
+                <div style="font-size:12px; color:var(--gray);">${d}</div>
+              </div>
+            </div>
+            <div class="tx-amount-col">
+              <div style="font-weight:700; color:${color}; font-size:15px;">฿${amt.toLocaleString()}</div>
+              <div style="margin-top:4px;">${statusBadge}</div>
+            </div>
+          </div>
+        `;
+      });
+    };
+    renderList('cust-recent-tx', 3);
+    renderList('cust-all-history', 0);
+  };
+
+  window.navAdmin = (sec) => {
+    document.querySelectorAll('#admin-content-area > div').forEach(e => {
+       if(e.id !== 'admin-page-title' && e.id.indexOf('title') === -1 && !e.classList.contains('admin-topbar')) e.classList.add('hidden');
+    });
+    
+    document.querySelectorAll('.admin-nav-item, .admin-bottom-nav .nav-item').forEach(e => e.classList.remove('active'));
+    
+    showEl(`admin-sec-${sec}`);
+    
+    const elDesktop = document.querySelector(`.admin-sidebar .admin-nav-item[onclick="navAdmin('${sec}')"]`);
+    if(elDesktop) elDesktop.classList.add('active');
+
+    const elMobile = document.querySelector(`.admin-bottom-nav .nav-item[onclick="navAdmin('${sec}')"]`);
+    if(elMobile) elMobile.classList.add('active');
+    
+    const titles = { dashboard: 'ภาพรวมระบบ', transactions: 'รายการธุรกรรม', users: 'จัดการผู้ใช้งาน', settings: 'ตั้งค่าร้านค้า' };
+    const titleText = titles[sec] || sec;
+    setText('admin-page-title', titleText);
+    setText('admin-page-title-mobile', titleText);
+    
+    window.scrollTo(0, 0);
+  };
+
+  window.toggleAdminSidebar = () => {};
+
+  const updateDashboardStats = () => {
+    let bal = 0;
+    let usersCount = 0;
+    
+    if(window.appState.users) {
+       for(let i=0; i<window.appState.users.length; i++) {
+          bal += (window.appState.users[i].balance || 0);
+          if(window.appState.users[i].role !== 'superadmin') usersCount++;
+       }
+    }
+    
+    let pending = 0;
+    if(window.appState.transactions) {
+       for(let i=0; i<window.appState.transactions.length; i++) {
+          if(window.appState.transactions[i].status === 'pending') pending++;
+       }
+    }
+    
+    setText('stat-total-balance', bal.toLocaleString());
+    setText('stat-total-users', usersCount);
+    setText('stat-pending', pending);
+    
+    const badgeDesktop = getEl('admin-badge-tx');
+    if(badgeDesktop) {
+        badgeDesktop.textContent = pending;
+        badgeDesktop.classList.toggle('hidden', pending === 0);
+    }
+    const badgeMobile = getEl('admin-badge-tx-mobile');
+    if(badgeMobile) {
+        badgeMobile.textContent = pending;
+        badgeMobile.classList.toggle('hidden', pending === 0);
+    }
+  };
+
+  const renderAdminTransactions = () => {
+    const tbody = document.querySelector('#table-tx tbody');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+
+    if(!window.appState.transactions) return;
+
+    window.appState.transactions.forEach(t => {
+      let tr = document.createElement('tr');
+      let statusStr = t.status==='approved' ? '<span class="badge bg-green">สำเร็จ</span>' : (t.status==='rejected' ? '<span class="badge bg-red">ปฏิเสธ</span>' : '<span class="badge bg-yellow">รอตรวจสอบ</span>');
+      let d = new Date(t.date).toLocaleString('th-TH');
+      let slipBtn = t.slipBase64 ? `<button class="btn btn-sm btn-outline" style="padding:6px 10px; font-size:12px;" onclick="viewSlip('${t.id}')">รูปสลิป</button>` : '-';
+      
+      let actionBtns = '-';
+      let amt = t.amount ? t.amount : 0;
+      let rm = t.remark ? t.remark : '-';
+
+      if(t.status === 'pending') {
+        if(t.type === 'deposit') {
+          actionBtns = `<button class="btn btn-sm btn-success" onclick="approveTx('${t.id}')">✓ อนุมัติ</button> <button class="btn btn-sm btn-danger" onclick="rejectTx('${t.id}')">✗ ปฏิเสธ</button>`;
+        } else {
+          actionBtns = `<button class="btn btn-sm btn-success" onclick="openEditWithdraw('${t.id}', ${amt})">พิจารณาถอน</button> <button class="btn btn-sm btn-danger" onclick="rejectTx('${t.id}')">ปฏิเสธ</button>`;
+        }
+      }
+
+      tr.innerHTML = `
+        <td style="color:var(--gray); font-size:13px;">${d}</td>
+        <td><b>${t.userName}</b></td>
+        <td><span class="badge ${t.type==='deposit'?'bg-green':'bg-red'}">${t.type==='deposit'?'ฝากออม':'ถอนทอง'}</span></td>
+        <td style="font-weight:bold; color:${t.type==='deposit'?'var(--green)':'var(--red)'}; font-size:15px;">฿${amt.toLocaleString()}</td>
+        <td><div style="font-size:13px; max-width: 150px; overflow:hidden; text-overflow:ellipsis;" title="${rm}">${rm}</div>${slipBtn}</td>
+        <td>${statusStr}</td>
+        <td><div class="flex gap-2">${actionBtns}</div></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  };
+
+  const renderAdminUsers = () => {
+    const tbody = document.querySelector('#table-users tbody');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+    const myRole = window.appState.currentUser ? window.appState.currentUser.role : '';
+    const myId = window.appState.currentUser ? window.appState.currentUser.id : '';
+
+    if(!window.appState.users) return;
+
+    window.appState.users.forEach(u => {
+      let tr = document.createElement('tr');
+      let rText = u.role === 'superadmin' ? '<span class="badge bg-gold">Super Admin</span>' : (u.role === 'subadmin' ? '<span class="badge bg-green">Admin</span>' : '<span class="badge" style="background:#eee; color:var(--black)">ลูกค้า</span>');
+      
+      let actionBtns = '-';
+      if(myRole === 'superadmin' && u.id !== myId) {
+        let toggleRole = u.role === 'customer' ? `<button class="btn btn-sm btn-outline" onclick="changeRole('${u.id}', 'subadmin')">ตั้งเป็น Admin</button>` : `<button class="btn btn-sm btn-outline" style="border-color:var(--red); color:var(--red)" onclick="changeRole('${u.id}', 'customer')">ปลด Admin</button>`;
+        actionBtns = toggleRole;
+      }
+      
+      let userAvatar = u.profilePicBase64 ? `<img src="${u.profilePicBase64}" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">` : `<div style="width:36px; height:36px; border-radius:50%; background:var(--gray-light); display:flex; align-items:center; justify-content:center; font-size:16px;">👤</div>`;
+      let bal = u.balance ? u.balance : 0;
+
+      tr.innerHTML = `
+        <td>${userAvatar}</td>
+        <td><b style="font-size:15px;">${u.name}</b></td>
+        <td style="color:var(--gray);">${u.phone}</td>
+        <td>${rText}</td>
+        <td style="font-weight:bold; color:var(--gold-dark); font-size:15px;">฿${bal.toLocaleString()}</td>
+        <td>${actionBtns}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  };
+
+  window.changeRole = async (uid, newRole) => {
+    if(confirm(`ต้องการเปลี่ยนสิทธิ์ผู้ใช้นี้เป็น ${newRole} ใช่หรือไม่?`)) {
+      showLoading(true);
+      const isAuthed = await ensureAuth();
+      if(!isAuthed) { showLoading(false); return showToast("ไม่ได้เชื่อมต่อฐานข้อมูล", true); }
+      
+      let targetUser = null;
+      for(let i=0; i<window.appState.users.length; i++){
+         if(window.appState.users[i].id === uid) targetUser = window.appState.users[i];
+      }
+      
+      if(targetUser) targetUser.role = newRole;
+      
+      try {
+         await updateDoc(getDocRef('appUsers', uid), { role: newRole });
+         renderAdminUsers();
+         showToast("เปลี่ยนสิทธิ์สำเร็จ");
+      } catch(e) {
+         console.error(e);
+         showToast("❌ เปลี่ยนสิทธิ์ไม่สำเร็จ", true);
+      }
+      showLoading(false);
+    }
+  };
+
+  window.viewSlip = (txId) => {
+    let tx = null;
+    for(let i=0; i<window.appState.transactions.length; i++){
+       if(window.appState.transactions[i].id === txId) tx = window.appState.transactions[i];
+    }
+    
+    if(tx && tx.slipBase64) {
+      const img = getEl('slip-image-full');
+      if(img) { img.src = tx.slipBase64; openModal('modal-view-slip'); }
+    }
+  };
+
+  window.openEditWithdraw = (txId, reqAmount) => {
+    pendingTxId = txId;
+    setText('mw-req-amt', (reqAmount || 0).toLocaleString());
+    setVal('mw-app-amt', reqAmount || 0);
+    openModal('modal-edit-withdraw');
+  };
+
+  window.confirmApproveWithdraw = () => {
+    const el = getEl('mw-app-amt');
+    const appAmt = el ? parseFloat(el.value) : 0;
+    if(isNaN(appAmt) || appAmt <= 0) return showToast("ยอดเงินไม่ถูกต้อง", true);
+    closeModal('modal-edit-withdraw');
+    processTx(pendingTxId, 'approved', appAmt);
+  };
+
+  window.approveTx = (txId) => {
+    if(confirm("ยืนยันการอนุมัติรายการนี้?")) {
+      processTx(txId, 'approved');
+    }
+  };
+
+  window.rejectTx = (txId) => {
+    const reason = prompt("ระบุเหตุผลที่ปฏิเสธ (ถ้ามี):");
+    if(reason !== null) {
+      processTx(txId, 'rejected', null, reason);
+    }
+  };
+
+  const processTx = async (txId, status, overrideAmount = null, rejectReason = "") => {
+    showLoading(true);
+    const isAuthed = await ensureAuth();
+    if(!isAuthed) { showLoading(false); return showToast("⚠️ ขาดการเชื่อมต่อ ไม่สามารถจัดการข้อมูล", true); }
+    
+    let tx = null;
+    if(window.appState.transactions) {
+       for(let i=0; i<window.appState.transactions.length; i++) {
+          if(window.appState.transactions[i].id === txId) tx = window.appState.transactions[i];
+       }
+    }
+    
+    if(!tx) { showLoading(false); return; }
+
+    let user = null;
+    if(window.appState.users) {
+       for(let i=0; i<window.appState.users.length; i++) {
+          if(window.appState.users[i].id === tx.userId) user = window.appState.users[i];
+       }
+    }
+
+    let finalAmount = overrideAmount !== null ? overrideAmount : (tx.amount ? tx.amount : 0);
+
+    try {
+      if(status === 'approved' && user) {
+        let newBalance = user.balance ? user.balance : 0;
+        if(tx.type === 'deposit') newBalance += finalAmount;
+        else if(tx.type === 'withdraw') {
+          if(finalAmount > newBalance) {
+            showToast("ลูกค้ามียอดไม่พอให้หัก", true);
+            showLoading(false);
+            return;
+          }
+          newBalance -= finalAmount;
+        }
+        user.balance = newBalance;
+        await updateDoc(getDocRef('appUsers', user.id), { balance: newBalance });
+      }
+
+      tx.status = status;
+      let updateData = { status: status };
+      if(overrideAmount !== null) { tx.amount = overrideAmount; updateData.amount = overrideAmount; }
+      if(rejectReason) {
+        const rm = tx.remark ? tx.remark : '';
+        tx.remark = rm + ` [ปฏิเสธ: ${rejectReason}]`;
+        updateData.remark = tx.remark;
+      }
+
+      await updateDoc(getDocRef('transactions', txId), updateData);
+      
+      try {
+        localStorage.setItem('cache_users', JSON.stringify(window.appState.users));
+        localStorage.setItem('cache_txs', JSON.stringify(window.appState.transactions));
+      } catch(e){}
+      
+      renderAdminTransactions();
+      renderAdminUsers();
+      updateDashboardStats();
+      
+      let statTh = status==='approved'?'✅ อนุมัติสำเร็จ':'❌ ถูกปฏิเสธ';
+      sendTgMsg(`อัปเดตสถานะธุรกรรม\nผู้ใช้: ${tx.userName}\nประเภท: ${tx.type==='deposit'?'ฝาก':'ถอน'}\nยอด: ฿${finalAmount.toLocaleString()}\nสถานะ: ${statTh}`);
+      
+      showToast("ดำเนินการสำเร็จ");
+    } catch(e) {
+      console.error(e);
+      showToast("❌ ดำเนินการไม่สำเร็จ (ตรวจสอบสิทธิ์ Firebase)", true);
+    }
+    showLoading(false);
+  };
+
+  const updateSettingsUI = () => {
+    const s = window.appState.settings || {};
+    
+    const sName = s.shopName ? s.shopName : 'พรีเมียมออมทอง';
+    setText('cust-header-name', sName);
+    setText('admin-shop-name', sName);
+    setText('admin-shop-name-sidebar', sName);
+    setText('login-shop-name', sName); 
+    
+    setText('cust-bank-name', s.bankName ? s.bankName : '-');
+    setText('cust-bank-accname', s.bankAccName ? s.bankAccName : '-');
+    setText('cust-bank-accno', s.bankAccNo ? s.bankAccNo : '-');
+    
+    const lineIdVal = s.lineId ? s.lineId : '';
+    const lineLinkVal = s.lineLink ? s.lineLink : '';
+    const phoneVal = s.phone ? s.phone : '';
+    
+    let contactHtml = '';
+    if (phoneVal) contactHtml += `<div style="margin-bottom:8px;">📞 โทร: <a href="tel:${phoneVal}" style="color:var(--gold-dark); text-decoration:none; font-weight:700;">${phoneVal}</a></div>`;
+    if (lineIdVal) contactHtml += `<div style="margin-bottom:12px;">💬 Line ID: <span style="color:var(--gold-dark); font-weight:700;">${lineIdVal}</span></div>`;
+    
+    const elDetails = getEl('cust-shop-contact-details');
+    if (elDetails) elDetails.innerHTML = contactHtml ? contactHtml : '-';
+    
+    const elBtn = getEl('cust-shop-contact-btn');
+    if (elBtn) {
+        if (lineLinkVal) {
+            let safeLink = lineLinkVal.startsWith('http') ? lineLinkVal : `https://${lineLinkVal}`;
+            elBtn.innerHTML = `<a href="${safeLink}" target="_blank" class="btn btn-success" style="display:inline-flex; width:100%; text-decoration:none; padding:12px 16px; font-size:15px; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">✅ คลิกเพิ่มเพื่อน Line ติดต่อร้าน</a>`;
+        } else {
+            elBtn.innerHTML = '';
+        }
+    }
+    
+    if(s.shopLogoBase64) {
+      const lg = getEl('cust-header-logo');
+      if(lg) { lg.src = s.shopLogoBase64; lg.style.display = 'block'; }
+      const lfb = getEl('cust-header-logo-fallback');
+      if(lfb) lfb.style.display = 'none';
+      const lp = getEl('set-logo-preview');
+      if(lp) { lp.src = s.shopLogoBase64; lp.classList.remove('hidden'); }
+      
+      const logImg = getEl('login-logo-img');
+      if(logImg) { logImg.src = s.shopLogoBase64; logImg.style.display = 'block'; }
+      const logFb = getEl('login-logo-fallback');
+      if(logFb) logFb.style.display = 'none';
+    }
+
+    if(s.qrBase64) {
+      const qg = getEl('cust-qr-img');
+      if(qg) { qg.src = s.qrBase64; qg.style.display = 'block'; }
+      const qfb = getEl('cust-qr-placeholder');
+      if(qfb) qfb.style.display = 'none';
+      const qp = getEl('set-qr-preview');
+      if(qp) { qp.src = s.qrBase64; qp.classList.remove('hidden'); }
+    }
+
+    setVal('set-shopname', s.shopName ? s.shopName : '');
+    setVal('set-phone', s.phone ? s.phone : '');
+    setVal('set-line-id', s.lineId ? s.lineId : '');
+    setVal('set-line-link', s.lineLink ? s.lineLink : '');
+    setVal('set-bankname', s.bankName ? s.bankName : '');
+    setVal('set-bankaccname', s.bankAccName ? s.bankAccName : '');
+    setVal('set-bankaccno', s.bankAccNo ? s.bankAccNo : '');
+  };
+
+  window.saveSettings = async () => {
+    showLoading(true);
+    const isAuthed = await ensureAuth();
+    if(!isAuthed) { showLoading(false); return showToast("⚠️ ออฟไลน์: ไม่สามารถบันทึกตั้งค่าได้", true); }
+    
+    const newData = {
+      shopName: getVal('set-shopname'),
+      phone: getVal('set-phone'),
+      lineId: getVal('set-line-id'),
+      lineLink: getVal('set-line-link'),
+      bankName: getVal('set-bankname'),
+      bankAccName: getVal('set-bankaccname'),
+      bankAccNo: getVal('set-bankaccno'),
+      tgToken: "8731749401:AAEmA6wiK5o4NM0CcjJnmgt_827PbyMtPYw", // FIXED
+      tgChatId: getVal('set-tg-chatid')
+    };
+    
+    const qrInput = getEl('set-qr-code');
+    if(qrInput && qrInput.dataset && qrInput.dataset.base64) newData.qrBase64 = qrInput.dataset.base64;
+
+    const logoInput = getEl('set-shop-logo');
+    if(logoInput && logoInput.dataset && logoInput.dataset.base64) newData.shopLogoBase64 = logoInput.dataset.base64;
+
+    window.appState.settings = {...(window.appState.settings||{}), ...newData};
+    try { localStorage.setItem('cache_settings', JSON.stringify(window.appState.settings)); } catch(e){}
+    updateSettingsUI();
+
+    try {
+      await setDoc(getDocRef('settings', 'global'), newData, {merge:true});
+      showToast("บันทึกการตั้งค่าสำเร็จ");
+    } catch(e) {
+      console.error(e);
+      showToast("❌ บันทึกไม่สำเร็จ (ตรวจสิทธิ์ Firebase)", true);
+    }
+    showLoading(false);
+  };
+
+  const sendTgMsg = async (text) => {
+    const s = window.appState.settings || {};
+    if(!s.tgToken || !s.tgChatId) return;
+    try {
+      await fetch(`https://api.telegram.org/bot${s.tgToken}/sendMessage`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ chat_id: s.tgChatId, text: text, parse_mode: 'HTML' })
+      });
+    } catch(e) { console.log('TG Error:', e); }
+  };
+
+  window.testTelegram = () => {
+    showToast("กำลังส่งข้อความทดสอบ...");
+    sendTgMsg("🔔 ข้อความทดสอบจากระบบออมทองพรีเมียม");
+  };
+
+  window.exportData = (type) => {
+    let data = window.appState[type];
+    if(!data || data.length === 0) return showToast("ไม่มีข้อมูลให้ Export", true);
+    
+    let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+    if(type === 'users') {
+      csvContent += "Name,Phone,Role,Balance\n";
+      data.forEach(u => { 
+        let b = u.balance ? u.balance : 0;
+        csvContent += `"${u.name}","${u.phone}","${u.role}","${b}"\n`; 
+      });
+    } else {
+      csvContent += "Date,UserName,Type,Amount,Status,Remark\n";
+      data.forEach(t => { 
+        let d = new Date(t.date).toLocaleString('th-TH');
+        let amt = t.amount ? t.amount : 0;
+        let rm = t.remark ? t.remark : '';
+        csvContent += `"${d}","${t.userName}","${t.type}","${amt}","${t.status}","${rm}"\n`; 
+      });
+    }
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `export_${type}_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  window.backupToTelegram = async () => {
+    showLoading(true);
+    let userCount = window.appState.users ? window.appState.users.length : 0;
+    
+    let totalBal = 0;
+    if(window.appState.users) {
+       for(let i=0; i<window.appState.users.length; i++){
+          totalBal += (window.appState.users[i].balance ? window.appState.users[i].balance : 0);
+       }
+    }
+    
+    let txCount = window.appState.transactions ? window.appState.transactions.length : 0;
+    
+    let msg = `📦 <b>Weekly Backup Report</b>\n` +
+              `วันที่: ${new Date().toLocaleString('th-TH')}\n\n` +
+              `👥 จำนวนสมาชิกรวม: ${userCount}\n` +
+              `💰 ยอดเงินออมในระบบรวม: ฿${totalBal.toLocaleString()}\n` +
+              `📋 จำนวนธุรกรรมทั้งหมด: ${txCount}\n\n` +
+              `<i>หมายเหตุ: แอดมินสามารถโหลดข้อมูลแบบละเอียด(Excel) ได้จากระบบหลังบ้าน</i>`;
+    
+    await sendTgMsg(msg);
+    try { localStorage.setItem('goldAppLastBackup', Date.now().toString()); } catch(e){}
+    showToast("ส่ง Backup เข้า Telegram สำเร็จ");
+    setTimeout(() => { showLoading(false); }, 200);
+  };
+
+  const checkAndRunBackup = () => {
+    let last = null;
+    try { last = localStorage.getItem('goldAppLastBackup'); } catch(e){}
+    const now = Date.now();
+    if(!last || (now - parseInt(last)) > 604800000) {
+       backupToTelegram();
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', initApp);
+
+</script>
+</body>
+</html>
