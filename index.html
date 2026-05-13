@@ -385,7 +385,10 @@
           <div style="font-size:12px;color:var(--gray);">ธนาคาร</div><div class="font-bold" id="cust-bank-name" style="font-size:15px;margin-bottom:8px;font-weight:600;">-</div>
           <div style="font-size:12px;color:var(--gray);">ชื่อบัญชี</div><div class="font-bold" id="cust-bank-accname" style="font-size:15px;margin-bottom:8px;font-weight:600;">-</div>
           <div style="font-size:12px;color:var(--gray);">เลขบัญชี</div>
-          <div class="font-bold serif" id="cust-bank-accno" style="font-size:22px;color:var(--gold-dark);letter-spacing:2px;">-</div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <div class="font-bold serif" id="cust-bank-accno" style="font-size:22px;color:var(--gold-dark);letter-spacing:2px;">-</div>
+            <button class="btn btn-sm" style="background:var(--gray-light); color:var(--gray-dark); border:none; padding:6px 12px; border-radius:8px; font-size:12px; cursor:pointer;" onclick="copyBankAccount()">📋 คัดลอก</button>
+          </div>
         </div>
       </div>
       <div class="form-group"><label>จำนวนเงินที่โอน (บาท)</label><input type="number" id="dep-amount" class="form-control" placeholder="0.00"></div>
@@ -814,6 +817,24 @@
       };
       reader.readAsDataURL(input.files[0]);
     }
+  };
+
+  // ─── ฟังก์ชันใหม่: คัดลอกเลขบัญชี ───
+  window.copyBankAccount = () => {
+    const accNo = getEl('cust-bank-accno').textContent;
+    if(!accNo || accNo === '-') return showToast('ไม่มีเลขบัญชีให้คัดลอก', true);
+
+    const tempInput = document.createElement("textarea");
+    tempInput.value = accNo.replace(/\s+/g, ''); // ลบช่องว่างออกเพื่อความถูกต้องเวลาโอน
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    try {
+      document.execCommand("copy");
+      showToast('📋 คัดลอกเลขบัญชีแล้ว');
+    } catch (err) {
+      showToast('❌ ไม่สามารถคัดลอกได้', true);
+    }
+    document.body.removeChild(tempInput);
   };
 
   // ─── Seed Customers into Firebase ───
