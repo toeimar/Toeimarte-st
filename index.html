@@ -190,7 +190,6 @@
   .badge-info { background: rgba(59,130,246,0.12); color: var(--info); }
   .badge-purple { background: rgba(139,92,246,0.12); color: var(--purple); }
   .badge-primary { background: var(--primary-light); color: var(--primary); }
-  /* [FIX4] badge สำหรับคืนรถช้า */
   .badge-overdue { background: rgba(239,68,68,0.18); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
 
   .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
@@ -455,7 +454,6 @@
   .insurance-days-bar { height: 6px; border-radius: 99px; background: var(--border); overflow: hidden; margin-top: 6px; }
   .insurance-days-fill { height: 100%; border-radius: 99px; transition: width 0.5s; }
 
-  /* [FIX3] viewer overlay สำหรับดูรูปเต็ม */
   .img-viewer-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999;
     display: flex; align-items: center; justify-content: center; padding: 16px;
@@ -498,7 +496,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyl0TZT5yNIWQmX3XhAnPkh7orWFLUImw",
@@ -513,7 +511,9 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
-const envAppId = typeof __app_id !== 'undefined' ? __app_id : 'car-rental-mic';
+
+// ✅ แก้ไข: ใช้ path ที่ถูกต้อง (จำนวนเซกเมนต์ต้องเป็นคู่สำหรับ doc)
+const STORE_DOC_PATH = () => doc(db, 'ev_rental_store', 'main_state');
 
 const MOCK_IMAGES = [
   "https://images.unsplash.com/photo-1560958089-b8a1929cea89?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
@@ -586,14 +586,20 @@ const app = {
   searchParams: { pick: '', drop: '', dateFrom: '', dateTo: '', type: 'ทั้งหมด' },
   tempUploads: {}, 
   isFirestoreInitialized: false,
+  _isSaving: false,
 
+  // ✅ แก้ไข saveState: ใช้ path ที่ถูกต้องและ merge state อย่างปลอดภัย
   saveState: async function() { 
     localStorage.setItem('ev_state_v5', JSON.stringify(this.state)); 
-    if (this.isFirestoreInitialized) {
+    if (this.isFirestoreInitialized && !this._isSaving) {
+      this._isSaving = true;
       try {
-        const docRef = doc(db, 'artifacts', envAppId, 'public', 'data', 'store_data', 'main_state');
-        await setDoc(docRef, this.state);
-      } catch (e) { console.error("Error saving to Firestore", e); }
+        await setDoc(STORE_DOC_PATH(), this.state);
+      } catch (e) { 
+        console.error("Error saving to Firestore:", e); 
+      } finally {
+        this._isSaving = false;
+      }
     }
   },
 
@@ -601,53 +607,79 @@ const app = {
     if (!this.state.settings.tgBotToken) this.state.settings.tgBotToken = DEFAULT_STATE.settings.tgBotToken;
     if (!this.state.settings.tgChatId) this.state.settings.tgChatId = DEFAULT_STATE.settings.tgChatId;
     if (!this.state.settings.insuranceAlertDays) this.state.settings.insuranceAlertDays = 30;
-    this.state.branches = this.state.branches.map(b => ({
-      address: '', mapUrl: '', mapEmbed: '',
-      ...b
-    }));
-    this.state.cars = this.state.cars.map(c => ({
-      insuranceExpiry: '', insuranceNote: '',
-      ...c
-    }));
+    this.state.branches = this.state.branches.map(b => ({ address: '', mapUrl: '', mapEmbed: '', ...b }));
+    this.state.cars = this.state.cars.map(c => ({ insuranceExpiry: '', insuranceNote: '', ...c }));
 
     document.documentElement.setAttribute('data-theme', this.state.theme);
     this.updateThemeIcon();
 
+    // ✅ แก้ไข: restore session ก่อน Firebase init
+    const uid = sessionStorage.getItem('ev_user_id');
+    if (uid) this.currentUser = this.state.users.find(u => u.id === uid) || null;
+
     try {
       await signInAnonymously(auth);
       this.isFirestoreInitialized = true;
-      const docRef = doc(db, 'artifacts', envAppId, 'public', 'data', 'store_data', 'main_state');
+
+      const docRef = STORE_DOC_PATH();
+
+      // ✅ ดึงข้อมูลจาก Firestore ครั้งแรกก่อน (เพื่อให้ได้ข้อมูลล่าสุดทันที)
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        const remoteState = snap.data();
+        this._mergeRemoteState(remoteState);
+      } else {
+        // ไม่มีใน Firestore ให้บันทึก state ปัจจุบันขึ้นไป
+        await setDoc(docRef, this.state);
+      }
+
+      // ✅ subscribe real-time updates
       onSnapshot(docRef, (snapshot) => {
         if (snapshot.exists()) {
-          this.state = snapshot.data();
-          if (!this.state.settings.tgBotToken) this.state.settings.tgBotToken = DEFAULT_STATE.settings.tgBotToken;
-          if (!this.state.settings.tgChatId) this.state.settings.tgChatId = DEFAULT_STATE.settings.tgChatId;
-          localStorage.setItem('ev_state_v5', JSON.stringify(this.state));
-          const uid = sessionStorage.getItem('ev_user_id');
-          if(uid) this.currentUser = this.state.users.find(u => u.id === uid);
-          if(document.getElementById('app-root').innerHTML !== '') this.render();
-        } else { this.saveState(); }
-      }, (error) => { console.error("Firestore listen error", error); });
-    } catch(e) { console.error("Auth error", e); }
+          const remoteState = snapshot.data();
+          this._mergeRemoteState(remoteState);
+          if (document.getElementById('app-root').innerHTML !== '') this.render();
+        }
+      }, (error) => { console.error("Firestore listen error:", error); });
 
-    const uid = sessionStorage.getItem('ev_user_id');
-    if(uid) this.currentUser = this.state.users.find(u => u.id === uid);
-    
-    const urlParams = new URLSearchParams(window.location.search);
-    const receiptId = urlParams.get('receipt');
+    } catch(e) { console.error("Firebase init error:", e); }
 
     const today = new Date();
     const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
     this.searchParams.dateFrom = today.toISOString().split('T')[0];
     this.searchParams.dateTo = tomorrow.toISOString().split('T')[0];
-    if(this.state.branches.length > 0) {
+    if (this.state.branches.length > 0) {
       this.searchParams.pick = this.state.branches[0].id;
       this.searchParams.drop = this.state.branches[0].id;
     }
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const receiptId = urlParams.get('receipt');
+
     this.render();
-    if(receiptId) { ui.showReceiptModal(receiptId); setTimeout(() => window.print(), 800); }
+    if (receiptId) { ui.showReceiptModal(receiptId); setTimeout(() => window.print(), 800); }
     this.checkInsuranceAlerts();
+    this.checkPickupReturnAlerts();
+  },
+
+  // ✅ ฟังก์ชันใหม่: merge state จาก Firestore โดยรักษา session user ไว้
+  _mergeRemoteState: function(remoteState) {
+    this.state = remoteState;
+    if (!this.state.settings.tgBotToken) this.state.settings.tgBotToken = DEFAULT_STATE.settings.tgBotToken;
+    if (!this.state.settings.tgChatId) this.state.settings.tgChatId = DEFAULT_STATE.settings.tgChatId;
+    localStorage.setItem('ev_state_v5', JSON.stringify(this.state));
+    // ✅ sync currentUser จาก state ล่าสุด (รักษา session ไว้ด้วย)
+    const uid = sessionStorage.getItem('ev_user_id');
+    if (uid) {
+      const freshUser = this.state.users.find(u => u.id === uid);
+      if (freshUser) {
+        this.currentUser = freshUser;
+      } else {
+        // user ถูกลบออกจากระบบ
+        this.currentUser = null;
+        sessionStorage.removeItem('ev_user_id');
+      }
+    }
   },
 
   checkInsuranceAlerts() {
@@ -665,6 +697,37 @@ const app = {
         setTimeout(() => {
           utils.showToast(`🚨 ${car.name} ประกันหมดอายุแล้ว! โปรดต่อทันที`, 'error');
         }, 1500);
+      }
+    });
+  },
+
+  checkPickupReturnAlerts() {
+    const today = new Date(); today.setHours(0,0,0,0);
+    this.state.bookings.forEach(b => {
+      if(b.status === 'Cancelled' || b.status === 'Completed') return;
+      const pickDate = new Date(b.dateFrom); pickDate.setHours(0,0,0,0);
+      const returnDate = new Date(b.dateTo); returnDate.setHours(0,0,0,0);
+      const diffPick = Math.ceil((pickDate - today) / (1000 * 60 * 60 * 24));
+      const diffReturn = Math.ceil((returnDate - today) / (1000 * 60 * 60 * 24));
+      const car = this.state.cars.find(c => c.id === b.carId);
+      const user = this.state.users.find(u => u.id === b.userId);
+      const carName = car ? car.name : b.carId;
+      const userName = user ? user.name : b.userId;
+      if(b.status === 'Confirmed' && diffPick === 2) {
+        setTimeout(() => {
+          utils.showToast(`🚗 รับรถอีก 2 วัน! ${userName} · ${carName} (${utils.formatDate(b.dateFrom)})`, 'info');
+        }, 2000);
+        if(this.isAdmin()) {
+          utils.sendTelegram(`🚗 <b>แจ้งเตือน: รับรถอีก 2 วัน</b>\n\n📝 <b>รหัสจอง:</b> ${b.id}\n👤 <b>ลูกค้า:</b> ${userName}\n🚘 <b>รถ:</b> ${carName}\n📅 <b>วันรับรถ:</b> ${utils.formatDate(b.dateFrom)}`);
+        }
+      }
+      if(b.status === 'Active' && diffReturn === 2) {
+        setTimeout(() => {
+          utils.showToast(`🔔 คืนรถอีก 2 วัน! ${userName} · ${carName} (${utils.formatDate(b.dateTo)})`, 'warning');
+        }, 2500);
+        if(this.isAdmin()) {
+          utils.sendTelegram(`🔔 <b>แจ้งเตือน: คืนรถอีก 2 วัน</b>\n\n📝 <b>รหัสจอง:</b> ${b.id}\n👤 <b>ลูกค้า:</b> ${userName}\n🚘 <b>รถ:</b> ${carName}\n📅 <b>วันคืนรถ:</b> ${utils.formatDate(b.dateTo)}`);
+        }
       }
     });
   },
@@ -816,8 +879,6 @@ const utils = {
     document.execCommand('copy'); document.body.removeChild(el);
     utils.showToast('คัดลอกลิงก์สำเร็จ', 'success');
   },
-
-  // [FIX3] เปิดรูปด้วย viewer overlay แทน window.open
   openImageViewer: (src) => {
     if(!src) return utils.showToast('ไม่มีรูปภาพ', 'warning');
     const overlay = document.createElement('div');
@@ -828,8 +889,6 @@ const utils = {
     overlay.addEventListener('click', (e) => { if(e.target === overlay) overlay.remove(); });
     document.body.appendChild(overlay);
   },
-
-  // [FIX4] getBookingStatusDisplay เพิ่มสถานะ "คืนรถช้า"
   getBookingStatusDisplay: (b) => {
     if(b.status === 'Cancelled') return { text: 'ยกเลิก', class: 'danger' };
     if(b.status === 'Completed') return { text: 'คืนรถแล้ว', class: 'info' };
@@ -848,7 +907,6 @@ const utils = {
     }
     return { text: b.status, class: 'secondary' };
   },
-
   sendTelegram: async (message, parseMode = 'HTML') => {
     const botToken = app.state.settings.tgBotToken;
     const chatId = app.state.settings.tgChatId;
@@ -1086,17 +1144,13 @@ const views = {
         const exp = new Date(c.insuranceExpiry); exp.setHours(0,0,0,0);
         return Math.ceil((exp - today)/(1000*60*60*24)) <= alertDays;
       });
-
-      // [FIX4] นับรายการ overdue
       const overdueBks = app.state.bookings.filter(b => {
         if(b.status !== 'Active') return false;
         const ret = new Date(b.dateTo); ret.setHours(0,0,0,0);
         return ret < today;
       }).length;
-
       return `
         <h2 class="mb-4">สรุปภาพรวมระบบ</h2>
-        
         ${insuranceAlerts.length > 0 ? `
         <div class="card mb-4" style="border-color:var(--warning); background:rgba(245,158,11,0.05);">
           <div class="flex items-center gap-3 mb-3">
@@ -1114,7 +1168,6 @@ const views = {
             </div>`;
           }).join('')}
         </div>` : ''}
-
         <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 24px;">
           <div class="card flex items-center gap-4">
             <div class="stat-icon" style="background:rgba(16,185,129,0.1); color:var(--success);"><i class="fa-solid fa-wallet"></i></div>
@@ -1138,12 +1191,10 @@ const views = {
             <div><div class="stat-label" style="color:var(--danger);">คืนรถช้า (Overdue)</div><div class="stat-value text-danger">${overdueBks} <span style="font-size:1rem;">คัน</span></div></div>
           </div>` : ''}
         </div>
-        
         <div class="card mt-4">
           <h3 class="mb-4"><i class="fa-solid fa-calendar-alt text-primary"></i> ตารางคิวการจอง (14 วันข้างหน้า)</h3>
           <div id="timeline-container" class="table-responsive p-0" style="border:none; background:transparent;"></div>
         </div>
-
         <div class="card mt-4">
           <h3 class="mb-4"><i class="fa-solid fa-car text-primary"></i> รายการจองแยกตามรถแต่ละคัน</h3>
           <div class="car-booking-timeline">
@@ -1183,7 +1234,6 @@ const views = {
             }).join('')}
           </div>
         </div>
-
         <div class="card mt-4">
           <h3 class="mb-4"><i class="fa-solid fa-chart-bar text-primary"></i> กราฟรายได้ 7 วันล่าสุด (Mockup)</h3>
           <canvas id="incomeChart" height="75"></canvas>
@@ -1249,9 +1299,15 @@ const views = {
         </div>`;
     },
 
-    // [FIX2] bookings - เพิ่มวันที่จองในทุก card
     bookings: () => {
-      const sorted = [...app.state.bookings].sort((a,b) => new Date(b.dateFrom)-new Date(a.dateFrom));
+      const STATUS_PRIORITY = { 'Pending': 0, 'Active': 1, 'Confirmed': 2, 'Completed': 3, 'Cancelled': 4 };
+      const today = new Date(); today.setHours(0,0,0,0);
+      const sorted = [...app.state.bookings].sort((a, b) => {
+        const pa = STATUS_PRIORITY[a.status] ?? 5;
+        const pb = STATUS_PRIORITY[b.status] ?? 5;
+        if(pa !== pb) return pa - pb;
+        return new Date(b.dateFrom) - new Date(a.dateFrom);
+      });
       return `
         <div class="flex justify-between items-center mb-4" style="flex-wrap:wrap; gap:12px;">
           <h2>จัดการการจอง & ตรวจสอบสลิป</h2>
@@ -1263,7 +1319,6 @@ const views = {
               const u = app.state.users.find(x => x.id === b.userId);
               const c = app.state.cars.find(x => x.id === b.carId);
               const st = utils.getBookingStatusDisplay(b);
-              // [FIX2] วันที่จอง = createdAt ถ้ามี หรือใช้ dateFrom แทน
               const bookedOn = b.createdAt ? utils.formatDate(b.createdAt) : utils.formatDate(b.dateFrom);
               return `
               <div class="card mb-3 p-4">
@@ -1469,23 +1524,21 @@ const views = {
       `;
     },
 
-    // [FIX1] ซ่อน Bot Token - แสดงเป็น ****
     telegram: () => `
       <h2 class="mb-4"><i class="fa-brands fa-telegram text-info"></i> ตั้งค่าการแจ้งเตือน Telegram</h2>
       <div class="card mb-4">
         <h4 class="mb-4" style="padding-bottom:12px; border-bottom:1px solid var(--border);">ข้อมูล Bot</h4>
         <div class="input-group">
           <label>Bot Token</label>
-          <div style="position:relative;">
-            <input type="password" id="tg-token" class="input-control" value="${app.state.settings.tgBotToken||''}" placeholder="123456:ABCDEF..." autocomplete="new-password">
-            <button type="button" onclick="(()=>{const i=document.getElementById('tg-token');i.type=i.type==='password'?'text':'password';})()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.95rem;">
-              <i class="fa-solid fa-eye"></i>
-            </button>
+          <div style="background:var(--bg-body); border:1.5px solid var(--border); border-radius:12px; padding:13px 16px; display:flex; align-items:center; gap:10px; color:var(--text-muted);">
+            <i class="fa-solid fa-lock" style="color:var(--primary); flex-shrink:0;"></i>
+            <span style="font-family:monospace; font-size:0.95rem; letter-spacing:1px;">••••••••••••••••••••••••••••••••••••••</span>
+            <span class="badge badge-success" style="margin-left:auto; flex-shrink:0;"><i class="fa-solid fa-check"></i> ตั้งค่าแล้ว</span>
           </div>
-          <small class="text-muted mt-1 block" style="font-size:0.82rem;"><i class="fa-solid fa-lock"></i> Bot Token ถูกซ่อนเพื่อความปลอดภัย กดไอคอนตาเพื่อแสดง</small>
+          <small class="text-muted mt-1 block" style="font-size:0.82rem;"><i class="fa-solid fa-shield-halved text-success"></i> Bot Token ถูกป้องกันและไม่สามารถแก้ไขได้เพื่อความปลอดภัย</small>
         </div>
         <div class="input-group"><label>Chat ID (Group/Channel)</label><input type="text" id="tg-chatid" class="input-control" value="${app.state.settings.tgChatId||''}" placeholder="-1001234567890"></div>
-        <button class="btn btn-primary btn-sm" onclick="logic.saveTelegramSettings()"><i class="fa-solid fa-save"></i> บันทึก Bot Settings</button>
+        <button class="btn btn-primary btn-sm" onclick="logic.saveTelegramSettings()"><i class="fa-solid fa-save"></i> บันทึก Chat ID</button>
       </div>
       <div class="card mb-4">
         <h4 class="mb-3">ทดสอบการแจ้งเตือน</h4>
@@ -1502,6 +1555,8 @@ const views = {
             { icon:'✅', label:'อัปเดตสถานะการจอง', desc:'เมื่อแอดมินเปลี่ยนสถานะ Pending/Confirmed/Active/Completed/Cancelled' },
             { icon:'👤', label:'สมัครสมาชิกใหม่', desc:'เมื่อมีลูกค้าลงทะเบียนเข้าระบบ' },
             { icon:'🛡️', label:'ประกันใกล้หมดอายุ', desc:'แจ้งเตือนเมื่อกดปุ่มในหน้าประกัน' },
+            { icon:'🚗', label:'แจ้งเตือนรับรถล่วงหน้า 2 วัน', desc:'แจ้งอัตโนมัติเมื่อวันรับรถใกล้ถึง' },
+            { icon:'🔔', label:'แจ้งเตือนคืนรถล่วงหน้า 2 วัน', desc:'แจ้งอัตโนมัติเมื่อวันคืนรถใกล้ถึง' },
           ].map(ev => `
             <div class="flex items-center gap-3 p-3" style="background:var(--bg-body); border-radius:12px; border:1px solid var(--border);">
               <span style="font-size:1.4rem;">${ev.icon}</span>
@@ -1671,7 +1726,6 @@ const ui = {
         <img id="main-detail-img" src="${c.images[0]}" alt="${c.name}" style="border-radius:16px;">
       </div>
       <div class="gallery-thumbnails mb-4">${thumbs}</div>
-      
       <div class="features-grid">
         <div class="feature-item">
           <i class="fa-solid fa-battery-full text-success"></i>
@@ -1694,16 +1748,11 @@ const ui = {
           <div class="feature-name">ประเภทรถ</div>
         </div>
       </div>
-      
       <div class="mb-4">
         <div class="text-muted text-sm mb-2" style="font-weight:600;">ฟีเจอร์เด่น</div>
         <div class="car-features-tags">${featureTags}</div>
       </div>
-
-      <div class="card-flat p-4 mb-4" style="border-radius:16px;">
-        ${specHTML}
-      </div>
-      
+      <div class="card-flat p-4 mb-4" style="border-radius:16px;">${specHTML}</div>
       <div class="flex justify-between items-center p-4" style="background:var(--primary-light); border-radius:16px;">
         <div>
           <div class="text-muted text-sm" style="font-weight:500;">ราคาเช่า / วัน</div>
@@ -1720,7 +1769,6 @@ const ui = {
   showBookingModal(carId) {
     if(!app.currentUser) return this.showLoginModal();
     const c = app.state.cars.find(x => x.id === carId);
-
     this.showModal(`ยืนยันการจอง`, `
       <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 28px;" id="booking-grid">
         <div>
@@ -1751,7 +1799,6 @@ const ui = {
               <i class="fa-solid fa-calendar-days"></i> รวม ${utils.calcDays(app.searchParams.dateFrom, app.searchParams.dateTo)} วัน
             </div>
           </div>
-
           <h4 class="mb-3 flex items-center gap-2"><i class="fa-solid fa-id-card text-primary"></i> เอกสารผู้เช่า</h4>
           <div class="input-group mb-2">
             <label>ใบขับขี่ <span class="text-muted">(ถ้ามี)</span></label>
@@ -1764,7 +1811,6 @@ const ui = {
             <img id="preview-idcard" style="max-height:80px; display:none; margin-top:8px; border-radius:8px; object-fit:cover;">
           </div>
         </div>
-
         <div>
           <h4 class="mb-3 flex items-center gap-2"><i class="fa-solid fa-file-invoice-dollar text-primary"></i> สรุปค่าใช้จ่าย</h4>
           <div class="card-flat p-4 mb-4" style="border-radius:14px;">
@@ -1788,7 +1834,6 @@ const ui = {
               <button class="btn btn-outline btn-sm" onclick="logic.applyPromo(${c.price})" style="white-space:nowrap; flex-shrink:0;">ใช้โค้ด</button>
             </div>
           </div>
-
           <h4 class="mb-3 flex items-center gap-2"><i class="fa-solid fa-qrcode text-primary"></i> ชำระเงิน</h4>
           <div class="card-flat p-3 mb-4 text-center" style="border-radius:14px;">
             ${app.state.settings.qrUrl ? `<img src="${app.state.settings.qrUrl}" style="max-height:140px; margin:0 auto 10px; border-radius:12px; display:block;">` : `<i class="fa-solid fa-qrcode" style="font-size:56px; color:var(--primary); display:block; margin-bottom:10px;"></i>`}
@@ -1796,13 +1841,11 @@ const ui = {
             <div class="font-bold text-primary" style="font-size:1.1rem; letter-spacing:1px;">${app.state.settings.accNo}</div>
             <div class="text-muted text-sm">${app.state.settings.accName}</div>
           </div>
-          
           <div class="input-group">
             <label>แนบสลิปโอนเงิน <span class="text-danger">*</span></label>
             <input type="file" accept="image/*" class="input-control" onchange="logic.handleFileUpload(event, 'slip')">
             <img id="preview-slip" style="max-height:100px; display:none; margin-top:8px; border-radius:8px; border:1px solid var(--border); object-fit:cover;">
           </div>
-
           <button class="btn btn-primary w-full btn-lg mt-2" onclick="logic.confirmBooking(${c.id}, ${c.price})">
             <i class="fa-solid fa-check-circle"></i> ยืนยันการจอง
           </button>
@@ -1864,7 +1907,6 @@ const ui = {
     const bDrop = app.state.branches.find(br => br.id === b.dropBranch)?.name || b.dropBranch;
     const st = utils.getBookingStatusDisplay(b);
     const shareLink = window.location.origin + window.location.pathname + `?receipt=${b.id}`;
-
     this.showModal(`ใบยืนยันการจอง`, `
       <div id="print-area">
         <div class="text-center mb-4">
@@ -1921,13 +1963,11 @@ const ui = {
     `, '', 'ช่วยให้คะแนนเพื่อพัฒนาบริการ');
   },
 
-  // [FIX3] แก้ปุ่มดูสลิป/บัตร/ใบขับขี่ → ใช้ openImageViewer แทน window.open
   showAdminBookingModal(bId) {
     const b = app.state.bookings.find(x => x.id === bId);
     const u = app.state.users.find(x => x.id === b.userId);
     const c = app.state.cars.find(x => x.id === b.carId);
     const st = utils.getBookingStatusDisplay(b);
-    
     this.showModal(`จัดการคำสั่งจอง: ${bId}`, `
       <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 24px;" id="admin-bk-grid">
         <div>
@@ -2035,7 +2075,6 @@ const ui = {
     };
     const tOpts = app.state.carTypes.filter(t=>t!=='ทั้งหมด').map(t => `<option value="${t}" ${c.type===t?'selected':''}>${t}</option>`).join('');
     const existImgHtml = c.images.map(img => `<img src="${img}" style="max-height:50px; border-radius:6px; object-fit:cover;">`).join('');
-
     this.showModal(carId ? 'แก้ไขข้อมูลรถ' : 'เพิ่มรถยนต์ใหม่', `
       <div style="margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);">
         <p class="font-bold" style="color:var(--primary); margin-bottom:12px;"><i class="fa-solid fa-car"></i> ข้อมูลพื้นฐาน</p>
@@ -2051,7 +2090,6 @@ const ui = {
           <div class="input-group mb-0" style="grid-column:1/-1;"><label>จำนวนที่นั่ง</label><input type="number" id="car-seats" class="input-control" value="${c.seats}"></div>
         </div>
       </div>
-
       <div style="margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);">
         <p class="font-bold" style="color:var(--primary); margin-bottom:12px;"><i class="fa-solid fa-bolt"></i> สมรรถนะ</p>
         <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -2062,7 +2100,6 @@ const ui = {
           <div class="input-group mb-0" style="grid-column:1/-1;"><label>Top Speed</label><input type="text" id="car-topspeed" class="input-control" value="${c.topSpeed||''}" placeholder="เช่น 225 กม./ชม."></div>
         </div>
       </div>
-
       <div style="margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);">
         <p class="font-bold" style="color:var(--warning); margin-bottom:12px;"><i class="fa-solid fa-shield-halved"></i> ประกันรถยนต์</p>
         <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -2070,7 +2107,6 @@ const ui = {
           <div class="input-group mb-0" style="grid-column:1/-1;"><label>บันทึก / บริษัทประกัน</label><input type="text" id="car-ins-note" class="input-control" value="${c.insuranceNote||''}" placeholder="เช่น ประกันชั้น 1 บริษัทเมืองไทย"></div>
         </div>
       </div>
-
       <div class="input-group"><label>ฟีเจอร์เด่น <span class="text-muted">(คั่นด้วยลูกน้ำ)</span></label><input type="text" id="car-features" class="input-control" value="${c.features}" placeholder="Autopilot, จอ 15 นิ้ว, หลังคาแก้ว"></div>
       <div class="input-group">
         <label>รูปภาพรถ <span class="text-muted">(เลือกได้หลายรูป)</span></label>
@@ -2188,7 +2224,6 @@ const logic = {
     const phone = document.getElementById('log-phone').value.trim();
     const pass = document.getElementById('log-pass').value.trim();
     if(!phone || !pass) return utils.showToast('กรุณากรอกเบอร์โทรและรหัสผ่าน', 'error');
-    
     let user = app.state.users.find(u => u.phone === phone);
     if(user) {
       if(user.password === pass) {
@@ -2290,7 +2325,6 @@ const logic = {
     }
   },
 
-  // [FIX2] confirmBooking - บันทึก createdAt เพื่อแสดงวันที่จอง
   confirmBooking(carId, defaultPricePerDay) {
     if(!app.tempUploads['slip']) return utils.showToast('กรุณาอัปโหลดรูปสลิปโอนเงินก่อน', 'warning');
     const netVal = document.getElementById('book-net').dataset.net;
@@ -2306,7 +2340,7 @@ const logic = {
       idCardUrl: app.tempUploads['idcard'] || '',
       licenseUrl: app.tempUploads['license'] || '',
       contractUrl: null, isReviewed: false, fine: 0,
-      createdAt: new Date().toISOString().split('T')[0]  // [FIX2] บันทึกวันที่จอง
+      createdAt: new Date().toISOString().split('T')[0]
     };
     app.state.bookings.push(newBooking);
     app.saveState();
@@ -2458,10 +2492,9 @@ const logic = {
   },
 
   saveTelegramSettings() {
-    app.state.settings.tgBotToken = document.getElementById('tg-token').value.trim();
     app.state.settings.tgChatId = document.getElementById('tg-chatid').value.trim();
     app.saveState();
-    utils.showToast('บันทึก Telegram Settings สำเร็จ', 'success');
+    utils.showToast('บันทึก Chat ID สำเร็จ', 'success');
   },
 
   _starRating: 0,
@@ -2551,7 +2584,7 @@ const logic = {
   }
 };
 
-// ข้อ 9: Car grid
+// Car grid
 app.renderCarGrid = function() {
   const container = document.getElementById('car-grid-container');
   if(!container) return;
@@ -2585,7 +2618,6 @@ app.renderCarGrid = function() {
   container.innerHTML = summaryHtml + cars.map((c, idx) => {
     const isAvail = utils.isCarAvailable(c.id, dateFrom, dateTo);
     const featureTags = c.features.split(',').slice(0,2).map(f => `<span class="car-feature-tag">${f.trim()}</span>`).join('');
-
     return `
       <div class="card car-card" style="animation-delay:${idx * 0.05}s; ${!isAvail ? 'opacity:0.85;' : ''}">
         <div class="car-img-container">
@@ -2624,8 +2656,7 @@ app.renderCarGrid = function() {
             <button class="btn btn-sm" onclick="ui.showCarDetailModal(${c.id})" 
               style="${isAvail 
                 ? 'background:linear-gradient(135deg, var(--primary), #2563eb); color:white; box-shadow:0 3px 10px rgba(15,157,141,0.35); font-weight:700;' 
-                : 'background:rgba(239,68,68,0.1); color:var(--danger); border:1.5px solid rgba(239,68,68,0.3); font-weight:700;'}"
-              >
+                : 'background:rgba(239,68,68,0.1); color:var(--danger); border:1.5px solid rgba(239,68,68,0.3); font-weight:700;'}">
               ${isAvail ? '<i class="fa-solid fa-arrow-right"></i> เลือกเลย' : '<i class="fa-solid fa-calendar-plus"></i> เปลี่ยนวัน'}
             </button>
           </div>
