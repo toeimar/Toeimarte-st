@@ -48,31 +48,22 @@
     --hero-overlay: linear-gradient(135deg, #0a6b62 0%, #1d4ed8 100%);
   }
 
-  /* ================= RESET & BASE ================= */
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
   body { 
-    background-color: var(--bg-body); 
-    color: var(--text-main); 
-    line-height: 1.7; 
-    transition: background 0.3s, color 0.3s; 
-    overflow-x: hidden; 
-    -webkit-tap-highlight-color: transparent;
-    font-size: 16px;
-    -webkit-font-smoothing: antialiased;
+    background-color: var(--bg-body); color: var(--text-main); line-height: 1.7; 
+    transition: background 0.3s, color 0.3s; overflow-x: hidden; 
+    -webkit-tap-highlight-color: transparent; font-size: 16px; -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3, h4 { font-family: 'Prompt', sans-serif; color: var(--text-main); line-height: 1.3; }
   button { cursor: pointer; border: none; background: transparent; color: inherit; transition: all 0.2s; font-family: 'Sarabun', sans-serif; }
-  img { max-width: 100%; height: auto; }
-  a { color: var(--primary); text-decoration: none; }
+  img { max-width: 100%; height: auto; } a { color: var(--primary); text-decoration: none; }
   p, span, div, td, th, label, small { font-family: 'Sarabun', sans-serif; }
 
-  /* ================= SCROLLBAR ================= */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg-body); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-  /* ================= UTILITIES ================= */
   .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
   .flex { display: flex; } .grid { display: grid; }
   .items-center { align-items: center; } .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
@@ -93,8 +84,7 @@
   .flex-1 { flex: 1; }
   .cursor-pointer { cursor: pointer; }
   .block { display: block; }
-  
-  /* ================= ANIMATIONS ================= */
+
   @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -102,49 +92,36 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
   @keyframes bounce-in { 0% { transform: scale(0.7); opacity: 0; } 60% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
-  
-  /* FIX 3: Book button pulse animation */
   @keyframes bookPulse {
     0% { box-shadow: 0 4px 14px rgba(15,157,141,0.4), 0 0 0 0 rgba(15,157,141,0.5); }
     50% { box-shadow: 0 8px 20px rgba(15,157,141,0.6), 0 0 0 12px rgba(15,157,141,0); }
     100% { box-shadow: 0 4px 14px rgba(15,157,141,0.4), 0 0 0 0 rgba(15,157,141,0); }
   }
-  @keyframes bookShine {
-    0% { left: -100%; }
-    100% { left: 200%; }
-  }
-  @keyframes float {
-    0%, 100% { transform: translateY(0px) translateX(0); }
-    50% { transform: translateY(-4px) translateX(0); }
+  @keyframes bookShine { 0% { left: -100%; } 100% { left: 200%; } }
+  @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-4px); } }
+  @keyframes insurancePulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(245,158,11,0.5); }
+    50% { box-shadow: 0 0 0 8px rgba(245,158,11,0); }
   }
 
   .animate-fade { animation: fadeIn 0.4s ease forwards; }
   .animate-slide-up { animation: slideUp 0.3s ease forwards; }
   .animate-bounce-in { animation: bounce-in 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards; }
 
-  /* ================= UI COMPONENTS ================= */
   .card { 
     background: var(--bg-card); border-radius: 20px; padding: 24px; 
     box-shadow: var(--shadow-sm); border: 1px solid var(--border); 
-    transition: transform 0.25s, box-shadow 0.25s; 
-    animation: fadeIn 0.4s ease forwards;
+    transition: transform 0.25s, box-shadow 0.25s; animation: fadeIn 0.4s ease forwards;
   }
   .card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
   .card-flat { background: var(--bg-card); border-radius: 20px; padding: 24px; border: 1px solid var(--border); }
-
   .skeleton { background: linear-gradient(90deg, var(--border) 25%, var(--bg-body) 50%, var(--border) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
 
-  /* Inputs - improved readability */
   .input-group { margin-bottom: 16px; position: relative; }
-  .input-group label { 
-    display: block; font-size: 0.92rem; font-weight: 600; 
-    color: var(--text-main); margin-bottom: 7px; letter-spacing: 0.1px; 
-    font-family: 'Sarabun', sans-serif;
-  }
+  .input-group label { display: block; font-size: 0.92rem; font-weight: 600; color: var(--text-main); margin-bottom: 7px; letter-spacing: 0.1px; font-family: 'Sarabun', sans-serif; }
   .input-control { 
-    width: 100%; padding: 13px 16px; border-radius: 12px; 
-    border: 1.5px solid var(--border); background: var(--bg-input); 
-    color: var(--text-main); font-size: 1rem; transition: all 0.2s; 
+    width: 100%; padding: 13px 16px; border-radius: 12px; border: 1.5px solid var(--border); 
+    background: var(--bg-input); color: var(--text-main); font-size: 1rem; transition: all 0.2s; 
     font-family: 'Sarabun', sans-serif; font-weight: 500; line-height: 1.5;
   }
   .input-control:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px var(--primary-light); }
@@ -157,58 +134,31 @@
   .input-with-icon .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem; pointer-events: none; }
   .input-with-icon .input-control { padding-left: 42px; }
 
-  /* Buttons */
   .btn { 
-    display: inline-flex; align-items: center; justify-content: center; 
-    gap: 8px; padding: 12px 24px; border-radius: 12px; 
-    font-weight: 600; font-size: 1rem; transition: all 0.2s; 
-    text-align: center; font-family: 'Sarabun', sans-serif; white-space: nowrap;
-    position: relative; overflow: hidden;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; 
+    border-radius: 12px; font-weight: 600; font-size: 1rem; transition: all 0.2s; 
+    text-align: center; font-family: 'Sarabun', sans-serif; white-space: nowrap; position: relative; overflow: hidden;
   }
   .btn::after { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0); transition: background 0.2s; border-radius: inherit; }
   .btn:active::after { background: rgba(255,255,255,0.15); }
   .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none !important; }
-  
-  .btn-primary { 
-    background: linear-gradient(135deg, var(--primary), var(--primary-hover)); 
-    color: white; 
-    box-shadow: 0 4px 14px rgba(15,157,141,0.3); 
-  }
+  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; box-shadow: 0 4px 14px rgba(15,157,141,0.3); }
   .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15,157,141,0.4); }
   .btn-primary:active:not(:disabled) { transform: translateY(0); }
-  
-  /* FIX 3: Special book button */
   .btn-book {
-    background: linear-gradient(135deg, #0F9D8D, #2563eb);
-    color: white;
-    font-size: 1.1rem;
-    font-weight: 700;
-    padding: 16px 32px;
-    border-radius: 16px;
-    animation: bookPulse 2.5s infinite;
-    position: relative;
-    overflow: hidden;
-    letter-spacing: 0.3px;
+    background: linear-gradient(135deg, #0F9D8D, #2563eb); color: white;
+    font-size: 1.1rem; font-weight: 700; padding: 16px 32px; border-radius: 16px;
+    animation: bookPulse 2.5s infinite; position: relative; overflow: hidden; letter-spacing: 0.3px;
   }
   .btn-book::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 60%; height: 100%;
+    content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    animation: bookShine 2s infinite 1s;
-    transform: skewX(-20deg);
+    animation: bookShine 2s infinite 1s; transform: skewX(-20deg);
   }
-  .btn-book:hover:not(:disabled) {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 12px 28px rgba(15,157,141,0.5);
-    animation: none;
-  }
+  .btn-book:hover:not(:disabled) { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 28px rgba(15,157,141,0.5); animation: none; }
   .btn-book i { animation: float 2s ease-in-out infinite; }
-
   .btn-outline { border: 1.5px solid var(--border); color: var(--text-main); background: transparent; }
   .btn-outline:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
-  
   .btn-danger { background: rgba(239,68,68,0.1); color: var(--danger); }
   .btn-danger:hover:not(:disabled) { background: rgba(239,68,68,0.2); }
   .btn-success { background: rgba(16,185,129,0.1); color: var(--success); }
@@ -219,105 +169,106 @@
   .btn-info:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
   .btn-ghost { background: transparent; color: var(--text-muted); }
   .btn-ghost:hover { background: var(--primary-light); color: var(--primary); }
-  
   .btn-sm { padding: 9px 16px; font-size: 0.92rem; border-radius: 8px; gap: 6px; }
   .btn-xs { padding: 6px 10px; font-size: 0.82rem; border-radius: 6px; gap: 4px; }
   .btn-lg { padding: 16px 32px; font-size: 1.05rem; border-radius: 14px; }
   .btn-icon { padding: 10px; border-radius: 10px; }
   .btn-icon.btn-sm { padding: 8px; border-radius: 8px; }
 
-  /* Floating action button */
   .fab { 
-    position: fixed; bottom: 90px; right: 20px; 
-    width: 56px; height: 56px; border-radius: 50%; 
-    background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-    color: white; font-size: 1.3rem; 
-    box-shadow: 0 6px 20px rgba(15,157,141,0.45);
-    z-index: 500; display: none; align-items: center; justify-content: center;
-    transition: all 0.3s; cursor: pointer;
+    position: fixed; bottom: 90px; right: 20px; width: 56px; height: 56px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; font-size: 1.3rem;
+    box-shadow: 0 6px 20px rgba(15,157,141,0.45); z-index: 500; display: none; align-items: center; justify-content: center; transition: all 0.3s; cursor: pointer;
   }
   .fab:hover { transform: scale(1.1) rotate(15deg); }
   @media (max-width: 768px) { .fab { display: flex; } }
 
-  /* Badges */
-  .badge { 
-    padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; 
-    font-weight: 600; display: inline-flex; align-items: center; gap: 4px; 
-    white-space: nowrap; font-family: 'Sarabun', sans-serif;
-  }
+  .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; font-family: 'Sarabun', sans-serif; }
   .badge-success { background: rgba(16,185,129,0.12); color: var(--success); }
   .badge-warning { background: rgba(245,158,11,0.12); color: var(--warning); }
   .badge-danger { background: rgba(239,68,68,0.12); color: var(--danger); }
   .badge-info { background: rgba(59,130,246,0.12); color: var(--info); }
   .badge-purple { background: rgba(139,92,246,0.12); color: var(--purple); }
   .badge-primary { background: var(--primary-light); color: var(--primary); }
+  /* [FIX4] badge สำหรับคืนรถช้า */
+  .badge-overdue { background: rgba(239,68,68,0.18); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
 
   .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
 
-  /* Stat cards */
-  .stat-icon { 
-    width: 56px; height: 56px; border-radius: 16px; 
-    display: flex; align-items: center; justify-content: center; 
-    font-size: 1.4rem; flex-shrink: 0;
-  }
+  .stat-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
   .stat-value { font-size: 1.9rem; font-weight: 700; font-family: 'Prompt', sans-serif; line-height: 1.1; }
   .stat-label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
-  /* ================= LAYOUT ================= */
   .navbar { 
-    position: fixed; top: 0; left: 0; right: 0; height: 64px; 
-    background: var(--glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border); z-index: 1000; 
-    display: flex; align-items: center; justify-content: space-between; 
-    padding: 0 24px; box-shadow: var(--shadow-sm); 
-    transition: background 0.3s;
+    position: fixed; top: 0; left: 0; right: 0; height: 64px; background: var(--glass);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border); z-index: 1000; display: flex; align-items: center;
+    justify-content: space-between; padding: 0 24px; box-shadow: var(--shadow-sm); transition: background 0.3s;
   }
   .logo { font-family: 'Prompt', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
   .logo img { max-height: 36px; border-radius: 8px; object-fit: contain; }
   .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #2563eb); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1rem; }
-  
   .main-content { margin-top: 64px; min-height: calc(100vh - 64px); padding-bottom: 20px; transition: padding-bottom 0.3s; }
 
   .bottom-nav {
-    display: none;
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: var(--glass);
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    border-top: 1px solid var(--border);
-    z-index: 1100;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.07);
+    display: none; position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border); z-index: 1100;
+    padding-bottom: env(safe-area-inset-bottom, 0px); box-shadow: 0 -4px 20px rgba(0,0,0,0.07);
   }
   .bottom-nav-inner { display: flex; justify-content: space-around; align-items: center; height: 62px; }
   .bottom-nav-item {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     color: var(--text-muted); font-size: 0.78rem; font-weight: 600; gap: 3px; flex: 1; height: 100%; cursor: pointer;
-    transition: all 0.2s; border-radius: 12px; margin: 4px 2px; padding: 4px;
-    font-family: 'Sarabun', sans-serif;
+    transition: all 0.2s; border-radius: 12px; margin: 4px 2px; padding: 4px; font-family: 'Sarabun', sans-serif;
   }
   .bottom-nav-item i { font-size: 1.25rem; transition: transform 0.2s; }
   .bottom-nav-item.active { color: var(--primary); font-weight: 700; }
   .bottom-nav-item.active i { transform: scale(1.15); }
   .bottom-nav-item:active { background: var(--primary-light); color: var(--primary); border-radius: 12px; }
 
-  /* Hero & Search Panel */
+  .avail-badge-wrap {
+    position: absolute; top: 10px; right: 10px; z-index: 5;
+    display: flex; flex-direction: column; gap: 4px; align-items: flex-end;
+  }
+  .avail-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 99px; font-size: 0.82rem; font-weight: 700;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2); letter-spacing: 0.3px;
+    border: 1.5px solid rgba(255,255,255,0.3);
+  }
+  .avail-pill.avail { background: rgba(16,185,129,0.92); color: white; }
+  .avail-pill.unavail { background: rgba(239,68,68,0.92); color: white; animation: pulse 2s infinite; }
+  .avail-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: white; box-shadow: 0 0 0 2px rgba(255,255,255,0.4); }
+  .avail-pill.avail .dot { animation: pulse 2s infinite; }
+
+  .car-unavail-overlay {
+    position: absolute; inset: 0; z-index: 3;
+    background: rgba(0,0,0,0.55); border-radius: 16px 16px 0 0;
+    display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px);
+  }
+  .car-unavail-text {
+    background: rgba(239,68,68,0.95); color: white; padding: 10px 24px;
+    border-radius: 99px; font-weight: 700; font-size: 1rem;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 4px 16px rgba(239,68,68,0.5);
+    border: 2px solid rgba(255,255,255,0.3);
+  }
+
+  .insurance-alert { 
+    border-left: 4px solid var(--warning); background: rgba(245,158,11,0.08); 
+    padding: 12px 16px; border-radius: 12px; margin-bottom: 10px;
+    animation: insurancePulse 2s infinite;
+  }
+  .insurance-expiring { border-left-color: var(--danger); background: rgba(239,68,68,0.08); }
+
   .hero-section { 
-    background: var(--hero-overlay);
-    padding: 70px 20px 100px; text-align: center; color: white; 
-    border-radius: 0 0 36px 36px;
-    position: relative; overflow: hidden;
+    background: var(--hero-overlay); padding: 70px 20px 100px; text-align: center; color: white; 
+    border-radius: 0 0 36px 36px; position: relative; overflow: hidden;
   }
-  .hero-section::before { 
-    content: ''; position: absolute; top: -40%; right: -20%; 
-    width: 600px; height: 600px; border-radius: 50%; 
-    background: rgba(255,255,255,0.04); pointer-events: none;
-  }
-  .hero-section::after { 
-    content: ''; position: absolute; bottom: -30%; left: -15%; 
-    width: 400px; height: 400px; border-radius: 50%; 
-    background: rgba(255,255,255,0.04); pointer-events: none;
-  }
+  .hero-section::before { content: ''; position: absolute; top: -40%; right: -20%; width: 600px; height: 600px; border-radius: 50%; background: rgba(255,255,255,0.04); pointer-events: none; }
+  .hero-section::after { content: ''; position: absolute; bottom: -30%; left: -15%; width: 400px; height: 400px; border-radius: 50%; background: rgba(255,255,255,0.04); pointer-events: none; }
   .hero-section h1 { color: white; font-size: 2.4rem; margin-bottom: 10px; position: relative; z-index: 1; text-shadow: 0 2px 8px rgba(0,0,0,0.15); }
   .hero-section p { opacity: 0.95; font-size: 1.1rem; position: relative; z-index: 1; font-weight: 500; }
   .hero-stats { display: flex; justify-content: center; gap: 32px; margin-top: 24px; position: relative; z-index: 1; flex-wrap: wrap; }
@@ -327,56 +278,41 @@
   
   .flight-search-container { max-width: 1000px; margin: -60px auto 40px; padding: 0 20px; position: relative; z-index: 10; }
   .flight-search-box { 
-    background: var(--bg-card); padding: 24px; border-radius: 24px; 
-    box-shadow: var(--shadow-lg); 
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); 
-    gap: 14px; align-items: end; 
-    border: 1px solid var(--border);
+    background: var(--bg-card); padding: 24px; border-radius: 24px; box-shadow: var(--shadow-lg);
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; align-items: end; border: 1px solid var(--border);
   }
   
-  /* Section headers */
   .section-title { font-size: 1.5rem; font-weight: 700; position: relative; padding-left: 16px; }
   .section-title::before { content: ''; position: absolute; left: 0; top: 10%; height: 80%; width: 4px; background: linear-gradient(to bottom, var(--primary), #2563eb); border-radius: 2px; }
 
-  /* Car Grid */
   .car-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
   .car-card { display: flex; flex-direction: column; overflow: hidden; padding: 0; border-radius: 20px; }
   .car-img-container { position: relative; height: 200px; border-radius: 16px 16px 0 0; overflow: hidden; background: linear-gradient(135deg, #e0f2f1, #dbeafe); }
   .car-img-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
   .car-card:hover .car-img-container img { transform: scale(1.06); }
-  .car-status-badge { position: absolute; top: 12px; right: 12px; z-index: 2; }
   .car-price { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
-  .car-heart { position: absolute; top: 12px; left: 12px; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); transition: all 0.2s; z-index: 2; }
+  .car-heart { position: absolute; top: 12px; left: 12px; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); transition: all 0.2s; z-index: 6; }
   .car-heart:hover, .car-heart.liked { color: var(--danger); background: rgba(239,68,68,0.1); }
   .car-rating { display: flex; align-items: center; gap: 4px; font-size: 0.88rem; color: var(--text-muted); font-weight: 500; }
   .car-features-tags { display: flex; gap: 4px; flex-wrap: wrap; margin: 6px 0; }
   .car-feature-tag { font-size: 0.75rem; padding: 2px 8px; border-radius: 20px; background: var(--primary-light); color: var(--primary); font-weight: 600; }
 
-  /* Image Gallery */
   .gallery-thumbnails { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; flex-wrap: wrap; }
   .gallery-thumbnails img { width: 76px; height: 56px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; opacity: 0.65; transition: 0.2s; flex-shrink: 0; }
   .gallery-thumbnails img:hover, .gallery-thumbnails img.active { opacity: 1; border-color: var(--primary); }
 
-  /* Admin Layout */
   .admin-layout { display: flex; min-height: calc(100vh - 64px); }
   .sidebar { 
-    width: 260px; background: var(--bg-card); border-right: 1px solid var(--border); 
-    padding: 24px 16px; position: fixed; height: calc(100vh - 64px); 
-    overflow-y: auto; display: flex; flex-direction: column; gap: 4px; 
-    z-index: 900; top: 64px;
+    width: 260px; background: var(--bg-card); border-right: 1px solid var(--border); padding: 24px 16px;
+    position: fixed; height: calc(100vh - 64px); overflow-y: auto; display: flex; flex-direction: column; gap: 4px; z-index: 900; top: 64px;
   }
   .admin-main { margin-left: 260px; padding: 30px; width: calc(100% - 260px); }
-  .menu-item { 
-    padding: 11px 14px; border-radius: 12px; font-weight: 600; 
-    color: var(--text-muted); cursor: pointer; display: flex; align-items: center; 
-    gap: 12px; transition: all 0.2s; font-size: 0.95rem; font-family: 'Sarabun', sans-serif;
-  }
+  .menu-item { padding: 11px 14px; border-radius: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s; font-size: 0.95rem; font-family: 'Sarabun', sans-serif; }
   .menu-item:hover { background: var(--primary-light); color: var(--primary); }
   .menu-item.active { background: var(--primary-light); color: var(--primary); font-weight: 700; }
   .menu-item .menu-icon { width: 20px; text-align: center; }
   .sidebar-section-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; padding: 8px 14px 4px; font-weight: 700; }
 
-  /* ================= RESPONSIVE ================= */
   @media (max-width: 992px) {
     .admin-layout { flex-direction: column; }
     .sidebar { position: static; width: 100%; height: auto; flex-direction: row; overflow-x: auto; padding: 10px 16px; top: auto; border-right: none; border-bottom: 1px solid var(--border); flex-wrap: nowrap; gap: 4px; }
@@ -409,7 +345,6 @@
     .hero-stat-num { font-size: 1.3rem; }
   }
 
-  /* Table */
   .table-responsive { overflow-x: auto; background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border); }
   table { width: 100%; border-collapse: collapse; min-width: 700px; }
   th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); font-family: 'Sarabun', sans-serif; font-size: 0.95rem; }
@@ -418,83 +353,54 @@
   tbody tr:hover { background: var(--primary-light); }
   tbody tr:last-child td { border-bottom: none; }
   
-  /* FIX 5: Booking timeline per car */
   .car-booking-timeline { margin-top: 10px; }
-  .car-booking-row { 
-    background: var(--bg-body); border: 1px solid var(--border); 
-    border-radius: 14px; padding: 14px 16px; margin-bottom: 10px;
-  }
-  .car-booking-header { 
-    display: flex; align-items: center; justify-content: space-between; 
-    cursor: pointer; font-weight: 700; color: var(--primary); font-size: 0.98rem;
-  }
+  .car-booking-row { background: var(--bg-body); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; }
+  .car-booking-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-weight: 700; color: var(--primary); font-size: 0.98rem; }
   .car-booking-list { margin-top: 10px; }
-  .booking-mini-row {
-    display: flex; align-items: center; justify-content: space-between; 
-    padding: 8px 12px; border-radius: 10px; margin-bottom: 6px; 
-    background: var(--bg-card); border: 1px solid var(--border); font-size: 0.9rem;
-    flex-wrap: wrap; gap: 6px;
-  }
+  .booking-mini-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-radius: 10px; margin-bottom: 6px; background: var(--bg-card); border: 1px solid var(--border); font-size: 0.9rem; flex-wrap: wrap; gap: 6px; }
   
-  /* Timeline grid */
   .timeline-grid { display: grid; grid-template-columns: 140px repeat(14, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; overflow-x: auto; min-width: 900px; }
   .tl-cell { background: var(--bg-card); padding: 10px 5px; text-align: center; font-size: 0.78rem; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); position: relative; min-height: 40px; font-family: 'Sarabun', sans-serif; font-weight: 500; }
   .tl-header { background: var(--bg-body); font-weight: 700; color: var(--text-muted); }
   .tl-car-name { text-align: left; font-weight: 700; padding-left: 10px; color: var(--primary); font-size: 0.82rem; }
   .tl-bar { position: absolute; top: 10%; height: 80%; background: var(--primary); border-radius: 4px; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; z-index: 10; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px; box-shadow: var(--shadow-sm); cursor: pointer; }
 
-  /* Modals */
   .modal-overlay { 
-    position: fixed; inset: 0; background: rgba(0,0,0,0.55); 
-    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-    z-index: 2000; display: none; align-items: center; 
-    justify-content: center; padding: 16px; 
-    opacity: 0; transition: opacity 0.3s; 
+    position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    z-index: 2000; display: none; align-items: center; justify-content: center; padding: 16px; opacity: 0; transition: opacity 0.3s;
   }
   .modal-overlay.active { display: flex; opacity: 1; }
   .modal-content { 
-    background: var(--bg-card); border-radius: 24px; 
-    width: 100%; max-width: 480px; max-height: 92vh; 
-    overflow-y: auto; padding: 28px; 
-    transform: translateY(24px) scale(0.97); 
-    transition: transform 0.35s cubic-bezier(0.34,1.4,0.64,1); 
-    box-shadow: 0 30px 60px rgba(0,0,0,0.2); 
+    background: var(--bg-card); border-radius: 24px; width: 100%; max-width: 480px; max-height: 92vh; 
+    overflow-y: auto; padding: 28px; transform: translateY(24px) scale(0.97); 
+    transition: transform 0.35s cubic-bezier(0.34,1.4,0.64,1); box-shadow: 0 30px 60px rgba(0,0,0,0.2); 
     position: relative; border: 1px solid var(--border);
   }
   .modal-overlay.active .modal-content { transform: translateY(0) scale(1); }
   .modal-lg { max-width: 880px; }
   .modal-close { 
-    position: absolute; top: 18px; right: 18px; 
-    width: 32px; height: 32px; border-radius: 50%; 
-    background: var(--bg-body); display: flex; align-items: center; 
-    justify-content: center; cursor: pointer; color: var(--text-muted); 
-    transition: 0.2s; z-index: 10; border: 1px solid var(--border);
-    font-size: 0.85rem;
+    position: absolute; top: 18px; right: 18px; width: 32px; height: 32px; border-radius: 50%; 
+    background: var(--bg-body); display: flex; align-items: center; justify-content: center; 
+    cursor: pointer; color: var(--text-muted); transition: 0.2s; z-index: 10; border: 1px solid var(--border); font-size: 0.85rem;
   }
   .modal-close:hover { background: var(--danger); color: white; border-color: var(--danger); transform: rotate(90deg); }
   .modal-header { margin-bottom: 20px; padding-right: 40px; }
   .modal-title { font-size: 1.3rem; font-weight: 700; color: var(--primary); font-family: 'Prompt', sans-serif; }
   .modal-subtitle { font-size: 0.9rem; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
 
-  /* Upload Area */
   .upload-area { border: 2px dashed var(--border); border-radius: 14px; padding: 20px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--bg-body); color: var(--text-muted); position: relative; }
   .upload-area:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 
-  /* Toasts */
   #toast-container { position: fixed; bottom: 90px; right: 20px; z-index: 3000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
   @media (min-width: 769px) { #toast-container { bottom: 30px; right: 28px; } }
   .toast { 
-    background: var(--bg-card); color: var(--text-main); 
-    padding: 14px 20px; border-radius: 14px; 
-    box-shadow: 0 8px 24px rgba(0,0,0,0.14); 
-    border-left: 4px solid var(--primary); 
-    display: flex; align-items: center; gap: 12px; 
-    animation: slideUp 0.3s forwards; font-weight: 600; 
-    max-width: 340px; border: 1px solid var(--border); border-left-width: 4px;
-    pointer-events: auto; font-size: 0.95rem; font-family: 'Sarabun', sans-serif;
+    background: var(--bg-card); color: var(--text-main); padding: 14px 20px; border-radius: 14px; 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.14); border-left: 4px solid var(--primary); 
+    display: flex; align-items: center; gap: 12px; animation: slideUp 0.3s forwards; font-weight: 600; 
+    max-width: 340px; border: 1px solid var(--border); border-left-width: 4px; pointer-events: auto; 
+    font-size: 0.95rem; font-family: 'Sarabun', sans-serif;
   }
 
-  /* Receipt */
   .receipt-box { border: 1px solid var(--border); border-radius: 14px; padding: 18px; background: var(--bg-body); margin-bottom: 16px; }
   @media print {
     body * { visibility: hidden; }
@@ -503,45 +409,61 @@
     .modal-close, .no-print { display: none !important; }
   }
 
-  /* Empty state */
   .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
   .empty-state i { font-size: 3rem; margin-bottom: 16px; opacity: 0.4; display: block; }
   .empty-state p { font-size: 1rem; font-weight: 500; }
 
-  /* Progress bar */
   .progress-bar-wrap { background: var(--border); border-radius: 99px; height: 8px; overflow: hidden; }
   .progress-bar { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--primary), #2563eb); transition: width 0.5s ease; }
 
-  /* Tabs */
   .tab-list { display: flex; gap: 4px; background: var(--bg-body); border-radius: 12px; padding: 4px; border: 1px solid var(--border); overflow-x: auto; }
   .tab-item { padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.92rem; color: var(--text-muted); white-space: nowrap; transition: all 0.2s; font-family: 'Sarabun', sans-serif; }
   .tab-item.active { background: var(--bg-card); color: var(--primary); font-weight: 700; box-shadow: var(--shadow-sm); }
 
-  /* Info row */
   .info-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); gap: 12px; }
   .info-row:last-child { border-bottom: none; }
   .info-row-label { color: var(--text-muted); font-size: 0.92rem; flex-shrink: 0; font-weight: 500; }
   .info-row-value { font-weight: 600; text-align: right; word-break: break-word; }
 
-  /* Chips */
   .chip-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
   .chip { padding: 7px 16px; border-radius: 99px; font-size: 0.88rem; font-weight: 600; border: 1.5px solid var(--border); color: var(--text-muted); cursor: pointer; transition: all 0.2s; font-family: 'Sarabun', sans-serif; }
   .chip:hover, .chip.active { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 
-  /* Car detail features grid */
   .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
   .feature-item { background: var(--bg-body); border: 1px solid var(--border); border-radius: 14px; padding: 14px; text-align: center; }
   .feature-item i { font-size: 1.4rem; margin-bottom: 6px; display: block; }
   .feature-item .feature-val { font-weight: 700; font-size: 1.05rem; font-family: 'Prompt', sans-serif; }
   .feature-item .feature-name { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; font-weight: 500; }
 
-  /* FIX 7: Car spec table */
   .spec-table { width: 100%; border-collapse: collapse; }
   .spec-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); font-size: 0.95rem; font-family: 'Sarabun', sans-serif; }
   .spec-table td:first-child { color: var(--text-muted); font-weight: 600; width: 45%; }
   .spec-table td:last-child { font-weight: 700; color: var(--text-main); }
   .spec-table tr:last-child td { border-bottom: none; }
   .spec-section-title { font-size: 0.85rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin: 16px 0 8px; padding-bottom: 6px; border-bottom: 2px solid var(--primary-light); font-family: 'Prompt', sans-serif; }
+
+  .map-embed-container { border-radius: 14px; overflow: hidden; border: 1px solid var(--border); margin-top: 8px; }
+  .map-embed-container iframe { width: 100%; height: 220px; border: none; display: block; }
+
+  .tg-test-btn {
+    background: linear-gradient(135deg, #0088cc, #006aa3); color: white;
+    border-radius: 10px; padding: 10px 18px; font-weight: 700; font-size: 0.92rem;
+    display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border: none; transition: all 0.2s;
+  }
+  .tg-test-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,136,204,0.4); }
+
+  .insurance-days-bar { height: 6px; border-radius: 99px; background: var(--border); overflow: hidden; margin-top: 6px; }
+  .insurance-days-fill { height: 100%; border-radius: 99px; transition: width 0.5s; }
+
+  /* [FIX3] viewer overlay สำหรับดูรูปเต็ม */
+  .img-viewer-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999;
+    display: flex; align-items: center; justify-content: center; padding: 16px;
+    animation: fadeIn 0.2s ease;
+  }
+  .img-viewer-overlay img { max-width: 100%; max-height: 90vh; border-radius: 12px; object-fit: contain; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .img-viewer-close { position: fixed; top: 16px; right: 16px; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.15); color: white; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1.5px solid rgba(255,255,255,0.3); transition: background 0.2s; }
+  .img-viewer-close:hover { background: rgba(239,68,68,0.7); }
 </style>
 </head>
 <body>
@@ -611,13 +533,16 @@ const DEFAULT_STATE = {
     accNo: '123-4-56789-0', 
     accName: 'บจก. อีวีเรนทัล โปร',
     qrUrl: '',
-    signupPts: 100
+    signupPts: 100,
+    tgBotToken: '8945655803:AAHI9QB4v9TRS1Z4OYUHrTFcBJdEkwbugig',
+    tgChatId: '-1003948271693',
+    insuranceAlertDays: 30
   },
   branches: [
-    { id: 'BKK', name: 'สนามบินสุวรรณภูมิ (BKK)' },
-    { id: 'DMK', name: 'สนามบินดอนเมือง (DMK)' },
-    { id: 'CNX', name: 'เชียงใหม่ (CNX)' },
-    { id: 'HKT', name: 'ภูเก็ต (HKT)' }
+    { id: 'BKK', name: 'สนามบินสุวรรณภูมิ (BKK)', address: 'ถ.บางนา-ตราด กม.15 สมุทรปราการ', mapUrl: 'https://maps.google.com/?q=สนามบินสุวรรณภูมิ', mapEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3877.036!2d100.7474!3d13.6900!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x311d603f8e95b8c9%3A0xb90e8a2aff98b17a!2sSuvarnabhumi+Airport!5e0!3m2!1sth!2sth!4v1234567890' },
+    { id: 'DMK', name: 'สนามบินดอนเมือง (DMK)', address: '222 ถ.วิภาวดีรังสิต หลักสี่ กรุงเทพ', mapUrl: 'https://maps.google.com/?q=สนามบินดอนเมือง', mapEmbed: '' },
+    { id: 'CNX', name: 'เชียงใหม่ (CNX)', address: '60 ถ.มหิดล ต.หายยา อ.เมือง เชียงใหม่', mapUrl: 'https://maps.google.com/?q=เชียงใหม่', mapEmbed: '' },
+    { id: 'HKT', name: 'ภูเก็ต (HKT)', address: '222 ถ.เฉลิมพระเกียรติ ต.ไม้ขาว ถลาง ภูเก็ต', mapUrl: 'https://maps.google.com/?q=ภูเก็ต', mapEmbed: '' }
   ],
   carTypes: ['ทั้งหมด', 'Sedan', 'SUV', 'Sport', 'Van'],
   users: [
@@ -631,7 +556,8 @@ const DEFAULT_STATE = {
       features: "Autopilot, จอ 15 นิ้ว",
       brand: "Tesla", model: "Model 3", colorExt: "ขาวมุก", colorInt: "ดำ",
       engine: "Dual Motor Electric", power: "358 แรงม้า", torque: "510 Nm",
-      acceleration: "4.4 วินาที", topSpeed: "225 กม./ชม."
+      acceleration: "4.4 วินาที", topSpeed: "225 กม./ชม.",
+      insuranceExpiry: "2025-12-31", insuranceNote: "ประกันชั้น 1 บริษัทเมืองไทยประกันภัย"
     },
     { 
       id: 2, name: "Tesla Model Y", type: "SUV", price: 3200, range: 533, seats: 5, 
@@ -639,7 +565,8 @@ const DEFAULT_STATE = {
       features: "พื้นที่กว้าง, หลังคาแก้ว",
       brand: "Tesla", model: "Model Y", colorExt: "เทาเมทัลลิก", colorInt: "ขาว",
       engine: "Long Range Dual Motor", power: "456 แรงม้า", torque: "493 Nm",
-      acceleration: "5.0 วินาที", topSpeed: "217 กม./ชม."
+      acceleration: "5.0 วินาที", topSpeed: "217 กม./ชม.",
+      insuranceExpiry: "2026-06-15", insuranceNote: "ประกันชั้น 1 บริษัทวิริยะประกันภัย"
     }
   ],
   promotions: [
@@ -671,6 +598,18 @@ const app = {
   },
 
   init: async function() {
+    if (!this.state.settings.tgBotToken) this.state.settings.tgBotToken = DEFAULT_STATE.settings.tgBotToken;
+    if (!this.state.settings.tgChatId) this.state.settings.tgChatId = DEFAULT_STATE.settings.tgChatId;
+    if (!this.state.settings.insuranceAlertDays) this.state.settings.insuranceAlertDays = 30;
+    this.state.branches = this.state.branches.map(b => ({
+      address: '', mapUrl: '', mapEmbed: '',
+      ...b
+    }));
+    this.state.cars = this.state.cars.map(c => ({
+      insuranceExpiry: '', insuranceNote: '',
+      ...c
+    }));
+
     document.documentElement.setAttribute('data-theme', this.state.theme);
     this.updateThemeIcon();
 
@@ -681,6 +620,8 @@ const app = {
       onSnapshot(docRef, (snapshot) => {
         if (snapshot.exists()) {
           this.state = snapshot.data();
+          if (!this.state.settings.tgBotToken) this.state.settings.tgBotToken = DEFAULT_STATE.settings.tgBotToken;
+          if (!this.state.settings.tgChatId) this.state.settings.tgChatId = DEFAULT_STATE.settings.tgChatId;
           localStorage.setItem('ev_state_v5', JSON.stringify(this.state));
           const uid = sessionStorage.getItem('ev_user_id');
           if(uid) this.currentUser = this.state.users.find(u => u.id === uid);
@@ -706,6 +647,26 @@ const app = {
 
     this.render();
     if(receiptId) { ui.showReceiptModal(receiptId); setTimeout(() => window.print(), 800); }
+    this.checkInsuranceAlerts();
+  },
+
+  checkInsuranceAlerts() {
+    const alertDays = this.state.settings.insuranceAlertDays || 30;
+    const today = new Date(); today.setHours(0,0,0,0);
+    this.state.cars.forEach(car => {
+      if(!car.insuranceExpiry) return;
+      const expiry = new Date(car.insuranceExpiry); expiry.setHours(0,0,0,0);
+      const diff = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+      if(diff <= alertDays && diff >= 0) {
+        setTimeout(() => {
+          utils.showToast(`⚠️ ${car.name} ประกันหมดใน ${diff} วัน (${utils.formatDate(car.insuranceExpiry)})`, 'warning');
+        }, 1200);
+      } else if(diff < 0) {
+        setTimeout(() => {
+          utils.showToast(`🚨 ${car.name} ประกันหมดอายุแล้ว! โปรดต่อทันที`, 'error');
+        }, 1500);
+      }
+    });
   },
 
   toggleTheme() {
@@ -772,13 +733,11 @@ const app = {
     }
 
     const root = document.getElementById('app-root');
-    // FIX 6: Only show admin view if user is admin AND view is admin
     if(this.isAdmin() && this.currentView !== 'home') {
       root.innerHTML = views.adminLayout();
       if(!this.currentAdminTab) this.currentAdminTab = 'dashboard';
       this.renderAdminTab(this.currentAdminTab);
     } else {
-      // Always show customer home for non-admins or when view is 'home'
       root.innerHTML = views.customerHome();
       this.renderCarGrid();
     }
@@ -803,6 +762,7 @@ const app = {
 const utils = {
   formatMoney: (num) => new Intl.NumberFormat('th-TH').format(num),
   formatDate: (dateStr) => {
+    if(!dateStr) return '-';
     const d = new Date(dateStr);
     return d.toLocaleDateString('th-TH', { year:'numeric', month:'short', day:'numeric' });
   },
@@ -856,6 +816,20 @@ const utils = {
     document.execCommand('copy'); document.body.removeChild(el);
     utils.showToast('คัดลอกลิงก์สำเร็จ', 'success');
   },
+
+  // [FIX3] เปิดรูปด้วย viewer overlay แทน window.open
+  openImageViewer: (src) => {
+    if(!src) return utils.showToast('ไม่มีรูปภาพ', 'warning');
+    const overlay = document.createElement('div');
+    overlay.className = 'img-viewer-overlay';
+    overlay.innerHTML = `
+      <div class="img-viewer-close" onclick="this.parentElement.remove()"><i class="fa-solid fa-times"></i></div>
+      <img src="${src}" alt="ดูรูปเต็ม">`;
+    overlay.addEventListener('click', (e) => { if(e.target === overlay) overlay.remove(); });
+    document.body.appendChild(overlay);
+  },
+
+  // [FIX4] getBookingStatusDisplay เพิ่มสถานะ "คืนรถช้า"
   getBookingStatusDisplay: (b) => {
     if(b.status === 'Cancelled') return { text: 'ยกเลิก', class: 'danger' };
     if(b.status === 'Completed') return { text: 'คืนรถแล้ว', class: 'info' };
@@ -864,7 +838,7 @@ const utils = {
     const returnDate = new Date(b.dateTo); returnDate.setHours(0,0,0,0);
     const diffDays = Math.ceil((returnDate - today) / (1000 * 60 * 60 * 24));
     if(b.status === 'Active') {
-      if(diffDays < 0) return { text: 'เลยกำหนด (Overdue)', class: 'danger' };
+      if(diffDays < 0) return { text: `คืนรถช้า ${Math.abs(diffDays)} วัน`, class: 'overdue' };
       if(diffDays === 1) return { text: 'แจ้งเตือน: พรุ่งนี้คืนรถ', class: 'purple' };
       return { text: 'กำลังใช้งาน', class: 'success' };
     }
@@ -874,9 +848,19 @@ const utils = {
     }
     return { text: b.status, class: 'secondary' };
   },
+
+  sendTelegram: async (message, parseMode = 'HTML') => {
+    const botToken = app.state.settings.tgBotToken;
+    const chatId = app.state.settings.tgChatId;
+    if(!botToken || !chatId) return;
+    try {
+      await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: parseMode })
+      });
+    } catch (error) { console.error("Telegram Error:", error); }
+  },
   sendTelegramNotification: async (booking, car, user) => {
-    const botToken = '8945655803:AAHI9QB4v9TRS1Z4OYUHrTFcBJdEkwbugig';
-    const chatId = '-1005029081020';
     const pickBranchName = app.state.branches.find(b => b.id === booking.pickBranch)?.name || booking.pickBranch;
     const dropBranchName = app.state.branches.find(b => b.id === booking.dropBranch)?.name || booking.dropBranch;
     const message = `🔔 <b>มีรายการจองรถใหม่เข้าสู่ระบบ!</b>\n\n` +
@@ -888,12 +872,44 @@ const utils = {
                     `📍 <b>รับรถ:</b> ${pickBranchName}\n` +
                     `📍 <b>คืนรถ:</b> ${dropBranchName}\n\n` +
                     `<i>โปรดเข้าสู่ระบบหลังบ้านเพื่อตรวจสอบสลิปและอนุมัติ</i>`;
-    try {
-      await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'HTML' })
-      });
-    } catch (error) { console.error("Telegram Error:", error); }
+    await utils.sendTelegram(message);
+  },
+  sendTelegramStatusUpdate: async (booking, newStatus, car, user) => {
+    const statusEmoji = { Pending:'⏳', Confirmed:'✅', Active:'🚗', Completed:'🏁', Cancelled:'❌' };
+    const message = `${statusEmoji[newStatus]||'📌'} <b>อัปเดตสถานะการจอง</b>\n\n` +
+                    `📝 <b>รหัสจอง:</b> ${booking.id}\n` +
+                    `👤 <b>ลูกค้า:</b> ${user?.name||'-'}\n` +
+                    `🚗 <b>รถ:</b> ${car?.name||'-'}\n` +
+                    `🔄 <b>สถานะใหม่:</b> ${newStatus}\n` +
+                    `💰 <b>ยอด:</b> ฿${utils.formatMoney(booking.total)}`;
+    await utils.sendTelegram(message);
+  },
+  sendTelegramNewUser: async (user) => {
+    const message = `👤 <b>สมาชิกใหม่ลงทะเบียน!</b>\n\n` +
+                    `👤 <b>ชื่อ:</b> ${user.name}\n` +
+                    `📞 <b>เบอร์:</b> ${user.phone}\n` +
+                    `🏅 <b>ระดับ:</b> ${user.tier}`;
+    await utils.sendTelegram(message);
+  },
+  sendTelegramInsuranceAlert: async (car) => {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const expiry = new Date(car.insuranceExpiry); expiry.setHours(0,0,0,0);
+    const diff = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+    const message = `🛡️ <b>แจ้งเตือนประกันรถ</b>\n\n` +
+                    `🚗 <b>รถ:</b> ${car.name}\n` +
+                    `📅 <b>วันหมดประกัน:</b> ${utils.formatDate(car.insuranceExpiry)}\n` +
+                    `⏰ <b>เหลือ:</b> ${diff >= 0 ? diff + ' วัน' : 'หมดอายุแล้ว!'}\n` +
+                    `📋 <b>หมายเหตุ:</b> ${car.insuranceNote||'-'}`;
+    await utils.sendTelegram(message);
+  },
+  getInsuranceStatus: (car, alertDays) => {
+    if(!car.insuranceExpiry) return { status: 'none', diff: null, color: 'var(--text-muted)', label: 'ไม่ระบุ' };
+    const today = new Date(); today.setHours(0,0,0,0);
+    const expiry = new Date(car.insuranceExpiry); expiry.setHours(0,0,0,0);
+    const diff = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+    if(diff < 0) return { status: 'expired', diff, color: 'var(--danger)', label: `หมดอายุแล้ว ${Math.abs(diff)} วัน` };
+    if(diff <= alertDays) return { status: 'soon', diff, color: 'var(--warning)', label: `เหลือ ${diff} วัน` };
+    return { status: 'ok', diff, color: 'var(--success)', label: `เหลือ ${diff} วัน` };
   }
 };
 
@@ -1034,6 +1050,9 @@ const views = {
         <div id="menu-cars" class="menu-item" onclick="app.renderAdminTab('cars')">
           <span class="menu-icon"><i class="fa-solid fa-car"></i></span> จัดการรถ (Fleet)
         </div>
+        <div id="menu-insurance" class="menu-item" onclick="app.renderAdminTab('insurance')">
+          <span class="menu-icon"><i class="fa-solid fa-shield-halved"></i></span> ประกันรถยนต์
+        </div>
         <div id="menu-crm" class="menu-item" onclick="app.renderAdminTab('crm')">
           <span class="menu-icon"><i class="fa-solid fa-users"></i></span> จัดการลูกค้า (CRM)
         </div>
@@ -1041,6 +1060,9 @@ const views = {
         <div class="sidebar-section-label">การตั้งค่า</div>
         <div id="menu-settings" class="menu-item" onclick="app.renderAdminTab('settings')">
           <span class="menu-icon"><i class="fa-solid fa-cog"></i></span> ตั้งค่าร้านค้า
+        </div>
+        <div id="menu-telegram" class="menu-item" onclick="app.renderAdminTab('telegram')">
+          <span class="menu-icon"><i class="fa-brands fa-telegram"></i></span> การแจ้งเตือน Telegram
         </div>
         ${app.isMaster() ? `
           <div id="menu-admins" class="menu-item" style="color:var(--warning);" onclick="app.renderAdminTab('admins')">
@@ -1057,8 +1079,42 @@ const views = {
       const pendBks = app.state.bookings.filter(b => b.status === 'Pending').length;
       const income = app.state.bookings.filter(b => b.status !== 'Cancelled').reduce((sum, b) => sum + b.total, 0);
       const completedBks = app.state.bookings.filter(b => b.status === 'Completed').length;
+      const alertDays = app.state.settings.insuranceAlertDays || 30;
+      const today = new Date(); today.setHours(0,0,0,0);
+      const insuranceAlerts = app.state.cars.filter(c => {
+        if(!c.insuranceExpiry) return false;
+        const exp = new Date(c.insuranceExpiry); exp.setHours(0,0,0,0);
+        return Math.ceil((exp - today)/(1000*60*60*24)) <= alertDays;
+      });
+
+      // [FIX4] นับรายการ overdue
+      const overdueBks = app.state.bookings.filter(b => {
+        if(b.status !== 'Active') return false;
+        const ret = new Date(b.dateTo); ret.setHours(0,0,0,0);
+        return ret < today;
+      }).length;
+
       return `
         <h2 class="mb-4">สรุปภาพรวมระบบ</h2>
+        
+        ${insuranceAlerts.length > 0 ? `
+        <div class="card mb-4" style="border-color:var(--warning); background:rgba(245,158,11,0.05);">
+          <div class="flex items-center gap-3 mb-3">
+            <i class="fa-solid fa-triangle-exclamation" style="color:var(--warning); font-size:1.3rem;"></i>
+            <h4 style="color:var(--warning);">แจ้งเตือนประกันรถ (${insuranceAlerts.length} คัน)</h4>
+          </div>
+          ${insuranceAlerts.map(c => {
+            const ins = utils.getInsuranceStatus(c, alertDays);
+            return `<div class="insurance-alert${ins.status==='expired'?' insurance-expiring':''}">
+              <div class="flex justify-between items-center">
+                <span class="font-bold"><i class="fa-solid fa-car"></i> ${c.name}</span>
+                <span style="color:${ins.color}; font-weight:700;">${ins.label}</span>
+              </div>
+              <div class="text-muted text-sm">หมดอายุ: ${utils.formatDate(c.insuranceExpiry)} · ${c.insuranceNote||'-'}</div>
+            </div>`;
+          }).join('')}
+        </div>` : ''}
+
         <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 24px;">
           <div class="card flex items-center gap-4">
             <div class="stat-icon" style="background:rgba(16,185,129,0.1); color:var(--success);"><i class="fa-solid fa-wallet"></i></div>
@@ -1076,6 +1132,11 @@ const views = {
             <div class="stat-icon" style="background:rgba(139,92,246,0.1); color:var(--purple);"><i class="fa-solid fa-check-double"></i></div>
             <div><div class="stat-label">คืนรถแล้วทั้งหมด</div><div class="stat-value" style="color:var(--purple);">${completedBks} <span style="font-size:1rem;">ครั้ง</span></div></div>
           </div>
+          ${overdueBks > 0 ? `
+          <div class="card flex items-center gap-4" style="border-color:var(--danger); background:rgba(239,68,68,0.04);">
+            <div class="stat-icon" style="background:rgba(239,68,68,0.1); color:var(--danger);"><i class="fa-solid fa-clock-rotate-left"></i></div>
+            <div><div class="stat-label" style="color:var(--danger);">คืนรถช้า (Overdue)</div><div class="stat-value text-danger">${overdueBks} <span style="font-size:1rem;">คัน</span></div></div>
+          </div>` : ''}
         </div>
         
         <div class="card mt-4">
@@ -1083,7 +1144,6 @@ const views = {
           <div id="timeline-container" class="table-responsive p-0" style="border:none; background:transparent;"></div>
         </div>
 
-        <!-- FIX 5: Booking list per car -->
         <div class="card mt-4">
           <h3 class="mb-4"><i class="fa-solid fa-car text-primary"></i> รายการจองแยกตามรถแต่ละคัน</h3>
           <div class="car-booking-timeline">
@@ -1131,6 +1191,65 @@ const views = {
       `;
     },
 
+    insurance: () => {
+      const alertDays = app.state.settings.insuranceAlertDays || 30;
+      const today = new Date(); today.setHours(0,0,0,0);
+      return `
+        <div class="flex justify-between items-center mb-4" style="flex-wrap:wrap; gap:12px;">
+          <h2><i class="fa-solid fa-shield-halved text-primary"></i> จัดการประกันรถยนต์</h2>
+          <div class="flex gap-2">
+            <button class="tg-test-btn" onclick="logic.sendAllInsuranceAlerts()">
+              <i class="fa-brands fa-telegram"></i> แจ้งเตือน TG ทั้งหมด
+            </button>
+          </div>
+        </div>
+        <div class="input-group mb-4" style="max-width:320px;">
+          <label>แจ้งเตือนล่วงหน้า (วัน)</label>
+          <input type="number" id="ins-alert-days" class="input-control" value="${alertDays}" min="1" max="365" style="max-width:200px;">
+          <button class="btn btn-primary btn-sm mt-2" onclick="logic.saveInsuranceAlertDays()"><i class="fa-solid fa-save"></i> บันทึก</button>
+        </div>
+        <div class="grid" style="grid-template-columns: repeat(auto-fill,minmax(320px,1fr)); gap:18px;">
+          ${app.state.cars.map(car => {
+            const ins = utils.getInsuranceStatus(car, alertDays);
+            const expiry = car.insuranceExpiry ? new Date(car.insuranceExpiry) : null;
+            const pct = expiry ? Math.max(0, Math.min(100, (ins.diff/365)*100)) : 0;
+            return `
+            <div class="card" style="border-color:${ins.status==='expired'?'var(--danger)':ins.status==='soon'?'var(--warning)':'var(--border)'};">
+              <div class="flex justify-between items-start mb-3">
+                <div>
+                  <h4 style="font-size:1rem;">${car.name}</h4>
+                  <span class="badge badge-info" style="font-size:0.75rem;">${car.type}</span>
+                </div>
+                <span style="font-size:1.4rem;">${ins.status==='expired'?'🚨':ins.status==='soon'?'⚠️':'✅'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-row-label">วันหมดประกัน</span>
+                <span class="info-row-value" style="color:${ins.color}; font-weight:700;">${utils.formatDate(car.insuranceExpiry)}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-row-label">สถานะ</span>
+                <span class="info-row-value" style="color:${ins.color}; font-weight:700;">${ins.label}</span>
+              </div>
+              <div class="info-row" style="border:none;">
+                <span class="info-row-label">บันทึก</span>
+                <span class="info-row-value text-muted">${car.insuranceNote||'-'}</span>
+              </div>
+              ${ins.diff !== null && ins.diff >= 0 ? `
+              <div class="insurance-days-bar mt-2">
+                <div class="insurance-days-fill" style="width:${Math.min(100,(ins.diff/365)*100)}%; background:${ins.color};"></div>
+              </div>` : ''}
+              <div class="flex gap-2 mt-3">
+                <button class="btn btn-outline btn-sm flex-1" onclick="ui.showInsuranceEditModal(${car.id})"><i class="fa-solid fa-edit"></i> แก้ไข</button>
+                <button class="tg-test-btn" style="padding:8px 12px; font-size:0.82rem; border-radius:8px;" onclick="utils.sendTelegramInsuranceAlert(app.state.cars.find(c=>c.id===${car.id})).then(()=>utils.showToast('ส่ง Telegram แล้ว','success'))">
+                  <i class="fa-brands fa-telegram"></i>
+                </button>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>`;
+    },
+
+    // [FIX2] bookings - เพิ่มวันที่จองในทุก card
     bookings: () => {
       const sorted = [...app.state.bookings].sort((a,b) => new Date(b.dateFrom)-new Date(a.dateFrom));
       return `
@@ -1144,6 +1263,8 @@ const views = {
               const u = app.state.users.find(x => x.id === b.userId);
               const c = app.state.cars.find(x => x.id === b.carId);
               const st = utils.getBookingStatusDisplay(b);
+              // [FIX2] วันที่จอง = createdAt ถ้ามี หรือใช้ dateFrom แทน
+              const bookedOn = b.createdAt ? utils.formatDate(b.createdAt) : utils.formatDate(b.dateFrom);
               return `
               <div class="card mb-3 p-4">
                 <div class="flex justify-between items-center mb-3">
@@ -1165,14 +1286,23 @@ const views = {
                     <div class="text-muted">${b.days} วัน</div>
                   </div>
                   <div>
-                    <div class="text-muted" style="font-size:0.8rem;">วันเช่า</div>
-                    <div>${utils.formatDate(b.dateFrom)}</div>
+                    <div class="text-muted" style="font-size:0.8rem;">วันเช่า – คืน</div>
+                    <div>${utils.formatDate(b.dateFrom)} – ${utils.formatDate(b.dateTo)}</div>
+                  </div>
+                  <div>
+                    <div class="text-muted" style="font-size:0.8rem;">วันที่จอง</div>
+                    <div style="color:var(--info); font-weight:600;"><i class="fa-regular fa-clock" style="margin-right:4px;"></i>${bookedOn}</div>
                   </div>
                   <div>
                     <div class="text-muted" style="font-size:0.8rem;">ยอดชำระ</div>
                     <div class="font-bold">฿${utils.formatMoney(b.total + (b.fine || 0))}</div>
                     ${b.fine ? `<div class="text-danger" style="font-size:0.8rem;">+ ค่าปรับ ฿${utils.formatMoney(b.fine)}</div>` : ''}
                   </div>
+                  ${st.class === 'overdue' ? `
+                  <div>
+                    <div class="text-muted" style="font-size:0.8rem;">สถานะพิเศษ</div>
+                    <div class="badge badge-overdue"><i class="fa-solid fa-triangle-exclamation"></i> ${st.text}</div>
+                  </div>` : ''}
                 </div>
                 <div class="flex gap-2">
                   <button class="btn btn-outline btn-sm flex-1" onclick="ui.showAdminBookingModal('${b.id}')"><i class="fa-solid fa-pen-to-square"></i> ตรวจสอบ</button>
@@ -1195,12 +1325,18 @@ const views = {
       <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
         ${app.state.cars.map(c => {
           const bkCount = app.state.bookings.filter(b => b.carId === c.id && b.status !== 'Cancelled').length;
+          const alertDays = app.state.settings.insuranceAlertDays || 30;
+          const ins = utils.getInsuranceStatus(c, alertDays);
           return `
           <div class="card p-0 overflow-hidden" style="border-radius:20px;">
             <div style="height:160px; background:url('${c.images[0]}') center/cover; position:relative;">
               <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(to top, rgba(0,0,0,0.7), transparent); padding:12px 14px;">
                 <span class="badge badge-info" style="font-size:0.72rem;">${c.type}</span>
               </div>
+              ${ins.status !== 'ok' && ins.status !== 'none' ? `
+              <div style="position:absolute; top:8px; right:8px; background:${ins.status==='expired'?'rgba(239,68,68,0.92)':'rgba(245,158,11,0.92)'}; color:white; font-size:0.72rem; font-weight:700; padding:3px 8px; border-radius:99px; backdrop-filter:blur(4px);">
+                🛡️ ${ins.status==='expired'?'ประกันหมด':'ประกันใกล้หมด'}
+              </div>` : ''}
             </div>
             <div class="p-4">
               <div class="flex justify-between items-start mb-1">
@@ -1268,9 +1404,17 @@ const views = {
 
     settings: () => {
       const bList = app.state.branches.map(b => `
-        <div class="flex justify-between items-center p-3 mb-2" style="background:var(--bg-body); border-radius:12px; border:1px solid var(--border);">
-          <div><span class="badge badge-primary" style="margin-right:8px;">${b.id}</span><span>${b.name}</span></div>
-          <button class="btn btn-danger btn-xs" onclick="logic.deleteBranch('${b.id}')"><i class="fa-solid fa-trash"></i></button>
+        <div class="card-flat p-3 mb-3" style="border-radius:14px;">
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <span class="badge badge-primary" style="margin-right:8px;">${b.id}</span>
+              <span class="font-bold">${b.name}</span>
+            </div>
+            <button class="btn btn-danger btn-xs" onclick="logic.deleteBranch('${b.id}')"><i class="fa-solid fa-trash"></i></button>
+          </div>
+          <div class="text-muted text-sm mb-2">${b.address || 'ไม่ระบุที่อยู่'}</div>
+          ${b.mapUrl ? `<a href="${b.mapUrl}" target="_blank" class="btn btn-outline btn-xs"><i class="fa-solid fa-map-location-dot"></i> เปิด Google Maps</a>` : ''}
+          ${b.mapEmbed ? `<div class="map-embed-container mt-2"><iframe src="${b.mapEmbed}" allowfullscreen loading="lazy"></iframe></div>` : ''}
         </div>`).join('');
       return `
         <h2 class="mb-4">ตั้งค่าร้านค้า & ดีไซน์</h2>
@@ -1301,10 +1445,20 @@ const views = {
             </div>
             <div class="card">
               <h4 class="mb-3" style="padding-bottom:12px; border-bottom:1px solid var(--border);"><i class="fa-solid fa-map-location-dot text-primary"></i> สาขา / สถานที่รับ-คืนรถ</h4>
-              <div style="max-height:200px; overflow-y:auto; margin-bottom:12px;">${bList}</div>
-              <div class="flex gap-2">
+              <div style="max-height:260px; overflow-y:auto; margin-bottom:12px;">${bList}</div>
+              <div class="flex gap-2 mb-2">
                 <input type="text" id="new-branch-id" class="input-control" placeholder="รหัส (เช่น BKK)" style="width:35%;">
                 <input type="text" id="new-branch-name" class="input-control" placeholder="ชื่อสาขา">
+              </div>
+              <div class="input-group mb-2">
+                <input type="text" id="new-branch-addr" class="input-control" placeholder="ที่อยู่ / รายละเอียด">
+              </div>
+              <div class="input-group mb-2">
+                <input type="text" id="new-branch-mapurl" class="input-control" placeholder="ลิงก์ Google Maps (https://maps.google.com/...)">
+              </div>
+              <div class="input-group mb-2">
+                <label style="font-size:0.85rem; color:var(--text-muted);">Embed URL จาก Google Maps (แชร์ > ฝัง > คัดลอก src="...")</label>
+                <input type="text" id="new-branch-embed" class="input-control" placeholder="https://www.google.com/maps/embed?pb=...">
               </div>
               <button class="btn btn-outline btn-sm w-full mt-2" onclick="logic.addBranch()"><i class="fa-solid fa-plus"></i> เพิ่มสาขา</button>
             </div>
@@ -1314,6 +1468,52 @@ const views = {
         <style>@media(max-width:768px){ #setting-grid { grid-template-columns: 1fr !important; } }</style>
       `;
     },
+
+    // [FIX1] ซ่อน Bot Token - แสดงเป็น ****
+    telegram: () => `
+      <h2 class="mb-4"><i class="fa-brands fa-telegram text-info"></i> ตั้งค่าการแจ้งเตือน Telegram</h2>
+      <div class="card mb-4">
+        <h4 class="mb-4" style="padding-bottom:12px; border-bottom:1px solid var(--border);">ข้อมูล Bot</h4>
+        <div class="input-group">
+          <label>Bot Token</label>
+          <div style="position:relative;">
+            <input type="password" id="tg-token" class="input-control" value="${app.state.settings.tgBotToken||''}" placeholder="123456:ABCDEF..." autocomplete="new-password">
+            <button type="button" onclick="(()=>{const i=document.getElementById('tg-token');i.type=i.type==='password'?'text':'password';})()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.95rem;">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+          <small class="text-muted mt-1 block" style="font-size:0.82rem;"><i class="fa-solid fa-lock"></i> Bot Token ถูกซ่อนเพื่อความปลอดภัย กดไอคอนตาเพื่อแสดง</small>
+        </div>
+        <div class="input-group"><label>Chat ID (Group/Channel)</label><input type="text" id="tg-chatid" class="input-control" value="${app.state.settings.tgChatId||''}" placeholder="-1001234567890"></div>
+        <button class="btn btn-primary btn-sm" onclick="logic.saveTelegramSettings()"><i class="fa-solid fa-save"></i> บันทึก Bot Settings</button>
+      </div>
+      <div class="card mb-4">
+        <h4 class="mb-3">ทดสอบการแจ้งเตือน</h4>
+        <p class="text-muted text-sm mb-4">กดปุ่มด้านล่างเพื่อส่งข้อความทดสอบไปยัง Chat ID ที่ตั้งค่าไว้</p>
+        <button class="tg-test-btn" onclick="logic.testTelegram()" style="font-size:1rem; padding:14px 28px; border-radius:12px;">
+          <i class="fa-brands fa-telegram"></i> ส่งข้อความทดสอบ
+        </button>
+      </div>
+      <div class="card">
+        <h4 class="mb-3">เหตุการณ์ที่แจ้งเตือน</h4>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          ${[
+            { icon:'🔔', label:'มีการจองใหม่', desc:'แจ้งทันทีเมื่อลูกค้าส่งคำขอจอง' },
+            { icon:'✅', label:'อัปเดตสถานะการจอง', desc:'เมื่อแอดมินเปลี่ยนสถานะ Pending/Confirmed/Active/Completed/Cancelled' },
+            { icon:'👤', label:'สมัครสมาชิกใหม่', desc:'เมื่อมีลูกค้าลงทะเบียนเข้าระบบ' },
+            { icon:'🛡️', label:'ประกันใกล้หมดอายุ', desc:'แจ้งเตือนเมื่อกดปุ่มในหน้าประกัน' },
+          ].map(ev => `
+            <div class="flex items-center gap-3 p-3" style="background:var(--bg-body); border-radius:12px; border:1px solid var(--border);">
+              <span style="font-size:1.4rem;">${ev.icon}</span>
+              <div>
+                <div class="font-bold">${ev.label}</div>
+                <div class="text-muted text-sm">${ev.desc}</div>
+              </div>
+              <span class="badge badge-success" style="margin-left:auto;"><i class="fa-solid fa-check"></i> เปิดใช้</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    `,
 
     admins: () => `
       <h2 class="mb-4" style="color:var(--warning);"><i class="fa-solid fa-user-shield"></i> จัดการสิทธิ์แอดมิน (Master Only)</h2>
@@ -1372,13 +1572,8 @@ const ui = {
     if(m) { m.classList.remove('active'); setTimeout(() => m.remove(), 300); app.tempUploads = {}; }
   },
 
-  // FIX 2: Fixed login modal - clear and straightforward
   showLoginModal() {
-    this.showModal('เข้าสู่ระบบ', `
-      <p class="text-muted mb-4" style="font-size:0.92rem; line-height:1.7;">
-        เข้าสู่ระบบด้วยเบอร์โทรศัพท์และรหัสผ่าน หรือสมัครสมาชิกใหม่<br>
-        <small class="text-info">* ผู้ลงทะเบียนคนแรกในระบบจะได้รับสิทธิ์ Master Admin โดยอัตโนมัติ</small>
-      </p>
+    this.showModal('เข้าสู่ระบบ / สมัครสมาชิก', `
       <div class="input-group">
         <label>ชื่อ-นามสกุล <span class="text-muted" style="font-size:0.8rem;">(เฉพาะสมัครใหม่)</span></label>
         <div class="input-with-icon">
@@ -1401,11 +1596,6 @@ const ui = {
             onkeydown="if(event.key==='Enter') logic.login()">
         </div>
       </div>
-      <div class="card-flat p-3 mb-4" style="background:var(--primary-light); border-radius:12px; border-color:var(--primary);">
-        <p class="text-sm font-bold" style="color:var(--primary); margin-bottom:4px;"><i class="fa-solid fa-circle-info"></i> บัญชีทดสอบ</p>
-        <p class="text-sm">แอดมิน: <strong>0999999999</strong> / <strong>admin</strong></p>
-        <p class="text-sm">ลูกค้า: <strong>0811111111</strong> / <strong>123</strong></p>
-      </div>
       <button class="btn btn-primary w-full btn-lg" onclick="logic.login()">
         <i class="fa-solid fa-sign-in-alt"></i> เข้าสู่ระบบ / สมัครสมาชิก
       </button>
@@ -1414,6 +1604,36 @@ const ui = {
       </p>
     `, '', 'กรอกข้อมูลเพื่อเข้าสู่ระบบหรือสมัครสมาชิก');
     setTimeout(() => document.getElementById('log-phone')?.focus(), 200);
+  },
+
+  showChangePasswordModal() {
+    this.showModal('เปลี่ยนรหัสผ่าน', `
+      <div class="input-group">
+        <label>รหัสผ่านเดิม <span class="text-danger">*</span></label>
+        <div class="input-with-icon">
+          <i class="fa-solid fa-lock input-icon"></i>
+          <input type="password" id="chpw-old" class="input-control" placeholder="รหัสผ่านเดิม">
+        </div>
+      </div>
+      <div class="input-group">
+        <label>รหัสผ่านใหม่ <span class="text-danger">*</span></label>
+        <div class="input-with-icon">
+          <i class="fa-solid fa-lock input-icon"></i>
+          <input type="password" id="chpw-new" class="input-control" placeholder="รหัสผ่านใหม่ (อย่างน้อย 4 ตัว)">
+        </div>
+      </div>
+      <div class="input-group mb-6">
+        <label>ยืนยันรหัสผ่านใหม่ <span class="text-danger">*</span></label>
+        <div class="input-with-icon">
+          <i class="fa-solid fa-lock input-icon"></i>
+          <input type="password" id="chpw-confirm" class="input-control" placeholder="ยืนยันรหัสผ่านใหม่"
+            onkeydown="if(event.key==='Enter') logic.changePassword()">
+        </div>
+      </div>
+      <button class="btn btn-primary w-full btn-lg" onclick="logic.changePassword()">
+        <i class="fa-solid fa-key"></i> เปลี่ยนรหัสผ่าน
+      </button>
+    `, '', `${app.currentUser?.name || ''} · ${app.currentUser?.phone || ''}`);
   },
 
   showCarDetailModal(carId) {
@@ -1429,7 +1649,6 @@ const ui = {
     const thumbs = c.images.map((img, i) => `<img src="${img}" class="${i===0?'active':''}" onclick="changeMainImg('${img}', this)">`).join('');
     const featureTags = c.features.split(',').map(f => `<span class="car-feature-tag">${f.trim()}</span>`).join('');
 
-    // FIX 7: Enhanced spec section
     const specHTML = `
       <div class="spec-section-title"><i class="fa-solid fa-info-circle"></i> ข้อมูลพื้นฐาน</div>
       <table class="spec-table">
@@ -1481,7 +1700,6 @@ const ui = {
         <div class="car-features-tags">${featureTags}</div>
       </div>
 
-      <!-- FIX 7: Spec table -->
       <div class="card-flat p-4 mb-4" style="border-radius:16px;">
         ${specHTML}
       </div>
@@ -1491,7 +1709,6 @@ const ui = {
           <div class="text-muted text-sm" style="font-weight:500;">ราคาเช่า / วัน</div>
           <div class="font-bold text-primary" style="font-size:2rem; line-height:1.1; font-family:'Prompt',sans-serif;">฿${utils.formatMoney(c.price)}</div>
         </div>
-        <!-- FIX 3: Book button with animation -->
         <button class="btn btn-book" ${isAvail?'':'disabled'} onclick="ui.showBookingModal(${c.id})" style="${isAvail?'':'opacity:0.5; cursor:not-allowed; animation:none;'}">
           ${isAvail ? '<i class="fa-solid fa-calendar-check"></i> จองเลย!' : '<i class="fa-solid fa-lock"></i> ไม่ว่าง'}
         </button>
@@ -1599,10 +1816,18 @@ const ui = {
   showMyBookings() {
     const myBks = app.state.bookings.filter(b => b.userId === app.currentUser.id).sort((a,b) => new Date(b.dateFrom)-new Date(a.dateFrom));
     let html = '';
+    const profileBar = `
+      <div class="card-flat p-3 mb-4 flex justify-between items-center" style="border-radius:14px; background:var(--primary-light);">
+        <div>
+          <div class="font-bold">${app.currentUser.name}</div>
+          <div class="text-muted text-sm">${app.currentUser.phone} · ${utils.formatMoney(app.currentUser.points)} แต้ม</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="ui.closeModal(); ui.showChangePasswordModal()"><i class="fa-solid fa-key"></i> เปลี่ยนรหัสผ่าน</button>
+      </div>`;
     if(myBks.length === 0) {
-      html = `<div class="empty-state"><i class="fa-solid fa-calendar-xmark"></i><p>ยังไม่มีประวัติการจอง</p><button class="btn btn-primary btn-sm mt-4" onclick="ui.closeModal()">เลือกดูรถ</button></div>`;
+      html = profileBar + `<div class="empty-state"><i class="fa-solid fa-calendar-xmark"></i><p>ยังไม่มีประวัติการจอง</p><button class="btn btn-primary btn-sm mt-4" onclick="ui.closeModal()">เลือกดูรถ</button></div>`;
     } else {
-      html = myBks.map(b => {
+      html = profileBar + myBks.map(b => {
         const c = app.state.cars.find(x => x.id === b.carId);
         const st = utils.getBookingStatusDisplay(b);
         return `
@@ -1696,6 +1921,7 @@ const ui = {
     `, '', 'ช่วยให้คะแนนเพื่อพัฒนาบริการ');
   },
 
+  // [FIX3] แก้ปุ่มดูสลิป/บัตร/ใบขับขี่ → ใช้ openImageViewer แทน window.open
   showAdminBookingModal(bId) {
     const b = app.state.bookings.find(x => x.id === bId);
     const u = app.state.users.find(x => x.id === b.userId);
@@ -1736,16 +1962,16 @@ const ui = {
           <div class="card-flat p-3 text-center mb-4" style="border-radius:14px; border-color:var(--warning);">
             <div class="font-bold mb-2 text-primary" id="adm-display-total">ยอดโอน: ฿${utils.formatMoney(b.total)}</div>
             ${b.slipUrl 
-              ? `<img src="${b.slipUrl}" style="max-height:160px; border-radius:10px; border:1px solid var(--border); display:block; margin:0 auto 10px; object-fit:contain;">
-                 <button class="btn btn-outline btn-sm w-full" onclick="window.open('${b.slipUrl}')"><i class="fa-solid fa-expand"></i> ดูสลิปเต็ม</button>` 
+              ? `<img src="${b.slipUrl}" style="max-height:160px; border-radius:10px; border:1px solid var(--border); display:block; margin:0 auto 10px; object-fit:contain; cursor:pointer;" onclick="utils.openImageViewer('${b.slipUrl}')">
+                 <button class="btn btn-outline btn-sm w-full" onclick="utils.openImageViewer('${b.slipUrl}')"><i class="fa-solid fa-expand"></i> ดูสลิปเต็ม</button>` 
               : `<div class="empty-state" style="padding:24px;"><i class="fa-solid fa-file-image" style="font-size:2rem; opacity:0.3; display:block; margin-bottom:8px;"></i><p style="font-size:0.92rem;">ไม่มีภาพสลิป</p></div>`}
           </div>
           <div class="flex gap-2 mb-4">
             ${b.idCardUrl 
-              ? `<button class="btn btn-outline btn-sm flex-1" onclick="window.open('${b.idCardUrl}')"><i class="fa-solid fa-id-card"></i> บัตรปชช.</button>` 
+              ? `<button class="btn btn-outline btn-sm flex-1" onclick="utils.openImageViewer('${b.idCardUrl}')"><i class="fa-solid fa-id-card"></i> บัตรปชช.</button>` 
               : `<button class="btn btn-outline btn-sm flex-1" disabled style="opacity:0.4;"><i class="fa-solid fa-id-card"></i> ไม่มีบัตรปชช.</button>`}
             ${b.licenseUrl 
-              ? `<button class="btn btn-outline btn-sm flex-1" onclick="window.open('${b.licenseUrl}')"><i class="fa-solid fa-car"></i> ใบขับขี่</button>` 
+              ? `<button class="btn btn-outline btn-sm flex-1" onclick="utils.openImageViewer('${b.licenseUrl}')"><i class="fa-solid fa-car"></i> ใบขับขี่</button>` 
               : `<button class="btn btn-outline btn-sm flex-1" disabled style="opacity:0.4;"><i class="fa-solid fa-car"></i> ไม่มีใบขับขี่</button>`}
           </div>
           <button class="btn btn-primary w-full btn-lg" onclick="logic.updateBookingStatus('${bId}')">
@@ -1780,12 +2006,32 @@ const ui = {
     `, '', u.phone);
   },
 
-  // FIX 7: Enhanced car form modal with new spec fields
+  showInsuranceEditModal(carId) {
+    const c = app.state.cars.find(x => x.id === carId);
+    this.showModal(`แก้ไขประกัน: ${c.name}`, `
+      <div class="input-group">
+        <label>วันที่ประกันหมดอายุ</label>
+        <input type="date" id="ins-expiry" class="input-control" value="${c.insuranceExpiry||''}">
+      </div>
+      <div class="input-group mb-6">
+        <label>บันทึก / บริษัทประกัน</label>
+        <textarea id="ins-note" class="input-control" rows="3" placeholder="เช่น ประกันชั้น 1 บริษัทเมืองไทยประกันภัย เลขกรมธรรม์ 12345">${c.insuranceNote||''}</textarea>
+      </div>
+      <div class="flex gap-2">
+        <button class="btn btn-primary flex-1 btn-lg" onclick="logic.saveInsurance(${carId})"><i class="fa-solid fa-save"></i> บันทึก</button>
+        <button class="tg-test-btn" style="border-radius:12px; padding:14px 20px;" onclick="utils.sendTelegramInsuranceAlert(app.state.cars.find(c=>c.id===${carId})).then(()=>utils.showToast('ส่ง Telegram แล้ว','success'))">
+          <i class="fa-brands fa-telegram"></i> แจ้ง TG
+        </button>
+      </div>
+    `, '', `แก้ไขข้อมูลประกันสำหรับ ${c.name}`);
+  },
+
   showCarFormModal(carId = null) {
     const c = carId ? app.state.cars.find(x => x.id === carId) : { 
       name:'', type:'Sedan', price:1000, range:400, seats:5, images:[], features:'',
       brand:'', model:'', colorExt:'', colorInt:'',
-      engine:'', power:'', torque:'', acceleration:'', topSpeed:''
+      engine:'', power:'', torque:'', acceleration:'', topSpeed:'',
+      insuranceExpiry:'', insuranceNote:''
     };
     const tOpts = app.state.carTypes.filter(t=>t!=='ทั้งหมด').map(t => `<option value="${t}" ${c.type===t?'selected':''}>${t}</option>`).join('');
     const existImgHtml = c.images.map(img => `<img src="${img}" style="max-height:50px; border-radius:6px; object-fit:cover;">`).join('');
@@ -1802,9 +2048,7 @@ const ui = {
           <div class="input-group mb-0"><label>สีภายใน</label><input type="text" id="car-color-int" class="input-control" value="${c.colorInt||''}" placeholder="เช่น ดำ"></div>
           <div class="input-group mb-0"><label>ราคาเช่า/วัน (บาท)</label><input type="number" id="car-price" class="input-control" value="${c.price}"></div>
           <div class="input-group mb-0"><label>ระยะทางต่อชาร์จ (km)</label><input type="number" id="car-range" class="input-control" value="${c.range}"></div>
-          <div class="input-group mb-0" style="grid-column:1/-1;">
-            <label>จำนวนที่นั่ง</label><input type="number" id="car-seats" class="input-control" value="${c.seats}">
-          </div>
+          <div class="input-group mb-0" style="grid-column:1/-1;"><label>จำนวนที่นั่ง</label><input type="number" id="car-seats" class="input-control" value="${c.seats}"></div>
         </div>
       </div>
 
@@ -1816,6 +2060,14 @@ const ui = {
           <div class="input-group mb-0"><label>Torque</label><input type="text" id="car-torque" class="input-control" value="${c.torque||''}" placeholder="เช่น 510 Nm"></div>
           <div class="input-group mb-0"><label>Acceleration 0-100 กม./ชม.</label><input type="text" id="car-accel" class="input-control" value="${c.acceleration||''}" placeholder="เช่น 4.4 วินาที"></div>
           <div class="input-group mb-0" style="grid-column:1/-1;"><label>Top Speed</label><input type="text" id="car-topspeed" class="input-control" value="${c.topSpeed||''}" placeholder="เช่น 225 กม./ชม."></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+        <p class="font-bold" style="color:var(--warning); margin-bottom:12px;"><i class="fa-solid fa-shield-halved"></i> ประกันรถยนต์</p>
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="input-group mb-0" style="grid-column:1/-1;"><label>วันที่ประกันหมดอายุ</label><input type="date" id="car-ins-expiry" class="input-control" value="${c.insuranceExpiry||''}"></div>
+          <div class="input-group mb-0" style="grid-column:1/-1;"><label>บันทึก / บริษัทประกัน</label><input type="text" id="car-ins-note" class="input-control" value="${c.insuranceNote||''}" placeholder="เช่น ประกันชั้น 1 บริษัทเมืองไทย"></div>
         </div>
       </div>
 
@@ -1931,7 +2183,6 @@ const logic = {
     } catch(err) { utils.showToast('เกิดข้อผิดพลาดในการโหลดภาพ', 'error'); }
   },
 
-  // FIX 2: Fixed login - admin redirect works correctly
   login() {
     const name = document.getElementById('log-name').value.trim();
     const phone = document.getElementById('log-phone').value.trim();
@@ -1945,7 +2196,6 @@ const logic = {
         sessionStorage.setItem('ev_user_id', user.id);
         utils.showToast(`ยินดีต้อนรับกลับ ${user.name} 👋`, 'success');
         ui.closeModal();
-        // FIX 2: Navigate admin to admin page, customer to home
         if(user.role === 'admin_master' || user.role === 'admin_sub') {
           app.navigate('admin_dashboard');
         } else {
@@ -1968,6 +2218,7 @@ const logic = {
       app.currentUser = user;
       sessionStorage.setItem('ev_user_id', user.id);
       app.saveState();
+      utils.sendTelegramNewUser(user);
       if(newRole === 'admin_master') {
         utils.showToast(`ลงทะเบียนสำเร็จ! คุณได้รับสิทธิ์ Master Admin 🎉`, 'success');
         ui.closeModal();
@@ -1978,6 +2229,22 @@ const logic = {
         app.navigate('home');
       }
     }
+  },
+
+  changePassword() {
+    const oldPw = document.getElementById('chpw-old').value;
+    const newPw = document.getElementById('chpw-new').value;
+    const confirmPw = document.getElementById('chpw-confirm').value;
+    if(!oldPw || !newPw || !confirmPw) return utils.showToast('กรุณากรอกข้อมูลให้ครบ', 'error');
+    if(newPw.length < 4) return utils.showToast('รหัสผ่านใหม่ต้องมีอย่างน้อย 4 ตัว', 'error');
+    if(newPw !== confirmPw) return utils.showToast('รหัสผ่านใหม่ไม่ตรงกัน', 'error');
+    const u = app.state.users.find(x => x.id === app.currentUser.id);
+    if(!u || u.password !== oldPw) return utils.showToast('รหัสผ่านเดิมไม่ถูกต้อง', 'error');
+    u.password = newPw;
+    app.currentUser.password = newPw;
+    app.saveState();
+    ui.closeModal();
+    utils.showToast('เปลี่ยนรหัสผ่านสำเร็จ ✅', 'success');
   },
 
   logout() {
@@ -2023,6 +2290,7 @@ const logic = {
     }
   },
 
+  // [FIX2] confirmBooking - บันทึก createdAt เพื่อแสดงวันที่จอง
   confirmBooking(carId, defaultPricePerDay) {
     if(!app.tempUploads['slip']) return utils.showToast('กรุณาอัปโหลดรูปสลิปโอนเงินก่อน', 'warning');
     const netVal = document.getElementById('book-net').dataset.net;
@@ -2037,7 +2305,8 @@ const logic = {
       slipUrl: app.tempUploads['slip'] || '',
       idCardUrl: app.tempUploads['idcard'] || '',
       licenseUrl: app.tempUploads['license'] || '',
-      contractUrl: null, isReviewed: false, fine: 0
+      contractUrl: null, isReviewed: false, fine: 0,
+      createdAt: new Date().toISOString().split('T')[0]  // [FIX2] บันทึกวันที่จอง
     };
     app.state.bookings.push(newBooking);
     app.saveState();
@@ -2072,9 +2341,15 @@ const logic = {
       const u = app.state.users.find(x=>x.id===b.userId);
       if(u) u.points += Math.floor(newTotal / 100);
     }
+    const oldStatus = b.status;
     b.status = newStatus; b.dateFrom = newDFrom; b.dateTo = newDTo;
     b.days = utils.calcDays(newDFrom, newDTo); b.total = newTotal; b.fine = newFine;
     app.saveState(); ui.closeModal();
+    if(oldStatus !== newStatus) {
+      const car = app.state.cars.find(c => c.id === b.carId);
+      const user = app.state.users.find(u => u.id === b.userId);
+      utils.sendTelegramStatusUpdate(b, newStatus, car, user);
+    }
     utils.showToast('อัปเดตข้อมูลการจองสำเร็จ', 'success');
     app.renderAdminTab('bookings');
   },
@@ -2095,7 +2370,6 @@ const logic = {
     if(u) { u.role = newRole; app.saveState(); utils.showToast(`เปลี่ยนสิทธิ์ ${u.name} เรียบร้อย`, 'success'); app.renderAdminTab('admins'); }
   },
 
-  // FIX 7: saveCar with new spec fields
   saveCar(carId) {
     const name = document.getElementById('car-name').value.trim();
     if(!name) return utils.showToast('กรุณากรอกชื่อรถ', 'error');
@@ -2115,6 +2389,8 @@ const logic = {
       torque: document.getElementById('car-torque').value,
       acceleration: document.getElementById('car-accel').value,
       topSpeed: document.getElementById('car-topspeed').value,
+      insuranceExpiry: document.getElementById('car-ins-expiry').value,
+      insuranceNote: document.getElementById('car-ins-note').value,
       status: "Available", rating: 5.0, reviews: 0
     };
     if(app.tempUploads['carimgs'] && app.tempUploads['carimgs'].length > 0) {
@@ -2137,6 +2413,55 @@ const logic = {
       app.state.cars = app.state.cars.filter(c => c.id !== carId);
       app.saveState(); utils.showToast('ลบรถสำเร็จ', 'success'); app.renderAdminTab('cars');
     }
+  },
+
+  saveInsurance(carId) {
+    const c = app.state.cars.find(x => x.id === carId);
+    c.insuranceExpiry = document.getElementById('ins-expiry').value;
+    c.insuranceNote = document.getElementById('ins-note').value;
+    app.saveState(); ui.closeModal();
+    utils.showToast('บันทึกข้อมูลประกันสำเร็จ', 'success');
+    app.renderAdminTab('insurance');
+  },
+
+  saveInsuranceAlertDays() {
+    const val = parseInt(document.getElementById('ins-alert-days').value) || 30;
+    app.state.settings.insuranceAlertDays = val;
+    app.saveState();
+    utils.showToast(`บันทึก: แจ้งเตือนล่วงหน้า ${val} วัน`, 'success');
+  },
+
+  async sendAllInsuranceAlerts() {
+    const alertDays = app.state.settings.insuranceAlertDays || 30;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const cars = app.state.cars.filter(c => {
+      if(!c.insuranceExpiry) return false;
+      const exp = new Date(c.insuranceExpiry); exp.setHours(0,0,0,0);
+      return Math.ceil((exp - today)/(1000*60*60*24)) <= alertDays;
+    });
+    if(cars.length === 0) return utils.showToast('ไม่มีประกันที่ใกล้หมด', 'info');
+    for(const c of cars) await utils.sendTelegramInsuranceAlert(c);
+    utils.showToast(`ส่ง Telegram แจ้งเตือน ${cars.length} คันแล้ว`, 'success');
+  },
+
+  async testTelegram() {
+    const msg = `🧪 <b>ทดสอบระบบแจ้งเตือน EVRENTAL PRO</b>\n\n` +
+                `✅ การเชื่อมต่อ Bot ทำงานปกติ\n` +
+                `📅 เวลาทดสอบ: ${new Date().toLocaleString('th-TH')}\n` +
+                `🏪 ร้าน: ${app.state.settings.storeName}`;
+    try {
+      await utils.sendTelegram(msg);
+      utils.showToast('ส่งข้อความทดสอบ Telegram สำเร็จ! ✅', 'success');
+    } catch(e) {
+      utils.showToast('ส่งไม่สำเร็จ ตรวจสอบ Bot Token/Chat ID', 'error');
+    }
+  },
+
+  saveTelegramSettings() {
+    app.state.settings.tgBotToken = document.getElementById('tg-token').value.trim();
+    app.state.settings.tgChatId = document.getElementById('tg-chatid').value.trim();
+    app.saveState();
+    utils.showToast('บันทึก Telegram Settings สำเร็จ', 'success');
   },
 
   _starRating: 0,
@@ -2182,9 +2507,12 @@ const logic = {
   addBranch() {
     const id = document.getElementById('new-branch-id').value.trim().toUpperCase();
     const name = document.getElementById('new-branch-name').value.trim();
+    const address = document.getElementById('new-branch-addr').value.trim();
+    const mapUrl = document.getElementById('new-branch-mapurl').value.trim();
+    const mapEmbed = document.getElementById('new-branch-embed').value.trim();
     if(!id || !name) return utils.showToast('กรุณากรอกรหัสและชื่อสาขา', 'warning');
     if(app.state.branches.find(b => b.id === id)) return utils.showToast('รหัสสาขานี้มีอยู่แล้ว', 'error');
-    app.state.branches.push({ id, name });
+    app.state.branches.push({ id, name, address, mapUrl, mapEmbed });
     app.saveState(); utils.showToast('เพิ่มสาขาสำเร็จ', 'success'); app.renderAdminTab('settings');
   },
 
@@ -2200,13 +2528,13 @@ const logic = {
     const wb = XLSX.utils.book_new();
     let data = [], filename = '';
     if(type === 'bookings') {
-      data = app.state.bookings.map(b => ({ รหัสการจอง: b.id, รหัสลูกค้า: b.userId, รหัสรถ: b.carId, วันรับ: b.dateFrom, วันคืน: b.dateTo, จำนวนวัน: b.days, ยอดเงิน: b.total, ค่าปรับ: b.fine, สถานะ: b.status }));
+      data = app.state.bookings.map(b => ({ รหัสการจอง: b.id, รหัสลูกค้า: b.userId, รหัสรถ: b.carId, วันจอง: b.createdAt||b.dateFrom, วันรับ: b.dateFrom, วันคืน: b.dateTo, จำนวนวัน: b.days, ยอดเงิน: b.total, ค่าปรับ: b.fine, สถานะ: b.status }));
       filename = 'Bookings_Report.xlsx';
     } else if(type === 'users') {
       data = app.state.users.map(u => ({ รหัสลูกค้า: u.id, ชื่อ: u.name, เบอร์: u.phone, ระดับ: u.tier, คะแนน: u.points, บทบาท: u.role }));
       filename = 'Customers_Report.xlsx';
     } else if(type === 'cars') {
-      data = app.state.cars.map(c => { const bCount = app.state.bookings.filter(b => b.carId === c.id).length; return { รหัสรถ: c.id, ชื่อรุ่น: c.name, ยี่ห้อ: c.brand||'', ประเภท: c.type, ราคาต่อวัน: c.price, จำนวนครั้งที่ถูกเช่า: bCount }; });
+      data = app.state.cars.map(c => { const bCount = app.state.bookings.filter(b => b.carId === c.id).length; return { รหัสรถ: c.id, ชื่อรุ่น: c.name, ยี่ห้อ: c.brand||'', ประเภท: c.type, ราคาต่อวัน: c.price, จำนวนครั้งที่ถูกเช่า: bCount, ประกันหมด: c.insuranceExpiry||'' }; });
       filename = 'Cars_Stats_Report.xlsx';
     } else {
       const ws1 = XLSX.utils.json_to_sheet(app.state.bookings);
@@ -2223,6 +2551,7 @@ const logic = {
   }
 };
 
+// ข้อ 9: Car grid
 app.renderCarGrid = function() {
   const container = document.getElementById('car-grid-container');
   if(!container) return;
@@ -2238,19 +2567,36 @@ app.renderCarGrid = function() {
     return;
   }
 
-  container.innerHTML = cars.map((c, idx) => {
-    const isAvail = utils.isCarAvailable(c.id, this.searchParams.dateFrom, this.searchParams.dateTo);
-    const badgeHtml = isAvail 
-      ? `<span class="badge badge-success car-status-badge" style="backdrop-filter:blur(8px); background:rgba(16,185,129,0.92);"><i class="fa-solid fa-check"></i> ว่าง</span>`
-      : `<span class="badge badge-danger car-status-badge" style="backdrop-filter:blur(8px); background:rgba(239,68,68,0.92);"><i class="fa-solid fa-times"></i> ติดจอง</span>`;
+  const dateFrom = this.searchParams.dateFrom;
+  const dateTo = this.searchParams.dateTo;
+  const hasDateFilter = dateFrom && dateTo;
+  const availCount = cars.filter(c => utils.isCarAvailable(c.id, dateFrom, dateTo)).length;
+
+  let summaryHtml = '';
+  if(hasDateFilter) {
+    summaryHtml = `
+    <div style="grid-column:1/-1; display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:14px; background:var(--bg-card); border:1px solid var(--border); margin-bottom:4px; flex-wrap:wrap;">
+      <span style="font-weight:700; font-size:0.95rem;"><i class="fa-solid fa-calendar-check text-primary"></i> ${utils.formatDate(dateFrom)} – ${utils.formatDate(dateTo)}</span>
+      <span class="avail-pill avail" style="font-size:0.8rem;"><span class="dot"></span> ว่าง ${availCount} คัน</span>
+      <span class="avail-pill unavail" style="animation:none; font-size:0.8rem;"><span class="dot" style="animation:none;"></span> ติดจอง ${cars.length - availCount} คัน</span>
+    </div>`;
+  }
+
+  container.innerHTML = summaryHtml + cars.map((c, idx) => {
+    const isAvail = utils.isCarAvailable(c.id, dateFrom, dateTo);
     const featureTags = c.features.split(',').slice(0,2).map(f => `<span class="car-feature-tag">${f.trim()}</span>`).join('');
 
     return `
-      <div class="card car-card" style="animation-delay:${idx * 0.05}s;">
+      <div class="card car-card" style="animation-delay:${idx * 0.05}s; ${!isAvail ? 'opacity:0.85;' : ''}">
         <div class="car-img-container">
-          ${badgeHtml}
+          <div class="avail-badge-wrap">
+            ${isAvail 
+              ? `<div class="avail-pill avail"><span class="dot"></span> ว่างพร้อมเช่า</div>` 
+              : `<div class="avail-pill unavail"><span class="dot" style="animation:none;"></span> ติดจองแล้ว</div>`}
+          </div>
+          ${!isAvail ? `<div class="car-unavail-overlay"><div class="car-unavail-text"><i class="fa-solid fa-lock"></i> ไม่ว่างในช่วงวันที่เลือก</div></div>` : ''}
           <div class="car-heart" onclick="this.classList.toggle('liked')" title="บันทึกรถคันนี้"><i class="fa-regular fa-heart"></i></div>
-          <img src="${c.images[0]}" alt="${c.name}" loading="lazy">
+          <img src="${c.images[0]}" alt="${c.name}" loading="lazy" style="${!isAvail ? 'filter:grayscale(30%);' : ''}">
         </div>
         <div class="p-4" style="flex:1; display:flex; flex-direction:column;">
           <div class="flex justify-between items-start mb-1">
@@ -2275,13 +2621,12 @@ app.renderCarGrid = function() {
               <span class="car-price">฿${utils.formatMoney(c.price)}</span>
               <span class="text-muted text-sm" style="font-weight:500;">/วัน</span>
             </div>
-            <!-- FIX 3: Animated select button on car card -->
             <button class="btn btn-sm" onclick="ui.showCarDetailModal(${c.id})" 
               style="${isAvail 
                 ? 'background:linear-gradient(135deg, var(--primary), #2563eb); color:white; box-shadow:0 3px 10px rgba(15,157,141,0.35); font-weight:700;' 
-                : 'opacity:0.55; background:var(--border); color:var(--text-muted);'}"
-              ${isAvail?'':'disabled'}>
-              ${isAvail ? '<i class="fa-solid fa-arrow-right"></i> เลือก' : '<i class="fa-solid fa-lock"></i> ไม่ว่าง'}
+                : 'background:rgba(239,68,68,0.1); color:var(--danger); border:1.5px solid rgba(239,68,68,0.3); font-weight:700;'}"
+              >
+              ${isAvail ? '<i class="fa-solid fa-arrow-right"></i> เลือกเลย' : '<i class="fa-solid fa-calendar-plus"></i> เปลี่ยนวัน'}
             </button>
           </div>
         </div>
