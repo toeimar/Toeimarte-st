@@ -1088,6 +1088,7 @@ const views = {
         <div id="menu-bookings" class="menu-item" onclick="app.renderAdminTab('bookings')"><span class="menu-icon"><i class="fa-solid fa-list-check"></i></span> จัดการการจอง</div>
         <div id="menu-cars" class="menu-item" onclick="app.renderAdminTab('cars')"><span class="menu-icon"><i class="fa-solid fa-car"></i></span> จัดการรถ (Fleet)</div>
         <div id="menu-insurance" class="menu-item" onclick="app.renderAdminTab('insurance')"><span class="menu-icon"><i class="fa-solid fa-shield-halved"></i></span> ประกันรถยนต์</div>
+        <div id="menu-insuranceplans" class="menu-item" onclick="app.renderAdminTab('insuranceplans')"><span class="menu-icon"><i class="fa-solid fa-shield-check"></i></span> แพ็กเกจประกันลูกค้า</div>
         <div id="menu-crm" class="menu-item" onclick="app.renderAdminTab('crm')"><span class="menu-icon"><i class="fa-solid fa-users"></i></span> จัดการลูกค้า (CRM)</div>
         <hr style="border:none; border-top:1px solid var(--border); margin: 8px 0;">
         <div class="sidebar-section-label">การตั้งค่า</div>
@@ -1378,6 +1379,29 @@ const views = {
                 <style>@media(max-width:768px){ #setting-grid { grid-template-columns: 1fr !important; } }</style>`;
     },
 
+    insuranceplans: () => {
+      return `
+        <div class="flex justify-between items-center mb-4">
+          <h2><i class="fa-solid fa-shield-halved text-primary"></i> แพ็กเกจประกันสำหรับลูกค้า</h2>
+          <button class="btn btn-primary btn-sm" onclick="logic.addInsurancePlan()"><i class="fa-solid fa-plus"></i> เพิ่มแพ็กเกจ</button>
+        </div>
+        ${app.state.insurancePlans.map((plan, idx) => `
+          <div class="card mb-3 p-4">
+            <div class="flex justify-between items-center" style="flex-wrap:wrap; gap:12px;">
+              <div>
+                <div class="font-bold">${plan.name}</div>
+                <div class="text-muted text-sm">${plan.desc}</div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="font-bold text-primary" style="font-size:1.2rem;">฿${utils.formatMoney(plan.price)}<span class="text-muted text-sm">/วัน</span></span>
+                <button class="btn btn-outline btn-sm" onclick="logic.editInsurancePlan(${idx})"><i class="fa-solid fa-edit"></i></button>
+                <button class="btn btn-danger btn-sm" onclick="logic.deleteInsurancePlan(${idx})"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+          </div>`).join('')}
+        ${app.state.insurancePlans.length === 0 ? `<div class="empty-state"><i class="fa-solid fa-shield-halved"></i><p>ยังไม่มีแพ็กเกจประกัน</p></div>` : ''}`;
+    },
+
     admins: () => `
       <h2 class="mb-4" style="color:var(--warning);"><i class="fa-solid fa-user-shield"></i> จัดการสิทธิ์แอดมิน (Master Only)</h2>
       ${app.state.users.map(u => {
@@ -1635,6 +1659,20 @@ const ui = {
             <div class="font-bold text-primary" style="font-size:1.1rem; letter-spacing:1px;">${app.state.settings.accNo}</div>
             <div class="text-muted text-sm">${app.state.settings.accName}</div>
           </div>
+                    ${app.state.insurancePlans.length > 0 ? `
+          <h4 class="mb-3 flex items-center gap-2"><i class="fa-solid fa-shield-halved text-warning"></i> เพิ่มประกันรถ</h4>
+          <div class="card-flat p-3 mb-4" style="border-radius:14px; border-color:var(--warning);">
+            <div class="chip-group mb-0">
+              <div class="chip ${''}" id="ins-none" onclick="logic.selectInsurancePlan(null, ${c.price})" style="border-color:var(--primary); color:var(--primary);">
+                <i class="fa-solid fa-times"></i> ไม่เพิ่มประกัน
+              </div>
+                    ${app.state.insurancePlans.map(plan => `
+                <div class="chip" id="ins-${plan.id}" onclick="logic.selectInsurancePlan('${plan.id}', ${c.price})">
+                  <i class="fa-solid fa-shield-halved"></i> ${plan.name} +฿${utils.formatMoney(plan.price)}/วัน
+                </div>`).join('')}
+            </div>
+            <div id="ins-desc" class="text-muted text-sm mt-2" style="display:none;"></div>
+          </div>` : ''}
           <div class="input-group"><label>แนบสลิปโอนเงิน <span class="text-danger">*</span></label><input type="file" accept="image/*" class="input-control" onchange="logic.handleFileUpload(event, 'slip')"><img id="preview-slip" style="max-height:100px; display:none; margin-top:8px; border-radius:8px; border:1px solid var(--border); object-fit:cover;"></div>
           <button class="btn btn-primary w-full btn-lg mt-2" onclick="logic.confirmBooking(${c.id}, ${c.price})"><i class="fa-solid fa-check-circle"></i> ยืนยันการจอง</button>
           <p class="text-center text-muted mt-2" style="font-size:0.82rem;"><i class="fa-solid fa-shield-halved text-success"></i> การจองจะมีผลหลังแอดมินตรวจสอบสลิป</p>
@@ -2082,8 +2120,11 @@ const logic = {
       document.getElementById('bk-disp-days').innerHTML = `<i class="fa-solid fa-calendar-days"></i> รวม ${days} วัน`;
       document.getElementById('bk-disp-renttext').innerText = `ค่าเช่า (${days} วัน)`;
       document.getElementById('bk-disp-rentprice').innerText = `฿${utils.formatMoney(baseTotal)}`;
-      document.getElementById('book-net').innerText = `฿${utils.formatMoney(baseTotal)}`;
-      document.getElementById('book-net').dataset.net = baseTotal;
+      const insPlan = app._selectedInsurancePlan ? app.state.insurancePlans?.find(p => p.id === app._selectedInsurancePlan) : null;
+      const insTotal = insPlan ? insPlan.price * days : 0;
+      const grandTotal = baseTotal + insTotal;
+      document.getElementById('book-net').innerText = `฿${utils.formatMoney(grandTotal)}`;
+      document.getElementById('book-net').dataset.net = grandTotal;
       document.getElementById('book-discount').textContent = `฿0`;
       const promoEl = document.getElementById('promo-code');
       if(promoEl) { promoEl.disabled = false; promoEl.value = ''; }
@@ -2117,9 +2158,12 @@ const logic = {
       slipUrl: app.tempUploads['slip'] || '',
       idCardUrl: app.tempUploads['idcard'] || '',
       licenseUrl: app.tempUploads['license'] || '',
+      insurancePlanId: app._selectedInsurancePlan || null,
+      insurancePlanName: app._selectedInsurancePlan ? (app.state.insurancePlans?.find(p => p.id === app._selectedInsurancePlan)?.name || '') : '',
       isReviewed: false, fine: 0,
       createdAt: new Date().toISOString().split('T')[0]
     };
+    
     app.state.bookings.push(newBooking);
     app.saveState();
     const car = app.state.cars.find(c => c.id === carId);
@@ -2310,6 +2354,65 @@ const logic = {
     utils.showToast('บันทึกการตั้งค่าร้านค้าสำเร็จ ✅', 'success');
     app.render();
     setTimeout(() => { app.renderAdminTab('settings'); }, 100);
+  },
+
+    selectInsurancePlan(planId, carPrice) {
+    document.querySelectorAll('.chip[id^="ins-"]').forEach(c => c.classList.remove('active'));
+    app._selectedInsurancePlan = planId;
+    if(planId) {
+      document.getElementById(`ins-${planId}`)?.classList.add('active');
+      const plan = app.state.insurancePlans.find(p => p.id === planId);
+      const descEl = document.getElementById('ins-desc');
+      if(descEl && plan) { descEl.textContent = plan.desc; descEl.style.display = 'block'; }
+    } else {
+      document.getElementById('ins-none')?.classList.add('active');
+      const descEl = document.getElementById('ins-desc');
+      if(descEl) descEl.style.display = 'none';
+    }
+    const dFrom = document.getElementById('bk-edit-dfrom').value;
+    const dTo = document.getElementById('bk-edit-dto').value;
+    logic.recalcCustomerBookingPrice(carPrice);
+  },
+
+  addInsurancePlan() {
+    ui.showModal('เพิ่มแพ็กเกจประกัน', `
+      <div class="input-group"><label>ชื่อแพ็กเกจ</label><input type="text" id="iplan-name" class="input-control" placeholder="เช่น ประกันชั้น 1"></div>
+      <div class="input-group"><label>ราคา/วัน (บาท)</label><input type="number" id="iplan-price" class="input-control" placeholder="500"></div>
+      <div class="input-group mb-6"><label>รายละเอียด</label><input type="text" id="iplan-desc" class="input-control" placeholder="เช่น คุ้มครองครอบคลุมทุกกรณี"></div>
+      <button class="btn btn-primary w-full btn-lg" onclick="logic.saveInsurancePlan()"><i class="fa-solid fa-save"></i> บันทึก</button>
+    `);
+  },
+
+  saveInsurancePlan(idx = null) {
+    const name = document.getElementById('iplan-name').value.trim();
+    const price = parseFloat(document.getElementById('iplan-price').value) || 0;
+    const desc = document.getElementById('iplan-desc').value.trim();
+    if(!name) return utils.showToast('กรุณากรอกชื่อแพ็กเกจ', 'error');
+    if(!app.state.insurancePlans) app.state.insurancePlans = [];
+    const plan = { id: 'plan_' + Date.now(), name, price, desc };
+    if(idx !== null) { app.state.insurancePlans[idx] = plan; }
+    else { app.state.insurancePlans.push(plan); }
+    app.saveState(); ui.closeModal();
+    utils.showToast('บันทึกแพ็กเกจประกันสำเร็จ', 'success');
+    app.renderAdminTab('insuranceplans');
+  },
+
+  editInsurancePlan(idx) {
+    const plan = app.state.insurancePlans[idx];
+    ui.showModal('แก้ไขแพ็กเกจประกัน', `
+      <div class="input-group"><label>ชื่อแพ็กเกจ</label><input type="text" id="iplan-name" class="input-control" value="${plan.name}"></div>
+      <div class="input-group"><label>ราคา/วัน (บาท)</label><input type="number" id="iplan-price" class="input-control" value="${plan.price}"></div>
+      <div class="input-group mb-6"><label>รายละเอียด</label><input type="text" id="iplan-desc" class="input-control" value="${plan.desc}"></div>
+      <button class="btn btn-primary w-full btn-lg" onclick="logic.saveInsurancePlan(${idx})"><i class="fa-solid fa-save"></i> บันทึก</button>
+    `);
+  },
+
+  deleteInsurancePlan(idx) {
+    if(confirm('ลบแพ็กเกจนี้ใช่หรือไม่?')) {
+      app.state.insurancePlans.splice(idx, 1);
+      app.saveState(); utils.showToast('ลบแพ็กเกจสำเร็จ', 'success');
+      app.renderAdminTab('insuranceplans');
+    }
   },
 
   addBranch() {
