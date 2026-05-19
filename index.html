@@ -2139,13 +2139,15 @@ const logic = {
     utils.showToast(`✅ ใช้โค้ดสำเร็จ! ลด ฿${utils.formatMoney(discountAmt)}`, 'success');
   },
 
-  recalcCustomerBookingPrice(carPrice) {
+    recalcCustomerBookingPrice(carPrice) {
     const dFrom = document.getElementById('bk-edit-dfrom').value;
     const dTo = document.getElementById('bk-edit-dto').value;
     if(dFrom && dTo) {
       app.searchParams.dateFrom = dFrom; app.searchParams.dateTo = dTo;
       const days = utils.calcDays(dFrom, dTo);
-      const baseTotal = days * carPrice;
+      const carObj = app.state.cars.find(c => c.price === carPrice) || { price: carPrice, priceTiers: [] };
+      const pricePerDay = utils.getTierPricePerDay(carObj, days);
+      const baseTotal = days * pricePerDay;
       document.getElementById('bk-disp-days').innerHTML = `<i class="fa-solid fa-calendar-days"></i> รวม ${days} วัน`;
       document.getElementById('bk-disp-renttext').innerText = `ค่าเช่า (${days} วัน)`;
       document.getElementById('bk-disp-rentprice').innerText = `฿${utils.formatMoney(baseTotal)}`;
