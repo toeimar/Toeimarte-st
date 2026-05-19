@@ -631,6 +631,7 @@ const app = {
     if (!this.state.settings.insuranceAlertDays) this.state.settings.insuranceAlertDays = 30;
     this.state.branches = this.state.branches.map(b => ({ address: '', mapUrl: '', mapEmbed: '', ...b }));
     this.state.cars = this.state.cars.map(c => ({ insuranceExpiry: '', insuranceNote: '', ...c }));
+    if (!this.state.insurancePlans) this.state.insurancePlans = DEFAULT_STATE.insurancePlans;
 
     document.documentElement.setAttribute('data-theme', this.state.theme);
     this.updateThemeIcon();
@@ -678,6 +679,7 @@ const app = {
     this.state = remoteState;
     if (!this.state.settings.tgBotToken) this.state.settings.tgBotToken = DEFAULT_STATE.settings.tgBotToken;
     if (!this.state.settings.tgChatId) this.state.settings.tgChatId = DEFAULT_STATE.settings.tgChatId;
+    if (!this.state.insurancePlans) this.state.insurancePlans = DEFAULT_STATE.insurancePlans;
     localStorage.setItem('ev_state_v5', JSON.stringify(this.state));
     const uid = sessionStorage.getItem('ev_user_id');
     if (uid) {
