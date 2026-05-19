@@ -1463,6 +1463,7 @@ const ui = {
   closeModal() {
     const m = document.getElementById('main-modal');
     if(m) { m.classList.remove('active'); setTimeout(() => m.remove(), 300); app.tempUploads = {}; }
+    if(m) { m.classList.remove('active'); setTimeout(() => m.remove(), 300); app.tempUploads = {}; app._selectedInsurancePlan = null; }
   },
 
   toggleCustomLocation(fieldId) {
@@ -2003,7 +2004,7 @@ const ui = {
           const bEnd = new Date(b.dateTo).getTime();
           if(dTime >= bStart && dTime <= bEnd) {
             const isStart = dTime === bStart;
-            let bg = b.status === 'Confirmed' ? 'var(--info)' : (b.status === 'Active' ? 'var(--success)' : 'var(--warning)');
+            let bg = b.status === 'Confirmed' ? 'var(--info)' : b.status === 'Active' ? 'var(--success)' : b.status === 'Pending' ? 'var(--warning)' : 'var(--purple)';
             cellHtml = `<div class="tl-bar" style="background:${bg}; left:1px; right:1px; width:calc(100% - 2px); border-radius:${isStart?'4px 0 0 4px':'0'}" title="${b.id}">${isStart ? b.id : ''}</div>`;
           }
         });
@@ -2129,7 +2130,8 @@ const logic = {
     const dFrom = document.getElementById('bk-edit-dfrom').value;
     const dTo = document.getElementById('bk-edit-dto').value;
     const days = utils.calcDays(dFrom, dTo);
-    const baseTotal = carPrice * days;
+    const carObj = app.state.cars.find(c => c.price === carPrice) || { price: carPrice, priceTiers: [] };
+    const baseTotal = utils.calcTieredPrice(carObj, days);
     let discountAmt = promo.type === 'percent' ? baseTotal * (promo.discount / 100) : promo.discount;
     let net = Math.max(0, baseTotal - discountAmt);
     document.getElementById('book-discount').textContent = `-฿${utils.formatMoney(discountAmt)}`;
@@ -2165,9 +2167,10 @@ const logic = {
   confirmBooking(carId, defaultPricePerDay) {
     if(!app.tempUploads['slip']) return utils.showToast('กรุณาอัปโหลดรูปสลิปโอนเงินก่อน', 'warning');
     const netVal = document.getElementById('book-net').dataset.net;
-    const finalTotal = netVal ? parseFloat(netVal) : (defaultPricePerDay * utils.calcDays(app.searchParams.dateFrom, app.searchParams.dateTo));
+    const carObj = app.state.cars.find(c => c.id === carId);
+    const days = utils.calcDays(app.searchParams.dateFrom, app.searchParams.dateTo);
+    const finalTotal = netVal ? parseFloat(netVal) : utils.calcTieredPrice(carObj, days);
     const bId = "BK-" + Math.floor(1000 + Math.random() * 9000);
-
     const pickCustomLabel = document.getElementById('bk-edit-pick-text')?.value.trim() || '';
     const pickCustomUrl = document.getElementById('bk-edit-pick-url')?.value.trim() || '';
     const dropCustomLabel = document.getElementById('bk-edit-drop-text')?.value.trim() || '';
@@ -2424,8 +2427,6 @@ const logic = {
       const descEl = document.getElementById('ins-desc');
       if(descEl) descEl.style.display = 'none';
     }
-    const dFrom = document.getElementById('bk-edit-dfrom').value;
-    const dTo = document.getElementById('bk-edit-dto').value;
     logic.recalcCustomerBookingPrice(carPrice);
   },
 
