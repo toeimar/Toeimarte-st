@@ -2092,26 +2092,21 @@ const logic = {
     const finalTotal = netVal ? parseFloat(netVal) : (defaultPricePerDay * utils.calcDays(app.searchParams.dateFrom, app.searchParams.dateTo));
     const bId = "BK-" + Math.floor(1000 + Math.random() * 9000);
 
-    const pickSel = document.getElementById('bk-edit-pick');
-    const isPickCustom = pickSel && pickSel.value === '__custom__';
-    const pickBranch = isPickCustom ? '__custom__' : (pickSel ? pickSel.value : app.searchParams.pick);
-    const pickCustomLabel = isPickCustom ? (document.getElementById('bk-edit-pick-custom-text')?.value.trim() || '') : '';
-    const pickCustomUrl = isPickCustom ? (document.getElementById('bk-edit-pick-custom-url')?.value.trim() || '') : '';
+    const pickCustomLabel = document.getElementById('bk-edit-pick-text')?.value.trim() || '';
+    const pickCustomUrl = document.getElementById('bk-edit-pick-url')?.value.trim() || '';
+    const dropCustomLabel = document.getElementById('bk-edit-drop-text')?.value.trim() || '';
+    const dropCustomUrl = document.getElementById('bk-edit-drop-url')?.value.trim() || '';
+    const pickBranch = '__custom__';
+    const dropBranch = '__custom__';
 
-    const dropSel = document.getElementById('bk-edit-drop');
-    const isDropCustom = dropSel && dropSel.value === '__custom__';
-    const dropBranch = isDropCustom ? '__custom__' : (dropSel ? dropSel.value : app.searchParams.drop);
-    const dropCustomLabel = isDropCustom ? (document.getElementById('bk-edit-drop-custom-text')?.value.trim() || '') : '';
-    const dropCustomUrl = isDropCustom ? (document.getElementById('bk-edit-drop-custom-url')?.value.trim() || '') : '';
-
-    if(isPickCustom && !pickCustomLabel) return utils.showToast('กรุณาระบุสถานที่รับรถ', 'warning');
-    if(isDropCustom && !dropCustomLabel) return utils.showToast('กรุณาระบุสถานที่คืนรถ', 'warning');
+    if(!pickCustomLabel) return utils.showToast('กรุณาระบุสถานที่รับรถ', 'warning');
+    if(!dropCustomLabel) return utils.showToast('กรุณาระบุสถานที่คืนรถ', 'warning');
 
     const newBooking = {
       id: bId, userId: app.currentUser.id, carId,
       pickBranch, dropBranch,
-      pickCustom: isPickCustom, pickCustomLabel, pickCustomUrl,
-      dropCustom: isDropCustom, dropCustomLabel, dropCustomUrl,
+      pickCustom: true, pickCustomLabel, pickCustomUrl,
+      dropCustom: true, dropCustomLabel, dropCustomUrl,
       dateFrom: app.searchParams.dateFrom, dateTo: app.searchParams.dateTo,
       days: utils.calcDays(app.searchParams.dateFrom, app.searchParams.dateTo),
       total: finalTotal, status: "Pending",
