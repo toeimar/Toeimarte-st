@@ -2576,7 +2576,11 @@ app.renderCarGrid = function() {
             ${c.acceleration ? `<span>·</span><span><i class="fa-solid fa-gauge text-warning"></i> ${c.acceleration}</span>` : ''}
           </div>
           <div class="mt-auto flex justify-between items-center" style="border-top:1px solid var(--border); padding-top:14px;">
-            <div><span class="car-price">฿${utils.formatMoney(c.price)}</span><span class="text-muted text-sm" style="font-weight:500;">/วัน</span></div>
+          <div>
+              <span class="car-price">฿${utils.formatMoney(utils.getTierPricePerDay(c, utils.calcDays(dateFrom, dateTo)))}</span>
+              <span class="text-muted text-sm" style="font-weight:500;">/วัน</span>
+              ${c.priceTiers && c.priceTiers.length > 1 ? `<div class="text-muted text-sm">เริ่มต้น ฿${utils.formatMoney(Math.min(...c.priceTiers.map(t=>t.price)))}/วัน</div>` : ''}
+            </div>
             <button class="btn btn-sm" onclick="ui.showCarDetailModal(${c.id})" 
               style="${isAvail ? 'background:linear-gradient(135deg, var(--primary), #2563eb); color:white; box-shadow:0 3px 10px rgba(15,157,141,0.35); font-weight:700;' : 'background:rgba(239,68,68,0.1); color:var(--danger); border:1.5px solid rgba(239,68,68,0.3); font-weight:700;'}">
               ${isAvail ? '<i class="fa-solid fa-arrow-right"></i> เลือกเลย' : '<i class="fa-solid fa-calendar-plus"></i> เปลี่ยนวัน'}
