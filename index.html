@@ -947,33 +947,23 @@ const utils = {
 };
 
 // =========== BRANCH SELECT + CUSTOM LOCATION ===========
-// สร้าง dropdown สาขา + กล่องระบุเอง (พิมพ์ได้)
 function branchSelectHTML(fieldId, currentVal, label, icon, iconColor) {
-  const bOpts = app.state.branches.map(b =>
-    `<option value="${b.id}" ${currentVal === b.id ? 'selected' : ''}>${b.name}</option>`
-  ).join('');
   return `
     <div class="input-group mb-0">
       <label><i class="fa-solid ${icon}" style="color:${iconColor};"></i> ${label}</label>
-      <select id="${fieldId}" class="input-control" onchange="ui.toggleCustomLocation('${fieldId}')">
-        ${bOpts}
-        <option value="__custom__">📍 ระบุเองที่อื่น...</option>
-      </select>
-      <div id="${fieldId}-custom-box" class="custom-location-box">
-        <label><i class="fa-solid fa-map-marker-alt"></i> พิมพ์ชื่อสถานที่หรือที่อยู่</label>
-        <input type="text" id="${fieldId}-custom-text" class="input-control" 
-               placeholder="เช่น โรงแรม X ถ.สุขุมวิท, บ้านเลขที่ 123 ซ.ลาดพร้าว"
-               style="padding:10px 14px;">
-        <label style="margin-top:4px;"><i class="fa-solid fa-map-location-dot"></i> Google Maps URL <span class="text-muted" style="font-weight:400;">(ไม่บังคับ)</span></label>
-        <input type="url" id="${fieldId}-custom-url" class="input-control" 
-               placeholder="https://maps.google.com/..."
-               style="padding:10px 14px;">
-        <span class="custom-location-hint"><i class="fa-solid fa-circle-info"></i> วาง URL จาก Google Maps เพื่อให้แอดมินนำทางได้ง่ายขึ้น</span>
+      <input type="text" id="${fieldId}-text" class="input-control" 
+             placeholder="เช่น สนามบินสุวรรณภูมิ, โรงแรม X ถ.สุขุมวิท"
+             value="${currentVal || ''}">
+      <div style="margin-top:6px;">
+        <input type="url" id="${fieldId}-url" class="input-control" 
+               placeholder="Google Maps URL (ไม่บังคับ) https://maps.google.com/..."
+               style="font-size:0.88rem; padding:9px 12px;">
       </div>
     </div>`;
 }
 
 // =========== VIEWS ===========
+
 const views = {
   bottomNav: () => {
     const isCustomerMode = app.currentView === 'home' || !app.isAdmin();
