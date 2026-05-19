@@ -2591,30 +2591,21 @@ app.renderCarGrid = function() {
   }).join('');
 };
 app.doSearchWithCustomLocation = function() {
-  const pickSel = document.getElementById('s-pick');
-  const dropSel = document.getElementById('s-drop');
-  if(pickSel && pickSel.value === '__custom__') {
-    const txt = document.getElementById('s-pick-custom-text')?.value.trim();
-    if(!txt) return utils.showToast('กรุณาระบุสถานที่รับรถ', 'warning');
-    this.searchParams.pick = '__custom__';
-    this.searchParams.pickCustomLabel = txt;
-    this.searchParams.pickCustomUrl = document.getElementById('s-pick-custom-url')?.value.trim() || '';
-  } else {
-    this.searchParams.pick = pickSel ? pickSel.value : this.searchParams.pick;
-    this.searchParams.pickCustomLabel = '';
-    this.searchParams.pickCustomUrl = '';
-  }
-  if(dropSel && dropSel.value === '__custom__') {
-    const txt = document.getElementById('s-drop-custom-text')?.value.trim();
-    if(!txt) return utils.showToast('กรุณาระบุสถานที่คืนรถ', 'warning');
-    this.searchParams.drop = '__custom__';
-    this.searchParams.dropCustomLabel = txt;
-    this.searchParams.dropCustomUrl = document.getElementById('s-drop-custom-url')?.value.trim() || '';
-  } else {
-    this.searchParams.drop = dropSel ? dropSel.value : this.searchParams.drop;
-    this.searchParams.dropCustomLabel = '';
-    this.searchParams.dropCustomUrl = '';
-  }
+  const pickText = document.getElementById('s-pick-text')?.value.trim();
+  const pickUrl = document.getElementById('s-pick-url')?.value.trim() || '';
+  const dropText = document.getElementById('s-drop-text')?.value.trim();
+  const dropUrl = document.getElementById('s-drop-url')?.value.trim() || '';
+
+  if(!pickText) return utils.showToast('กรุณาระบุสถานที่รับรถ', 'warning');
+  if(!dropText) return utils.showToast('กรุณาระบุสถานที่คืนรถ', 'warning');
+
+  this.searchParams.pick = '__custom__';
+  this.searchParams.pickCustomLabel = pickText;
+  this.searchParams.pickCustomUrl = pickUrl;
+  this.searchParams.drop = '__custom__';
+  this.searchParams.dropCustomLabel = dropText;
+  this.searchParams.dropCustomUrl = dropUrl;
+
   this.renderCarGrid();
 };
 
