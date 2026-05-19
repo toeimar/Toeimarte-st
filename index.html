@@ -1098,7 +1098,18 @@ const views = {
         <hr style="border:none; border-top:1px solid var(--border); margin: 8px 0;">
         <div class="sidebar-section-label">การตั้งค่า</div>
         <div id="menu-settings" class="menu-item" onclick="app.renderAdminTab('settings')"><span class="menu-icon"><i class="fa-solid fa-cog"></i></span> ตั้งค่าร้านค้า</div>
-        <div id="menu-telegram" class="menu-item" onclick="app.renderAdminTab('telegram')"><span class="menu-icon"><i class="fa-brands fa-telegram"></i></span> การแจ้งเตือน Telegram</div>
+          adminLayout: () => `
+    <div class="admin-layout">
+      <div class="sidebar">
+        <div class="sidebar-section-label">เมนูหลัก</div>
+        <div id="menu-dashboard" class="menu-item" onclick="app.renderAdminTab('dashboard')"><span class="menu-icon"><i class="fa-solid fa-chart-pie"></i></span> ภาพรวม (Dashboard)</div>
+        <div id="menu-bookings" class="menu-item" onclick="app.renderAdminTab('bookings')"><span class="menu-icon"><i class="fa-solid fa-list-check"></i></span> จัดการการจอง</div>
+        <div id="menu-cars" class="menu-item" onclick="app.renderAdminTab('cars')"><span class="menu-icon"><i class="fa-solid fa-car"></i></span> จัดการรถ (Fleet)</div>
+        <div id="menu-insurance" class="menu-item" onclick="app.renderAdminTab('insurance')"><span class="menu-icon"><i class="fa-solid fa-shield-halved"></i></span> ประกันรถยนต์</div>
+        <div id="menu-crm" class="menu-item" onclick="app.renderAdminTab('crm')"><span class="menu-icon"><i class="fa-solid fa-users"></i></span> จัดการลูกค้า (CRM)</div>
+        <hr style="border:none; border-top:1px solid var(--border); margin: 8px 0;">
+        <div class="sidebar-section-label">การตั้งค่า</div>
+        <div id="menu-settings" class="menu-item" onclick="app.renderAdminTab('settings')"><span class="menu-icon"><i class="fa-solid fa-cog"></i></span> ตั้งค่าร้านค้า</div>
         ${app.isMaster() ? `<div id="menu-admins" class="menu-item" style="color:var(--warning);" onclick="app.renderAdminTab('admins')"><span class="menu-icon"><i class="fa-solid fa-user-shield"></i></span> จัดการแอดมิน</div>` : ''}
       </div>
       <div class="admin-main animate-fade" id="admin-content"></div>
