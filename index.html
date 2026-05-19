@@ -1887,7 +1887,24 @@ const ui = {
           <div class="input-group mb-0"><label>รุ่น (Model)</label><input type="text" id="car-model" class="input-control" value="${c.model||''}" placeholder="เช่น Model 3"></div>
           <div class="input-group mb-0"><label>สีภายนอก</label><input type="text" id="car-color-ext" class="input-control" value="${c.colorExt||''}" placeholder="เช่น ขาวมุก"></div>
           <div class="input-group mb-0"><label>สีภายใน</label><input type="text" id="car-color-int" class="input-control" value="${c.colorInt||''}" placeholder="เช่น ดำ"></div>
-          <div class="input-group mb-0"><label>ราคาเช่า/วัน (บาท)</label><input type="number" id="car-price" class="input-control" value="${c.price}"></div>
+                <div class="input-group mb-0" style="grid-column:1/-1;">
+    <label>ราคาเช่าตามจำนวนวัน <span class="text-muted">(ขั้นบันได)</span></label>
+        <div id="price-tiers-container">
+          ${(c.priceTiers && c.priceTiers.length > 0 ? c.priceTiers : [{minDay:1, maxDay:1, price:c.price}]).map(t => `
+            <div class="price-tier-row flex gap-2 mb-2 items-center">
+              <input type="number" class="input-control tier-min" placeholder="วันเริ่ม" value="${t.minDay}" style="width:80px;">
+              <span class="text-muted">-</span>
+              <input type="number" class="input-control tier-max" placeholder="วันสิ้นสุด" value="${t.maxDay || ''}" style="width:80px;">
+              <span class="text-muted text-sm">วัน =</span>
+              <input type="number" class="input-control tier-price" placeholder="ราคา/วัน" value="${t.price}" style="flex:1;">
+              <span class="text-muted text-sm">บาท/วัน</span>
+              <button type="button" class="btn btn-danger btn-xs btn-icon" onclick="this.closest('.price-tier-row').remove()"><i class="fa-solid fa-times"></i></button>
+            </div>`).join('')}
+        </div>
+        <button type="button" class="btn btn-outline btn-sm mt-1" onclick="logic.addPriceTierRow()"><i class="fa-solid fa-plus"></i> เพิ่มช่วงราคา</button>
+        <small class="text-muted block mt-1">ช่องวันสิ้นสุดว่าง = ไม่จำกัด (เช่น 30+ วัน)</small>
+      </div>
+      <input type="hidden" id="car-price" value="${c.price}">
           <div class="input-group mb-0"><label>ระยะทางต่อชาร์จ (km)</label><input type="number" id="car-range" class="input-control" value="${c.range}"></div>
           <div class="input-group mb-0" style="grid-column:1/-1;"><label>จำนวนที่นั่ง</label><input type="number" id="car-seats" class="input-control" value="${c.seats}"></div>
         </div>
@@ -2228,10 +2245,18 @@ const logic = {
   saveCar(carId) {
     const name = document.getElementById('car-name').value.trim();
     if(!name) return utils.showToast('กรุณากรอกชื่อรถ', 'error');
+    const tiers = [];
+    document.querySelectorAll('.price-tier-row').forEach(row => {
+      const minDay = parseInt(row.querySelector('.tier-min').value) || 0;
+      const maxDay = row.querySelector('.tier-max').value ? parseInt(row.querySelector('.tier-max').value) : null;
+      const price = parseFloat(row.querySelector('.tier-price').value) || 0;
+      if(minDay && price) tiers.push({ minDay, maxDay, price });
+    });
     const newCar = {
       id: carId || Date.now(), name,
       type: document.getElementById('car-type').value,
-      price: parseFloat(document.getElementById('car-price').value) || 0,
+      price: tiers.length > 0 ? tiers[0].price : (parseFloat(document.getElementById('car-price').value) || 0),
+      priceTiers: tiers,
       range: parseInt(document.getElementById('car-range').value) || 0,
       seats: parseInt(document.getElementById('car-seats').value) || 0,
       features: document.getElementById('car-features').value,
