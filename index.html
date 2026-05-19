@@ -1462,7 +1462,6 @@ const ui = {
   
   closeModal() {
     const m = document.getElementById('main-modal');
-    if(m) { m.classList.remove('active'); setTimeout(() => m.remove(), 300); app.tempUploads = {}; }
     if(m) { m.classList.remove('active'); setTimeout(() => m.remove(), 300); app.tempUploads = {}; app._selectedInsurancePlan = null; }
   },
 
@@ -2175,8 +2174,8 @@ const logic = {
     const pickCustomUrl = document.getElementById('bk-edit-pick-url')?.value.trim() || '';
     const dropCustomLabel = document.getElementById('bk-edit-drop-text')?.value.trim() || '';
     const dropCustomUrl = document.getElementById('bk-edit-drop-url')?.value.trim() || '';
-    const pickBranch: pickCustomLabel,
-    const dropBranch: dropCustomLabel,
+    const pickBranch = pickCustomLabel;
+    const dropBranch = dropCustomLabel;
 
     if(!pickCustomLabel) return utils.showToast('กรุณาระบุสถานที่รับรถ', 'warning');
     if(!dropCustomLabel) return utils.showToast('กรุณาระบุสถานที่คืนรถ', 'warning');
