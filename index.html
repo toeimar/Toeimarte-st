@@ -1086,7 +1086,7 @@ const views = {
     </div>
   `,
 
-  adminLayout: () => `
+  <div id="menu-telegram" class="menu-item" onclick="app.renderAdminTab('telegram')"><span class="menu-icon"><i class="fa-brands fa-telegram"></i></span> การแจ้งเตือน Telegram</div>
     <div class="admin-layout">
       <div class="sidebar">
         <div class="sidebar-section-label">เมนูหลัก</div>
@@ -1373,9 +1373,16 @@ const views = {
             </div>
           </div>
         </div>
-        <button class="btn btn-primary w-full mt-4 btn-lg" onclick="logic.saveSettings()"><i class="fa-solid fa-save"></i> บันทึกการตั้งค่าทั้งหมด</button>
+                <button class="btn btn-primary w-full mt-4 btn-lg" onclick="logic.saveSettings()"><i class="fa-solid fa-save"></i> บันทึกการตั้งค่าทั้งหมด</button>
+        <div class="card mt-4">
+          <h4 class="mb-3" style="padding-bottom:12px; border-bottom:1px solid var(--border);"><i class="fa-brands fa-telegram text-info"></i> การแจ้งเตือน Telegram</h4>
+          <div class="input-group"><label>Chat ID (Group/Channel)</label><input type="text" id="tg-chatid" class="input-control" value="${app.state.settings.tgChatId||''}" placeholder="-1001234567890"></div>
+          <div class="flex gap-2">
+            <button class="btn btn-primary btn-sm" onclick="logic.saveTelegramSettings()"><i class="fa-solid fa-save"></i> บันทึก Chat ID</button>
+            <button class="tg-test-btn" onclick="logic.testTelegram()"><i class="fa-brands fa-telegram"></i> ทดสอบส่ง</button>
+          </div>
+        </div>
         <style>@media(max-width:768px){ #setting-grid { grid-template-columns: 1fr !important; } }</style>`;
-    },
 
     telegram: () => `
       <h2 class="mb-4"><i class="fa-brands fa-telegram text-info"></i> ตั้งค่าการแจ้งเตือน Telegram</h2>
