@@ -1655,8 +1655,8 @@ const ui = {
             <div class="mt-3 p-2 text-center" style="background:var(--primary-light); border-radius:10px; font-weight:700; color:var(--primary); font-size:0.95rem;" id="bk-disp-days"><i class="fa-solid fa-calendar-days"></i> รวม ${utils.calcDays(app.searchParams.dateFrom, app.searchParams.dateTo)} วัน</div>
           </div>
           <h4 class="mb-3 flex items-center gap-2"><i class="fa-solid fa-id-card text-primary"></i> เอกสารผู้เช่า</h4>
-          <div class="input-group mb-2"><label>ใบขับขี่ <span class="text-muted">(ถ้ามี)</span></label><input type="file" accept="image/*" class="input-control" onchange="logic.handleFileUpload(event, 'license')"><img id="preview-license" style="max-height:80px; display:none; margin-top:8px; border-radius:8px; object-fit:cover;"></div>
-          <div class="input-group"><label>บัตรประชาชน <span class="text-muted">(ถ้ามี)</span></label><input type="file" accept="image/*" class="input-control" onchange="logic.handleFileUpload(event, 'idcard')"><img id="preview-idcard" style="max-height:80px; display:none; margin-top:8px; border-radius:8px; object-fit:cover;"></div>
+          <div class="input-group mb-2"><label>ใบขับขี่ <span class="text-danger">*</span></label><input type="file" accept="image/*" class="input-control" onchange="logic.handleFileUpload(event, 'license')"><img id="preview-license" style="max-height:80px; display:none; margin-top:8px; border-radius:8px; object-fit:cover;"></div>
+          <div class="input-group"><label>บัตรประชาชน <span class="text-danger">*</span></label><input type="file" accept="image/*" class="input-control" onchange="logic.handleFileUpload(event, 'idcard')"><img id="preview-idcard" style="max-height:80px; display:none; margin-top:8px; border-radius:8px; object-fit:cover;"></div>
         </div>
         <div>
           <h4 class="mb-3 flex items-center gap-2"><i class="fa-solid fa-file-invoice-dollar text-primary"></i> สรุปค่าใช้จ่าย</h4>
@@ -2166,6 +2166,8 @@ const logic = {
   },
 
   confirmBooking(carId, defaultPricePerDay) {
+    if(!app.tempUploads['license']) return utils.showToast('กรุณาอัปโหลดใบขับขี่', 'warning');
+    if(!app.tempUploads['idcard']) return utils.showToast('กรุณาอัปโหลดบัตรประชาชน', 'warning');
     if(!app.tempUploads['slip']) return utils.showToast('กรุณาอัปโหลดรูปสลิปโอนเงินก่อน', 'warning');
     const netVal = document.getElementById('book-net').dataset.net;
     const carObj = app.state.cars.find(c => c.id === carId);
