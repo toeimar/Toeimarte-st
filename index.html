@@ -1382,45 +1382,8 @@ const views = {
             <button class="tg-test-btn" onclick="logic.testTelegram()"><i class="fa-brands fa-telegram"></i> ทดสอบส่ง</button>
           </div>
         </div>
-        <style>@media(max-width:768px){ #setting-grid { grid-template-columns: 1fr !important; } }</style>`;
-
-    telegram: () => `
-      <h2 class="mb-4"><i class="fa-brands fa-telegram text-info"></i> ตั้งค่าการแจ้งเตือน Telegram</h2>
-      <div class="card mb-4">
-        <h4 class="mb-4" style="padding-bottom:12px; border-bottom:1px solid var(--border);">ข้อมูล Bot</h4>
-        <div class="input-group">
-          <label>Bot Token</label>
-          <div style="background:var(--bg-body); border:1.5px solid var(--border); border-radius:12px; padding:13px 16px; display:flex; align-items:center; gap:10px; color:var(--text-muted);">
-            <i class="fa-solid fa-lock" style="color:var(--primary); flex-shrink:0;"></i>
-            <span style="font-family:monospace; font-size:0.95rem; letter-spacing:1px;">••••••••••••••••••••••••••••••••••••••</span>
-            <span class="badge badge-success" style="margin-left:auto; flex-shrink:0;"><i class="fa-solid fa-check"></i> ตั้งค่าแล้ว</span>
-          </div>
-        </div>
-        <div class="input-group"><label>Chat ID (Group/Channel)</label><input type="text" id="tg-chatid" class="input-control" value="${app.state.settings.tgChatId||''}" placeholder="-1001234567890"></div>
-        <button class="btn btn-primary btn-sm" onclick="logic.saveTelegramSettings()"><i class="fa-solid fa-save"></i> บันทึก Chat ID</button>
-      </div>
-      <div class="card mb-4">
-        <h4 class="mb-3">ทดสอบการแจ้งเตือน</h4>
-        <button class="tg-test-btn" onclick="logic.testTelegram()" style="font-size:1rem; padding:14px 28px; border-radius:12px;"><i class="fa-brands fa-telegram"></i> ส่งข้อความทดสอบ</button>
-      </div>
-      <div class="card">
-        <h4 class="mb-3">เหตุการณ์ที่แจ้งเตือน</h4>
-        <div style="display:flex; flex-direction:column; gap:10px;">
-          ${[
-            { icon:'🔔', label:'มีการจองใหม่', desc:'แจ้งทันทีเมื่อลูกค้าส่งคำขอจอง' },
-            { icon:'✅', label:'อัปเดตสถานะการจอง', desc:'เมื่อแอดมินเปลี่ยนสถานะ' },
-            { icon:'👤', label:'สมัครสมาชิกใหม่', desc:'เมื่อมีลูกค้าลงทะเบียนเข้าระบบ' },
-            { icon:'🛡️', label:'ประกันใกล้หมดอายุ', desc:'แจ้งเตือนเมื่อกดปุ่มในหน้าประกัน' },
-            { icon:'🚗', label:'แจ้งเตือนรับรถล่วงหน้า 2 วัน', desc:'แจ้งอัตโนมัติเมื่อวันรับรถใกล้ถึง' },
-            { icon:'🔔', label:'แจ้งเตือนคืนรถล่วงหน้า 2 วัน', desc:'แจ้งอัตโนมัติเมื่อวันคืนรถใกล้ถึง' },
-            { icon:'📍', label:'สถานที่รับ-คืนรถแบบกำหนดเอง', desc:'ส่ง Google Maps URL ในการแจ้งเตือน' },
-          ].map(ev => `<div class="flex items-center gap-3 p-3" style="background:var(--bg-body); border-radius:12px; border:1px solid var(--border);">
-            <span style="font-size:1.4rem;">${ev.icon}</span>
-            <div><div class="font-bold">${ev.label}</div><div class="text-muted text-sm">${ev.desc}</div></div>
-            <span class="badge badge-success" style="margin-left:auto;"><i class="fa-solid fa-check"></i> เปิดใช้</span>
-          </div>`).join('')}
-        </div>
-      </div>`,
+                <style>@media(max-width:768px){ #setting-grid { grid-template-columns: 1fr !important; } }</style>`;
+    },
 
     admins: () => `
       <h2 class="mb-4" style="color:var(--warning);"><i class="fa-solid fa-user-shield"></i> จัดการสิทธิ์แอดมิน (Master Only)</h2>
