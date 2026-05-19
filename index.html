@@ -2308,20 +2308,20 @@ const logic = {
   },
 
   saveSettings() {
-  app.state.settings.storeName = document.getElementById('set-store-name').value;
-  app.state.settings.heroTitle = document.getElementById('set-hero-title').value;
-  app.state.settings.heroSub = document.getElementById('set-hero-sub').value;
-  app.state.settings.phone = document.getElementById('set-phone').value;
-  app.state.settings.bank = document.getElementById('set-bank').value;
-  app.state.settings.accNo = document.getElementById('set-acc-no').value;
-  app.state.settings.accName = document.getElementById('set-acc-name').value;
-  if(app.tempUploads['setLogo']) app.state.settings.logoUrl = app.tempUploads['setLogo'];
-  if(app.tempUploads['setQR']) app.state.settings.qrUrl = app.tempUploads['setQR'];
-  app.saveState(); app.tempUploads = {};
-  utils.showToast('บันทึกการตั้งค่าร้านค้าสำเร็จ ✅', 'success');
-  app.render();
-  setTimeout(() => { app.renderAdminTab('settings'); }, 100);
-},
+    app.state.settings.storeName = document.getElementById('set-store-name').value;
+    app.state.settings.heroTitle = document.getElementById('set-hero-title').value;
+    app.state.settings.heroSub = document.getElementById('set-hero-sub').value;
+    app.state.settings.phone = document.getElementById('set-phone').value;
+    app.state.settings.bank = document.getElementById('set-bank').value;
+    app.state.settings.accNo = document.getElementById('set-acc-no').value;
+    app.state.settings.accName = document.getElementById('set-acc-name').value;
+    if(app.tempUploads['setLogo']) app.state.settings.logoUrl = app.tempUploads['setLogo'];
+    if(app.tempUploads['setQR']) app.state.settings.qrUrl = app.tempUploads['setQR'];
+    app.saveState(); app.tempUploads = {};
+    utils.showToast('บันทึกการตั้งค่าร้านค้าสำเร็จ ✅', 'success');
+    app.render();
+    setTimeout(() => { app.renderAdminTab('settings'); }, 100);
+  },
 
   addBranch() {
     const id = document.getElementById('new-branch-id').value.trim().toUpperCase();
