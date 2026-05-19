@@ -592,6 +592,10 @@ const DEFAULT_STATE = {
       insuranceExpiry: "2026-06-15", insuranceNote: "ประกันชั้น 1 บริษัทวิริยะประกันภัย"
     }
   ],
+  insurancePlans: [
+    { id: 'basic', name: 'ประกันพื้นฐาน', price: 200, desc: 'คุ้มครองอุบัติเหตุเบื้องต้น' },
+    { id: 'premium', name: 'ประกันชั้น 1', price: 500, desc: 'คุ้มครองครอบคลุมทุกกรณี' }
+  ],
   promotions: [
     { code: "NEWUSER", discount: 10, type: "percent", desc: "ลด 10% สำหรับผู้ใช้ใหม่" },
     { code: "DISCOUNT500", discount: 500, type: "amount", desc: "ลดทันที 500 บาท" }
