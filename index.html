@@ -826,7 +826,19 @@ const utils = {
   },
   calcDays: (d1, d2) => {
     const timeDiff = new Date(d2).getTime() - new Date(d1).getTime();
-    return Math.max(1, Math.ceil(timeDiff / (1000 * 3600 * 24)));
+        return Math.max(1, Math.ceil(timeDiff / (1000 * 3600 * 24)));
+  },
+  calcTieredPrice: (car, days) => {
+    if(!car.priceTiers || car.priceTiers.length === 0) return car.price * days;
+    const sorted = [...car.priceTiers].sort((a,b) => a.minDay - b.minDay);
+    const tier = sorted.reverse().find(t => days >= t.minDay);
+    return tier ? tier.price * days : car.price * days;
+  },
+  getTierPricePerDay: (car, days) => {
+    if(!car.priceTiers || car.priceTiers.length === 0) return car.price;
+    const sorted = [...car.priceTiers].sort((a,b) => a.minDay - b.minDay);
+    const tier = sorted.reverse().find(t => days >= t.minDay);
+    return tier ? tier.price : car.price;
   },
   isCarAvailable: (carId, dFrom, dTo) => {
     const checkStart = new Date(dFrom); const checkEnd = new Date(dTo);
@@ -2379,6 +2391,22 @@ const logic = {
     utils.showToast('บันทึกการตั้งค่าร้านค้าสำเร็จ ✅', 'success');
     app.render();
     setTimeout(() => { app.renderAdminTab('settings'); }, 100);
+  },
+
+  addPriceTierRow() {
+    const container = document.getElementById('price-tiers-container');
+    if(!container) return;
+    const row = document.createElement('div');
+    row.className = 'price-tier-row flex gap-2 mb-2 items-center';
+    row.innerHTML = `
+      <input type="number" class="input-control tier-min" placeholder="วันเริ่ม" style="width:80px;">
+      <span class="text-muted">-</span>
+      <input type="number" class="input-control tier-max" placeholder="วันสิ้นสุด" style="width:80px;">
+      <span class="text-muted text-sm">วัน =</span>
+      <input type="number" class="input-control tier-price" placeholder="ราคา/วัน" style="flex:1;">
+      <span class="text-muted text-sm">บาท/วัน</span>
+      <button type="button" class="btn btn-danger btn-xs btn-icon" onclick="this.closest('.price-tier-row').remove()"><i class="fa-solid fa-times"></i></button>`;
+    container.appendChild(row);
   },
 
     selectInsurancePlan(planId, carPrice) {
