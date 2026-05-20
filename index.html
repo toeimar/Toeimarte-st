@@ -574,12 +574,12 @@ const DEFAULT_STATE = {
       'ห้ามนำรถไปใช้ในกิจกรรมผิดกฎหมายทุกประเภท',
       'เงินมัดจำจะคืนให้หลังตรวจสอบสภาพรถเรียบร้อยแล้ว',
       'บริษัทสงวนสิทธิ์ในการเรียกค่าเสียหายเพิ่มเติมหากมีความเสียหาย'
+    ],
     depositType: 'fixed',
     depositValue: 2000,
     deliveryPricePerKm: 10,
     deliveryBaseKm: 0,
     storeMapUrl: '',
-    ]
   },
   branches: [
     { id: 'BKK', name: 'สนามบินสุวรรณภูมิ (BKK)', address: 'ถ.บางนา-ตราด กม.15 สมุทรปราการ', mapUrl: 'https://maps.google.com/?q=สนามบินสุวรรณภูมิ', mapEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3877.036!2d100.7474!3d13.6900!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x311d603f8e95b8c9%3A0xb90e8a2aff98b17a!2sSuvarnabhumi+Airport!5e0!3m2!1sth!2sth!4v1234567890' },
@@ -1456,12 +1456,8 @@ const views = {
           <div class="flex gap-2">
             <button class="btn btn-primary btn-sm" onclick="logic.saveTelegramSettings()"><i class="fa-solid fa-save"></i> บันทึก Chat ID</button>
             <button class="tg-test-btn" onclick="logic.testTelegram()"><i class="fa-brands fa-telegram"></i> ทดสอบส่ง</button>
-          </div>
-        </div>
-                        </div>
-                </div>
-                </div>
-                <div class="card mt-4">
+                  </div>
+        <div class="card mt-4">
           <h4 class="mb-3" style="padding-bottom:12px; border-bottom:1px solid var(--border);"><i class="fa-solid fa-file-contract text-primary"></i> แม่แบบสัญญาเช่า</h4>
           <div class="input-group"><label>ชื่อสัญญา (หัวเรื่อง)</label><input type="text" id="ct-title" class="input-control" value="${app.state.settings.contractTitle||'สัญญาเช่ารถยนต์'}"></div>
           <div class="input-group"><label>ข้อความนำ (ใต้ชื่อสัญญา)</label><textarea id="ct-header" class="input-control" rows="2">${app.state.settings.contractHeader||''}</textarea></div>
