@@ -687,7 +687,12 @@ const app = {
       onSnapshot(docRef, (snapshot) => {
         if (snapshot.exists()) {
           this._mergeRemoteState(snapshot.data());
-          if (document.getElementById('app-root').innerHTML !== '') this.render();
+          if (document.getElementById('app-root').innerHTML !== '') {
+            this.render();
+            if(this.isAdmin() && this.currentAdminTab) {
+              this.renderAdminTab(this.currentAdminTab);
+            }
+          }
         }
       }, (error) => { console.error("Firestore listen error:", error); });
     } catch(e) { console.error("Firebase init error:", e); }
@@ -2166,7 +2171,7 @@ _printContract() {
   if(contractArea) {
     const clone = contractArea.cloneNode(true);
     clone.id = 'contract-print-area';
-    clone.style.cssText = 'position:fixed;top:0;left:0;width:100%;z-index:99999;background:white;padding:20mm 18mm;font-family:Sarabun,sans-serif;font-size:13pt;line-height:1.9;color:black;';
+    clone.style.cssText = 'position:absolute;top:0;left:0;width:210mm;min-height:297mm;z-index:99999;background:white;padding:20mm 18mm;font-family:Sarabun,sans-serif;font-size:13pt;line-height:1.9;color:black;';
     document.body.appendChild(clone);
     setTimeout(() => { window.print(); clone.remove(); }, 300);
   } else {
