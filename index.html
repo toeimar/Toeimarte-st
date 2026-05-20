@@ -474,9 +474,12 @@
 
   /* ===== BRANCH INPUT MIXED ===== */
   .branch-input-wrap { position: relative; }
-   @media print {
+  @media print {
     body * { visibility: hidden; }
-    #contract-print-area, #contract-print-area * { visibility: visible; }
+    #contract-print-area, #contract-print-area * { visibility: visible !important; }
+    #main-modal, #main-modal * { visibility: visible !important; }
+    .modal-overlay { display: flex !important; opacity: 1 !important; }
+    .modal-content { transform: none !important; }
     #contract-print-area {
       position: fixed; top: 0; left: 0;
       width: 210mm; min-height: 297mm;
