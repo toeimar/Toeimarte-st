@@ -722,6 +722,7 @@ const app = {
   },
 
   checkInsuranceAlerts() {
+    if(!this.isAdmin()) return;
     const alertDays = this.state.settings.insuranceAlertDays || 30;
     const today = new Date(); today.setHours(0,0,0,0);
     this.state.cars.forEach(car => {
@@ -1366,6 +1367,7 @@ const views = {
                 </div>
               </div>
               <button class="btn btn-outline btn-sm" onclick="ui.showCRMEditModal('${u.id}')"><i class="fa-solid fa-gear"></i> จัดการ</button>
+              <button class="btn btn-danger btn-sm" onclick="logic.deleteCustomer('${u.id}')"><i class="fa-solid fa-trash"></i> ลบ</button>
             </div>`;
           }).join('')}
     `,
@@ -2157,7 +2159,16 @@ _printContract() {
   if(renterCanvas && renterImg) renterImg.src = renterCanvas.toDataURL('image/png');
   if(ownerCanvas && ownerImg) ownerImg.src = ownerCanvas.toDataURL('image/png');
   if(printArea) printArea.style.display = 'block';
-  setTimeout(() => { window.print(); }, 200);
+  const contractArea = document.getElementById('contract-print-area');
+  if(contractArea) {
+    const clone = contractArea.cloneNode(true);
+    clone.id = 'contract-print-area';
+    clone.style.cssText = 'position:fixed;top:0;left:0;width:100%;z-index:99999;background:white;padding:20mm 18mm;font-family:Sarabun,sans-serif;font-size:13pt;line-height:1.9;color:black;';
+    document.body.appendChild(clone);
+    setTimeout(() => { window.print(); clone.remove(); }, 300);
+  } else {
+    setTimeout(() => { window.print(); }, 200);
+  }
 },
 
   showInsuranceEditModal(carId) {
@@ -2894,6 +2905,17 @@ const logic = {
     if(app.state.branches.find(b => b.id === id)) return utils.showToast('รหัสสาขานี้มีอยู่แล้ว', 'error');
     app.state.branches.push({ id, name, address, mapUrl, mapEmbed });
     app.saveState(); utils.showToast('เพิ่มสาขาสำเร็จ', 'success'); app.renderAdminTab('settings');
+  },
+
+   deleteCustomer(userId) {
+    const u = app.state.users.find(x => x.id === userId);
+    if(!u) return;
+    if(confirm(`ต้องการลบลูกค้า "${u.name}" ออกจากระบบ?`)) {
+      app.state.users = app.state.users.filter(x => x.id !== userId);
+      app.saveState();
+      utils.showToast('ลบลูกค้าสำเร็จ', 'success');
+      app.renderAdminTab('crm');
+    }
   },
 
   deleteBranch(id) {
