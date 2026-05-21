@@ -483,20 +483,21 @@
     body * { visibility: hidden; }
     #contract-print-area, #contract-print-area * { visibility: visible !important; }
     #contract-print-area {
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 160mm !important;
-      max-width: 160mm !important;
-      padding: 8mm 10mm !important;
-      margin: 0 auto !important;
-      background: white !important;
-      color: black !important;
-      font-family: 'Sarabun', sans-serif !important;
-      font-size: 8pt !important;
-      line-height: 1.5 !important;
-      overflow: hidden !important;
-    }
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10mm 12mm !important;
+    margin: 0 auto !important;
+    background: white !important;
+    color: black !important;
+    font-family: 'Sarabun', sans-serif !important;
+    font-size: 9pt !important;
+    line-height: 1.6 !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
     #contract-print-area * {
       max-width: 100% !important;
       word-break: break-word !important;
@@ -2290,8 +2291,8 @@ _printContract() {
   if(contractArea) {
     const clone = contractArea.cloneNode(true);
     clone.id = 'contract-print-area';
-    clone.style.cssText = 'position:fixed;top:0;left:0;width:160mm;max-width:160mm;z-index:99999;background:white;padding:0;font-family:Sarabun,sans-serif;font-size:8pt;line-height:1.5;color:black;box-sizing:border-box;overflow:hidden;word-break:break-word;';
-        document.querySelectorAll('#contract-print-area').forEach(el => {
+    clone.style.cssText = 'position:relative;width:100%;max-width:100%;background:white;padding:10mm 12mm;font-family:Sarabun,sans-serif;font-size:9pt;line-height:1.6;color:black;box-sizing:border-box;overflow:visible;word-break:break-word;';
+    document.querySelectorAll('#contract-print-area').forEach(el => {
       if(el !== contractArea) el.remove();
     });
     document.body.appendChild(clone);
