@@ -498,6 +498,18 @@
     .info-row-value { color: #000 !important; }
     #sig-print-area { display: block !important; }
   }
+    /* ===== BOOKING CALENDAR ===== */
+  .booking-cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+  .booking-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+  .cal-day-header { text-align:center; font-size:0.78rem; font-weight:700; color:var(--text-muted); padding:6px 0; text-transform:uppercase; }
+  .cal-day { min-height:76px; border-radius:10px; border:1px solid var(--border); padding:4px 6px; background:var(--bg-card); position:relative; transition:background 0.15s; }
+  .cal-day:hover { background:var(--primary-light); }
+  .cal-day.today { border-color:var(--primary); border-width:2px; }
+  .cal-day.other-month { opacity:0.35; }
+  .cal-day-num { font-size:0.82rem; font-weight:700; color:var(--text-muted); }
+  .cal-day.today .cal-day-num { color:var(--primary); }
+  .cal-booking-chip { font-size:0.68rem; font-weight:700; border-radius:4px; padding:1px 5px; margin-top:2px; color:white; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer; }
+  .cal-car-filter { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
 </style>
   
 </head>
@@ -610,6 +622,8 @@ const DEFAULT_STATE = {
       engine: "Dual Motor Electric", power: "358 แรงม้า", torque: "510 Nm",
       acceleration: "4.4 วินาที", topSpeed: "225 กม./ชม.",
       insuranceExpiry: "2025-12-31", insuranceNote: "ประกันชั้น 1 บริษัทเมืองไทยประกันภัย",
+      prbExpiry: "", prbNote: "",
+      taxExpiry: "", taxNote: "",
       depositType: 'fixed', depositValue: 2000
     },
     { 
@@ -661,7 +675,7 @@ const app = {
     if (!this.state.settings.tgChatId) this.state.settings.tgChatId = DEFAULT_STATE.settings.tgChatId;
     if (!this.state.settings.insuranceAlertDays) this.state.settings.insuranceAlertDays = 30;
     this.state.branches = this.state.branches.map(b => ({ address: '', mapUrl: '', mapEmbed: '', ...b }));
-    this.state.cars = this.state.cars.map(c => ({ insuranceExpiry: '', insuranceNote: '', depositType: 'fixed', depositValue: 2000, ...c }));
+    this.state.cars = this.state.cars.map(c => ({ insuranceExpiry: '', insuranceNote: '', prbExpiry: '', prbNote: '', taxExpiry: '', taxNote: '', depositType: 'fixed', depositValue: 2000, ...c }));
     if (!this.state.insurancePlans) this.state.insurancePlans = DEFAULT_STATE.insurancePlans;
     if (!this.state.settings.depositType) this.state.settings.depositType = 'fixed';
     if (this.state.settings.depositValue === undefined) this.state.settings.depositValue = 2000;
@@ -802,7 +816,8 @@ const app = {
     const fn = views.adminTabs[tab];
     content.innerHTML = fn ? fn() : `<p class="text-muted">ไม่พบหน้านี้</p>`;
     if(tab === 'dashboard') {
-      setTimeout(() => { ui.renderChart(); ui.renderTimeline(); }, 100);
+      const today = new Date();
+      setTimeout(() => { ui.renderChart(); ui.renderTimeline(today.getFullYear(), today.getMonth(), null); }, 100);
     }
     document.getElementById('bottom-nav-root').innerHTML = views.bottomNav();
   },
@@ -1003,10 +1018,11 @@ const utils = {
     const message = `🛡️ <b>แจ้งเตือนประกันรถ</b>\n\n🚗 <b>รถ:</b> ${car.name}\n📅 <b>วันหมดประกัน:</b> ${utils.formatDate(car.insuranceExpiry)}\n⏰ <b>เหลือ:</b> ${diff >= 0 ? diff + ' วัน' : 'หมดอายุแล้ว!'}\n📋 <b>หมายเหตุ:</b> ${car.insuranceNote||'-'}`;
     await utils.sendTelegram(message);
   },
-  getInsuranceStatus: (car, alertDays) => {
-    if(!car.insuranceExpiry) return { status: 'none', diff: null, color: 'var(--text-muted)', label: 'ไม่ระบุ' };
+    getInsuranceStatus: (car, alertDays, type = 'insurance') => {
+    const expiryField = type === 'prb' ? car.prbExpiry : type === 'tax' ? car.taxExpiry : car.insuranceExpiry;
+    if(!expiryField) return { status: 'none', diff: null, color: 'var(--text-muted)', label: 'ไม่ระบุ' };
     const today = new Date(); today.setHours(0,0,0,0);
-    const expiry = new Date(car.insuranceExpiry); expiry.setHours(0,0,0,0);
+    const expiry = new Date(expiryField); expiry.setHours(0,0,0,0);
     const diff = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
     if(diff < 0) return { status: 'expired', diff, color: 'var(--danger)', label: `หมดอายุแล้ว ${Math.abs(diff)} วัน` };
     if(diff <= alertDays) return { status: 'soon', diff, color: 'var(--warning)', label: `เหลือ ${diff} วัน` };
@@ -1262,9 +1278,10 @@ const views = {
             const ins = utils.getInsuranceStatus(car, alertDays);
             return `<div class="card" style="border-color:${ins.status==='expired'?'var(--danger)':ins.status==='soon'?'var(--warning)':'var(--border)'};">
               <div class="flex justify-between items-start mb-3"><div><h4 style="font-size:1rem;">${car.name}</h4><span class="badge badge-info" style="font-size:0.75rem;">${car.type}</span></div><span style="font-size:1.4rem;">${ins.status==='expired'?'🚨':ins.status==='soon'?'⚠️':'✅'}</span></div>
-              <div class="info-row"><span class="info-row-label">วันหมดประกัน</span><span class="info-row-value" style="color:${ins.color}; font-weight:700;">${utils.formatDate(car.insuranceExpiry)}</span></div>
-              <div class="info-row"><span class="info-row-label">สถานะ</span><span class="info-row-value" style="color:${ins.color}; font-weight:700;">${ins.label}</span></div>
-              <div class="info-row" style="border:none;"><span class="info-row-label">บันทึก</span><span class="info-row-value text-muted">${car.insuranceNote||'-'}</span></div>
+              <div class="info-row"><span class="info-row-label">🛡️ ประกัน</span><span class="info-row-value" style="color:${ins.color}; font-weight:700;">${utils.formatDate(car.insuranceExpiry)} · ${ins.label}</span></div>
+              <div class="info-row"><span class="info-row-label">📋 บันทึก</span><span class="info-row-value text-muted">${car.insuranceNote||'-'}</span></div>
+              ${(() => { const prb = utils.getInsuranceStatus(car, alertDays, 'prb'); return `<div class="info-row"><span class="info-row-label">🚗 พ.ร.บ.</span><span class="info-row-value" style="color:${prb.color}; font-weight:700;">${car.prbExpiry ? utils.formatDate(car.prbExpiry) + ' · ' + prb.label : 'ไม่ระบุ'}</span></div>`; })()}
+              ${(() => { const tax = utils.getInsuranceStatus(car, alertDays, 'tax'); return `<div class="info-row" style="border:none;"><span class="info-row-label">🏷️ ภาษี/ป้าย</span><span class="info-row-value" style="color:${tax.color}; font-weight:700;">${car.taxExpiry ? utils.formatDate(car.taxExpiry) + ' · ' + tax.label : 'ไม่ระบุ'}</span></div>`; })()}
               ${ins.diff !== null && ins.diff >= 0 ? `<div class="insurance-days-bar mt-2"><div class="insurance-days-fill" style="width:${Math.min(100,(ins.diff/365)*100)}%; background:${ins.color};"></div></div>` : ''}
               <div class="flex gap-2 mt-3">
                 <button class="btn btn-outline btn-sm flex-1" onclick="ui.showInsuranceEditModal(${car.id})"><i class="fa-solid fa-edit"></i> แก้ไข</button>
@@ -1344,6 +1361,7 @@ const views = {
             <div class="p-4">
               <div class="flex justify-between items-start mb-1"><h3 style="font-size:1.05rem; font-weight:700;">${c.name}</h3><span style="font-size:0.82rem; color:var(--text-muted);">${bkCount} ครั้ง</span></div>
               <div class="text-primary font-bold mb-1" style="font-size:1.1rem;">฿${utils.formatMoney(c.price)}<span class="text-muted" style="font-size:0.85rem; font-weight:500;"> /วัน</span></div>
+              ${c.priceTiers && c.priceTiers.length > 1 ? `<div style="margin-bottom:6px;">${c.priceTiers.map(t=>`<span style="font-size:0.72rem; background:var(--primary-light); color:var(--primary); border-radius:6px; padding:2px 7px; margin-right:3px; font-weight:700;">${t.minDay}${t.maxDay?'-'+t.maxDay:'+'}วัน = ฿${utils.formatMoney(t.price)}</span>`).join('')}</div>` : ''}
               <div class="car-rating mb-3"><i class="fa-solid fa-star" style="color:var(--warning);"></i> ${c.rating} (${c.reviews} รีวิว)</div>
               <div class="flex gap-2">
                 <button class="btn btn-outline btn-sm flex-1" onclick="ui.showCarFormModal(${c.id})"><i class="fa-solid fa-edit"></i> แก้ไข</button>
@@ -1743,9 +1761,19 @@ const ui = {
           <div class="card-flat p-3 mb-4" style="border-radius:14px;">
             <div class="font-bold text-primary mb-3" style="font-size:1.05rem;">${c.name}</div>
             ${branchSelectHTML('bk-edit-pick', app.searchParams.pick, 'สถานที่รับรถ', 'fa-location-dot', 'var(--primary)')}
-            <div class="input-group mb-2 mt-3"><label>วันที่รับรถ</label><input type="date" id="bk-edit-dfrom" class="input-control" style="padding:8px 12px;" value="${app.searchParams.dateFrom}" onchange="logic.recalcCustomerBookingPrice(${c.price})"></div>
+            <div class="input-group mb-2 mt-3"><label>วันที่รับรถ</label>
+              <div class="flex gap-2">
+                <input type="date" id="bk-edit-dfrom" class="input-control" style="padding:8px 12px; flex:1;" value="${app.searchParams.dateFrom}" onchange="logic.recalcCustomerBookingPrice(${c.price})">
+                <input type="time" id="bk-edit-tpick" class="input-control" style="padding:8px 12px; width:120px;" value="09:00">
+              </div>
+            </div>
             ${branchSelectHTML('bk-edit-drop', app.searchParams.drop, 'สถานที่คืนรถ', 'fa-map-pin', 'var(--warning)')}
-            <div class="input-group mb-0 mt-3"><label>วันที่คืนรถ</label><input type="date" id="bk-edit-dto" class="input-control" style="padding:8px 12px;" value="${app.searchParams.dateTo}" onchange="logic.recalcCustomerBookingPrice(${c.price})"></div>
+            <div class="input-group mb-0 mt-3"><label>วันที่คืนรถ</label>
+              <div class="flex gap-2">
+                <input type="date" id="bk-edit-dto" class="input-control" style="padding:8px 12px; flex:1;" value="${app.searchParams.dateTo}" onchange="logic.recalcCustomerBookingPrice(${c.price})">
+                <input type="time" id="bk-edit-tdrop" class="input-control" style="padding:8px 12px; width:120px;" value="09:00">
+              </div>
+            </div>
             <div class="mt-3 p-2 text-center" style="background:var(--primary-light); border-radius:10px; font-weight:700; color:var(--primary); font-size:0.95rem;" id="bk-disp-days"><i class="fa-solid fa-calendar-days"></i> รวม ${utils.calcDays(app.searchParams.dateFrom, app.searchParams.dateTo)} วัน</div>
           </div>
           <h4 class="mb-3 flex items-center gap-2"><i class="fa-solid fa-id-card text-primary"></i> เอกสารผู้เช่า</h4>
@@ -1901,18 +1929,19 @@ const ui = {
           <h4 class="mb-3" style="font-size:0.95rem; border-bottom:1px solid var(--border); padding-bottom:10px;">รายละเอียดการเช่า</h4>
           <div class="info-row">
             <span class="info-row-label"><i class="fa-solid fa-location-dot text-primary"></i> รับรถที่</span>
-            <span class="info-row-value">${bPick}${b.pickCustomUrl ? `<br><a href="${b.pickCustomUrl}" target="_blank" class="text-primary text-sm"><i class="fa-solid fa-map-location-dot"></i> ดูแผนที่</a>` : ''}<br><span class="text-muted text-sm">${utils.formatDate(b.dateFrom)}</span></span>
+            <span class="info-row-value">${bPick}${b.pickCustomUrl ? `<br><a href="${b.pickCustomUrl}" target="_blank" class="text-primary text-sm"><i class="fa-solid fa-map-location-dot"></i> ดูแผนที่</a>` : ''}<br><span class="text-muted text-sm">${utils.formatDate(b.dateFrom)}${b.timePick ? ' เวลา ' + b.timePick + ' น.' : ''}</span></span>
           </div>
           <div class="info-row">
             <span class="info-row-label"><i class="fa-solid fa-map-pin text-warning"></i> คืนรถที่</span>
-            <span class="info-row-value">${bDrop}${b.dropCustomUrl ? `<br><a href="${b.dropCustomUrl}" target="_blank" class="text-primary text-sm"><i class="fa-solid fa-map-location-dot"></i> ดูแผนที่</a>` : ''}<br><span class="text-muted text-sm">${utils.formatDate(b.dateTo)}</span></span>
+            <span class="info-row-value">${bDrop}${b.dropCustomUrl ? `<br><a href="${b.dropCustomUrl}" target="_blank" class="text-primary text-sm"><i class="fa-solid fa-map-location-dot"></i> ดูแผนที่</a>` : ''}<br><span class="text-muted text-sm">${utils.formatDate(b.dateTo)}${b.timeDrop ? ' เวลา ' + b.timeDrop + ' น.' : ''}</span></span>
           </div>
           <div class="info-row" style="border:none;"><span class="info-row-label">ระยะเวลา</span><span class="info-row-value font-bold text-info">${b.days} วัน</span></div>
         </div>
         <div class="receipt-box text-right" style="background:var(--primary-light);">
           <div class="text-muted text-sm">ยอดชำระสุทธิ</div>
-          <div class="font-bold text-primary" style="font-size:2.2rem; line-height:1.1; font-family:'Prompt',sans-serif;">฿${utils.formatMoney(b.total)}</div>
-          ${b.fine ? `<div class="text-danger mt-2">ยอดค่าปรับ: + ฿${utils.formatMoney(b.fine)}</div><div class="font-bold text-danger" style="font-size:1.5rem;">รวม: ฿${utils.formatMoney(b.total + b.fine)}</div>` : ''}
+          ${b.deliveryCost > 0 ? `<div class="text-muted text-sm" style="margin-bottom:4px;"><i class="fa-solid fa-truck" style="color:var(--info);"></i> รวมค่ารับ-ส่งรถ ฿${utils.formatMoney(b.deliveryCost)} (${b.deliveryKm} กม.)</div>` : ''}
+          <div class="font-bold text-primary" style="font-size:2.2rem; line-height:1.1; font-family:'Prompt',sans-serif;">฿${utils.formatMoney(b.total + (b.deliveryCost||0))}</div>
+          ${b.fine ? `<div class="text-danger mt-2">ยอดค่าปรับ: + ฿${utils.formatMoney(b.fine)}</div><div class="font-bold text-danger" style="font-size:1.5rem;">รวม: ฿${utils.formatMoney(b.total + (b.deliveryCost||0) + b.fine)}</div>` : ''}
         </div>
       </div>
       <div class="flex gap-2 no-print mt-4" style="flex-wrap:wrap;">
@@ -2192,8 +2221,21 @@ _printContract() {
   showInsuranceEditModal(carId) {
     const c = app.state.cars.find(x => x.id === carId);
     this.showModal(`แก้ไขประกัน: ${c.name}`, `
-      <div class="input-group"><label>วันที่ประกันหมดอายุ</label><input type="date" id="ins-expiry" class="input-control" value="${c.insuranceExpiry||''}"></div>
-      <div class="input-group mb-6"><label>บันทึก / บริษัทประกัน</label><textarea id="ins-note" class="input-control" rows="3" placeholder="เช่น ประกันชั้น 1 บริษัทเมืองไทยประกันภัย">${c.insuranceNote||''}</textarea></div>
+            <div style="padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid var(--border);">
+        <p class="font-bold mb-2" style="color:var(--primary);">🛡️ ประกันภัย</p>
+        <div class="input-group"><label>วันหมดอายุประกัน</label><input type="date" id="ins-expiry" class="input-control" value="${c.insuranceExpiry||''}"></div>
+        <div class="input-group mb-0"><label>บริษัทประกัน / บันทึก</label><textarea id="ins-note" class="input-control" rows="2" placeholder="เช่น ประกันชั้น 1 บริษัทเมืองไทยประกันภัย">${c.insuranceNote||''}</textarea></div>
+      </div>
+      <div style="padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid var(--border);">
+        <p class="font-bold mb-2" style="color:var(--warning);">🚗 พ.ร.บ. (ประกันภาคบังคับ)</p>
+        <div class="input-group"><label>วันหมดอายุ พ.ร.บ.</label><input type="date" id="prb-expiry" class="input-control" value="${c.prbExpiry||''}"></div>
+        <div class="input-group mb-0"><label>บันทึก พ.ร.บ.</label><input type="text" id="prb-note" class="input-control" value="${c.prbNote||''}" placeholder="เช่น พ.ร.บ. บริษัทกลางคุ้มครองผู้ประสบภัย"></div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <p class="font-bold mb-2" style="color:var(--info);">🏷️ ภาษีรถยนต์ / ป้ายทะเบียน</p>
+        <div class="input-group"><label>วันหมดอายุภาษี/ป้าย</label><input type="date" id="tax-expiry" class="input-control" value="${c.taxExpiry||''}"></div>
+        <div class="input-group mb-0"><label>บันทึก</label><input type="text" id="tax-note" class="input-control" value="${c.taxNote||''}" placeholder="เช่น ต่อภาษีประจำปี 2026"></div>
+      </div>
       <div class="flex gap-2">
         <button class="btn btn-primary flex-1 btn-lg" onclick="logic.saveInsurance(${carId})"><i class="fa-solid fa-save"></i> บันทึก</button>
         <button class="tg-test-btn" style="border-radius:12px; padding:14px 20px;" onclick="utils.sendTelegramInsuranceAlert(app.state.cars.find(c=>c.id===${carId})).then(()=>utils.showToast('ส่ง Telegram แล้ว','success'))"><i class="fa-brands fa-telegram"></i> แจ้ง TG</button>
@@ -2315,39 +2357,89 @@ _printContract() {
     });
   },
 
-  renderTimeline() {
+    renderTimeline(year, month, filterCarId) {
     const container = document.getElementById('timeline-container');
     if(!container) return;
     const today = new Date(); today.setHours(0,0,0,0);
-    let html = `<div class="timeline-grid"><div class="tl-cell tl-header">รถยนต์ / วันที่</div>`;
-    let daysArray = [];
-    for(let i=0; i<14; i++) {
-      let d = new Date(today); d.setDate(d.getDate() + i);
-      daysArray.push(d);
-      const isToday = i === 0;
-      html += `<div class="tl-cell tl-header" style="${isToday?'color:var(--primary);font-weight:700;':''}">${d.getDate()}/${d.getMonth()+1}${isToday?'<br><span style="font-size:0.6rem;">(วันนี้)</span>':''}</div>`;
+    const curYear = year !== undefined ? year : today.getFullYear();
+    const curMonth = month !== undefined ? month : today.getMonth();
+    const firstDay = new Date(curYear, curMonth, 1);
+    const lastDay = new Date(curYear, curMonth + 1, 0);
+    const thMonths = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+    const startPad = (firstDay.getDay());
+    const totalCells = startPad + lastDay.getDate();
+    const rows = Math.ceil(totalCells / 7);
+    const statusColors = { Pending:'#f59e0b', Confirmed:'#3b82f6', Active:'#10b981', Completed:'#8b5cf6', Cancelled:'#ef4444' };
+    const activeCars = app.state.cars;
+    
+    // Car filter chips
+    let filterHtml = `<div class="cal-car-filter">
+      <div class="chip ${!filterCarId?'active':''}" onclick="ui._calNav(${curYear},${curMonth},null)">ทุกคัน</div>
+      ${activeCars.map(c => `<div class="chip ${filterCarId===c.id?'active':''}" onclick="ui._calNav(${curYear},${curMonth},${c.id})">${c.name}</div>`).join('')}
+    </div>`;
+
+    // Header nav
+    let navHtml = `
+      <div class="booking-cal-header">
+        <button class="btn btn-outline btn-sm" onclick="ui._calNav(${curMonth===0?curYear-1:curYear},${curMonth===0?11:curMonth-1},${filterCarId||'null'})"><i class="fa-solid fa-chevron-left"></i> ก่อนหน้า</button>
+        <h3 style="font-family:'Prompt',sans-serif; color:var(--primary);">${thMonths[curMonth]} ${curYear + 543}</h3>
+        <button class="btn btn-outline btn-sm" onclick="ui._calNav(${curMonth===11?curYear+1:curYear},${curMonth===11?0:curMonth+1},${filterCarId||'null'})">ถัดไป <i class="fa-solid fa-chevron-right"></i></button>
+      </div>`;
+
+    // Day headers
+    const dayNames = ['อา.','จ.','อ.','พ.','พฤ.','ศ.','ส.'];
+    let gridHtml = `<div class="booking-cal-grid">`;
+    dayNames.forEach(d => { gridHtml += `<div class="cal-day-header">${d}</div>`; });
+
+    // Empty pads
+    for(let i=0; i<startPad; i++) {
+      const padDate = new Date(curYear, curMonth, -startPad + i + 1);
+      gridHtml += `<div class="cal-day other-month"><div class="cal-day-num">${padDate.getDate()}</div></div>`;
     }
-    app.state.cars.forEach(car => {
-      html += `<div class="tl-cell tl-car-name">${car.name}</div>`;
-      const carBks = app.state.bookings.filter(b => b.carId === car.id && b.status !== 'Cancelled' && b.status !== 'Completed');
-      daysArray.forEach(d => {
-        const dTime = d.getTime();
-        let cellHtml = '';
-        carBks.forEach(b => {
-          const bStart = new Date(b.dateFrom).getTime();
-          const bEnd = new Date(b.dateTo).getTime();
-          if(dTime >= bStart && dTime <= bEnd) {
-            const isStart = dTime === bStart;
-            let bg = b.status === 'Confirmed' ? 'var(--info)' : b.status === 'Active' ? 'var(--success)' : b.status === 'Pending' ? 'var(--warning)' : 'var(--purple)';
-            cellHtml = `<div class="tl-bar" style="background:${bg}; left:1px; right:1px; width:calc(100% - 2px); border-radius:${isStart?'4px 0 0 4px':'0'}" title="${b.id}">${isStart ? b.id : ''}</div>`;
-          }
-        });
-        html += `<div class="tl-cell">${cellHtml}</div>`;
+
+    // Days
+    for(let d=1; d<=lastDay.getDate(); d++) {
+      const thisDate = new Date(curYear, curMonth, d); thisDate.setHours(0,0,0,0);
+      const isToday = thisDate.getTime() === today.getTime();
+      let chips = '';
+      let bkCount = 0;
+      app.state.bookings.forEach(b => {
+        if(b.status === 'Cancelled') return;
+        if(filterCarId && b.carId !== filterCarId) return;
+        const bStart = new Date(b.dateFrom); bStart.setHours(0,0,0,0);
+        const bEnd = new Date(b.dateTo); bEnd.setHours(0,0,0,0);
+        if(thisDate >= bStart && thisDate <= bEnd) {
+          bkCount++;
+          const car = app.state.cars.find(c => c.id === b.carId);
+          const color = statusColors[b.status] || '#888';
+          const label = thisDate.getTime()===bStart.getTime() ? (car?.name||b.carId) : '─';
+          if(bkCount <= 3) chips += `<div class="cal-booking-chip" style="background:${color};" title="${b.id} · ${car?.name||''}" onclick="ui.showAdminBookingModal('${b.id}')">${label}</div>`;
+          else if(bkCount === 4) chips += `<div class="cal-booking-chip" style="background:var(--text-muted);">+${bkCount-3} อื่นๆ</div>`;
+        }
       });
-    });
-    html += `</div>`;
-    container.innerHTML = html;
-  }
+      gridHtml += `<div class="cal-day${isToday?' today':''}"><div class="cal-day-num">${d}</div>${chips}</div>`;
+    }
+
+    // Trailing pads
+    const endPad = (7 - ((startPad + lastDay.getDate()) % 7)) % 7;
+    for(let i=1; i<=endPad; i++) {
+      gridHtml += `<div class="cal-day other-month"><div class="cal-day-num">${i}</div></div>`;
+    }
+    gridHtml += `</div>`;
+
+    // Legend
+    const legendHtml = `<div class="flex gap-3 flex-wrap mt-3" style="font-size:0.8rem; font-weight:600;">
+      ${Object.entries(statusColors).map(([s,c]) => `<span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${c};margin-right:4px;"></span>${s==='Pending'?'รอตรวจสอบ':s==='Confirmed'?'อนุมัติแล้ว':s==='Active'?'กำลังใช้งาน':s==='Completed'?'คืนรถแล้ว':'ยกเลิก'}</span>`).join('')}
+    </div>`;
+
+    container.innerHTML = filterHtml + navHtml + gridHtml + legendHtml;
+  },
+
+  _calNav(year, month, carId) {
+    const container = document.getElementById('timeline-container');
+    if(!container) return;
+    ui.renderTimeline(year, month, carId || null);
+  },
 };
 
 // =========== BUSINESS LOGIC ===========
@@ -2529,6 +2621,8 @@ const logic = {
       pickCustom: true, pickCustomLabel, pickCustomUrl,
       dropCustom: true, dropCustomLabel, dropCustomUrl,
       dateFrom: app.searchParams.dateFrom, dateTo: app.searchParams.dateTo,
+      timePick: document.getElementById('bk-edit-tpick')?.value || '09:00',
+      timeDrop: document.getElementById('bk-edit-tdrop')?.value || '09:00',
       days: utils.calcDays(app.searchParams.dateFrom, app.searchParams.dateTo),
       total: finalTotal, status: "Pending",
       slipUrl: app.tempUploads['slip'] || '',
@@ -2667,10 +2761,14 @@ const logic = {
     }
   },
 
-  saveInsurance(carId) {
+    saveInsurance(carId) {
     const c = app.state.cars.find(x => x.id === carId);
     c.insuranceExpiry = document.getElementById('ins-expiry').value;
     c.insuranceNote = document.getElementById('ins-note').value;
+    c.prbExpiry = document.getElementById('prb-expiry')?.value || '';
+    c.prbNote = document.getElementById('prb-note')?.value || '';
+    c.taxExpiry = document.getElementById('tax-expiry')?.value || '';
+    c.taxNote = document.getElementById('tax-note')?.value || '';
     app.saveState(); ui.closeModal();
     utils.showToast('บันทึกข้อมูลประกันสำเร็จ', 'success');
     app.renderAdminTab('insurance');
