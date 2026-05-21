@@ -483,14 +483,14 @@
         #contract-print-area {
       position: fixed; top: 0; left: 0;
       width: 210mm; min-height: 297mm;
-      padding: 15mm 14mm; background: white; color: black;
-      font-family: 'Sarabun', sans-serif; font-size: 11pt; line-height: 1.7;
+      padding: 10mm 10mm; background: white; color: black;
+      font-family: 'Sarabun', sans-serif; font-size: 9pt; line-height: 1.5;
     }
     #contract-print-area [style*="grid-template-columns:1fr 1fr"] {
       grid-template-columns: 1fr !important;
     }
     #contract-print-area table {
-      font-size: 10pt !important;
+      font-size: 8pt !important;
     }
     .no-print { display: none !important; }
     .receipt-box { border: 1px solid #ccc !important; background: white !important; }
@@ -777,11 +777,17 @@ const app = {
       const user = this.state.users.find(u => u.id === b.userId);
       const carName = car ? car.name : b.carId;
       const userName = user ? user.name : b.userId;
-      if(b.status === 'Confirmed' && diffPick === 2) {
-        setTimeout(() => { utils.showToast(`🚗 รับรถอีก 2 วัน! ${userName} · ${carName} (${utils.formatDate(b.dateFrom)})`, 'info'); }, 2000);
+            if(b.status === 'Confirmed' && diffPick === 2) {
+        if(app.isAdmin()) {
+          setTimeout(() => { utils.showToast(`🚗 รับรถอีก 2 วัน! ${userName} · ${carName} (${utils.formatDate(b.dateFrom)})`, 'info'); }, 2000);
+        }
       }
       if(b.status === 'Active' && diffReturn === 2) {
-        setTimeout(() => { utils.showToast(`🔔 คืนรถอีก 2 วัน! ${userName} · ${carName} (${utils.formatDate(b.dateTo)})`, 'warning'); }, 2500);
+        if(app.isAdmin()) {
+          setTimeout(() => { utils.showToast(`🔔 คืนรถอีก 2 วัน! ${userName} · ${carName} (${utils.formatDate(b.dateTo)})`, 'warning'); }, 2500);
+        } else if(app.currentUser && app.currentUser.id === b.userId) {
+          setTimeout(() => { utils.showToast(`🔔 แจ้งเตือน: อีก 2 วันถึงกำหนดคืนรถ (${utils.formatDate(b.dateTo)})`, 'warning'); }, 2500);
+        }
       }
     });
   },
@@ -2129,10 +2135,20 @@ const ui = {
       </div>
 
       <!-- ลายเซ็น print -->
-      <div id="sig-print-area" style="display:none;">
+            <div id="sig-print-area" style="display:none;">
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:24px; text-align:center;">
-          <div><img id="sig-renter-img" style="max-height:80px; display:block; margin:0 auto 4px;"><div style="border-top:1.5px solid var(--text-main); padding-top:6px; font-size:0.85rem; color:var(--text-muted);">ลายมือชื่อผู้เช่า</div><div style="font-size:0.85rem;">( ${u.name} )</div></div>
-          <div><img id="sig-owner-img" style="max-height:80px; display:block; margin:0 auto 4px;"><div style="border-top:1.5px solid var(--text-main); padding-top:6px; font-size:0.85rem; color:var(--text-muted);">ลายมือชื่อผู้ให้เช่า</div><div style="font-size:0.85rem;">( ${s.storeName} )</div></div>
+          <div>
+            <img id="sig-renter-img" style="max-height:80px; display:block; margin:0 auto 4px;">
+            <div style="border-top:1.5px solid var(--text-main); padding-top:6px; font-size:0.85rem; color:var(--text-muted);">ลายมือชื่อผู้เช่า</div>
+            <div style="font-size:0.85rem;">( ${u.name} )</div>
+            <div style="font-size:0.8rem; color:#555; margin-top:4px;">วันที่ ............/............/............</div>
+          </div>
+          <div>
+            <img id="sig-owner-img" style="max-height:80px; display:block; margin:0 auto 4px;">
+            <div style="border-top:1.5px solid var(--text-main); padding-top:6px; font-size:0.85rem; color:var(--text-muted);">ลายมือชื่อผู้ให้เช่า</div>
+            <div style="font-size:0.85rem;">( ${s.storeName} )</div>
+            <div style="font-size:0.8rem; color:#555; margin-top:4px;">วันที่ ............/............/............</div>
+          </div>
         </div>
       </div>
     </div>
@@ -2624,7 +2640,7 @@ const logic = {
       timePick: document.getElementById('bk-edit-tpick')?.value || '09:00',
       timeDrop: document.getElementById('bk-edit-tdrop')?.value || '09:00',
       days: utils.calcDays(app.searchParams.dateFrom, app.searchParams.dateTo),
-      total: finalTotal, status: "Pending",
+      total: finalTotal + (app._deliveryCost || 0), status: "Pending",
       slipUrl: app.tempUploads['slip'] || '',
       idCardUrl: app.tempUploads['idcard'] || '',
       licenseUrl: app.tempUploads['license'] || '',
@@ -2650,9 +2666,9 @@ const logic = {
     app.tempUploads = {};
     app._deliveryCost = 0;
     app._deliveryKm = 0;
-    utils.showToast('สร้างรายการจองเรียบร้อย! แอดมินกำลังตรวจสอบ 🎉', 'success');
+    utils.showToast('สร้างรายการจองเรียบร้อย! กรุณาลงนามในสัญญา 🎉', 'success');
     app.renderCarGrid();
-    ui.showReceiptModal(bId);
+    ui.showContractModal(bId);
   },
 
   recalcAdminBookingPrice(carPricePerDay) {
