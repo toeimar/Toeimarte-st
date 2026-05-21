@@ -1039,7 +1039,7 @@ const views = {
           <div class="bottom-nav-item" onclick="document.querySelector('.flight-search-container')?.scrollIntoView({behavior:'smooth'})">
             <i class="fa-solid fa-search"></i>ค้นหา
           </div>
-          <div class="bottom-nav-item" onclick="${app.currentUser ? 'ui.showMyBookings()' : 'ui.showLoginModal()'}">
+        <div class="bottom-nav-item" onclick="app.currentUser && !app.isAdmin() ? ui.showMyBookings() : ui.showLoginModal()">
             <i class="fa-solid fa-history"></i>ประวัติ
           </div>
           ${app.isAdmin() 
@@ -1129,7 +1129,7 @@ const views = {
     <div class="container" style="padding-bottom: 40px;">
       <div class="flex justify-between items-center mb-4">
         <h2 class="section-title">รถพร้อมให้บริการ</h2>
-        ${app.currentUser && !app.isAdmin() ? `<button class="btn btn-outline btn-sm desktop-only" onclick="ui.showMyBookings()"><i class="fa-solid fa-history"></i> ประวัติการจอง</button>` : ''}
+        ${app.currentUser && !app.isAdmin() ? `<button class="btn btn-outline btn-sm" onclick="ui.showMyBookings()"><i class="fa-solid fa-history"></i> ประวัติการจอง</button>` : ''}
       </div>
       <div class="chip-group mb-4">
         ${app.state.carTypes.map(t => `<div class="chip ${app.searchParams.type===t?'active':''}" onclick="app.searchParams.type='${t}'; app.renderCarGrid(); document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); this.classList.add('active')">${t}</div>`).join('')}
