@@ -476,59 +476,79 @@
   .branch-input-wrap { position: relative; }
   @media print {
     @page {
-      size: A4 portrait;
-      margin: 8mm 10mm;
+      size: 210mm 297mm;
+      margin: 25.4mm 25.4mm 25.4mm 25.4mm;
     }
+    * { box-sizing: border-box !important; }
     body * { visibility: hidden; }
     #contract-print-area, #contract-print-area * { visibility: visible !important; }
     #contract-print-area {
-      position: fixed;
-      top: 0; left: 0;
-      width: 190mm;
-      padding: 0;
-      background: white;
-      color: black;
-      font-family: 'Sarabun', sans-serif;
-      font-size: 8.5pt;
-      line-height: 1.45;
-      box-sizing: border-box;
-      overflow: hidden;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 160mm !important;
+      max-width: 160mm !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      background: white !important;
+      color: black !important;
+      font-family: 'Sarabun', sans-serif !important;
+      font-size: 8pt !important;
+      line-height: 1.5 !important;
+      overflow: hidden !important;
     }
-    #contract-print-area h2 { font-size: 11pt !important; margin-bottom: 4px !important; }
-    #contract-print-area h3 { font-size: 9.5pt !important; }
-    #contract-print-area h4 { font-size: 8.5pt !important; }
-    #contract-print-area [style*="font-size:1.5rem"],
-    #contract-print-area [style*="font-size: 1.5rem"] { font-size: 10pt !important; }
-    #contract-print-area [style*="font-size:1.3rem"],
-    #contract-print-area [style*="font-size: 1.3rem"] { font-size: 9pt !important; }
+    #contract-print-area * {
+      max-width: 100% !important;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+    }
+    #contract-print-area [style*="font-size:1.15rem"],
+    #contract-print-area [style*="font-size: 1.15rem"],
     #contract-print-area [style*="font-size:1.1rem"],
-    #contract-print-area [style*="font-size: 1.1rem"] { font-size: 8.5pt !important; }
-    #contract-print-area table { font-size: 7.5pt !important; width: 100% !important; }
-    #contract-print-area td, #contract-print-area th { padding: 4px 7px !important; }
+    #contract-print-area [style*="font-size: 1.1rem"] { font-size: 9pt !important; }
+    #contract-print-area [style*="font-size:1.05rem"],
+    #contract-print-area [style*="font-size: 1.05rem"],
+    #contract-print-area [style*="font-size:0.95rem"],
+    #contract-print-area [style*="font-size: 0.95rem"] { font-size: 8pt !important; }
+    #contract-print-area [style*="font-size:0.88rem"],
+    #contract-print-area [style*="font-size: 0.88rem"],
+    #contract-print-area [style*="font-size:0.83rem"],
+    #contract-print-area [style*="font-size: 0.83rem"] { font-size: 7.5pt !important; }
+    #contract-print-area [style*="font-size:0.82rem"],
+    #contract-print-area [style*="font-size: 0.82rem"],
+    #contract-print-area [style*="font-size:0.78rem"],
+    #contract-print-area [style*="font-size: 0.78rem"] { font-size: 7pt !important; }
+    #contract-print-area table {
+      width: 100% !important;
+      font-size: 7.5pt !important;
+      border-collapse: collapse !important;
+    }
+    #contract-print-area td {
+      padding: 3px 4px !important;
+      word-break: break-word !important;
+    }
     #contract-print-area [style*="display:grid"],
     #contract-print-area [style*="display: grid"] {
       display: grid !important;
+      max-width: 100% !important;
     }
     #contract-print-area [style*="grid-template-columns:1fr 1fr"],
     #contract-print-area [style*="grid-template-columns: 1fr 1fr"] {
       grid-template-columns: 1fr 1fr !important;
       gap: 6px !important;
     }
+    #contract-print-area [style*="margin-bottom:18px"],
+    #contract-print-area [style*="margin-bottom: 18px"],
+    #contract-print-area [style*="margin-bottom:14px"],
+    #contract-print-area [style*="margin-bottom: 14px"],
+    #contract-print-area [style*="margin-bottom:12px"],
+    #contract-print-area [style*="margin-bottom: 12px"] { margin-bottom: 5px !important; }
     #contract-print-area [style*="padding:14px"],
-    #contract-print-area [style*="padding: 14px"] { padding: 6px 8px !important; }
-    #contract-print-area [style*="padding:10px 16px"],
-    #contract-print-area [style*="padding: 10px 16px"] { padding: 5px 8px !important; }
-    #contract-print-area [style*="margin-bottom:16px"],
-    #contract-print-area [style*="margin-bottom: 16px"] { margin-bottom: 5px !important; }
-    #contract-print-area [style*="margin-bottom:20px"],
-    #contract-print-area [style*="margin-bottom: 20px"] { margin-bottom: 8px !important; }
-    #contract-print-area [style*="border-radius:12px"],
-    #contract-print-area [style*="border-radius: 12px"] { border-radius: 4px !important; }
-    #contract-print-area [style*="padding:6px 28px"] { padding: 3px 14px !important; }
+    #contract-print-area [style*="padding: 14px"],
+    #contract-print-area [style*="padding:10px"],
+    #contract-print-area [style*="padding: 10px"] { padding: 4px 6px !important; }
     .no-print { display: none !important; }
-    .receipt-box { border: 1px solid #ccc !important; background: white !important; }
-    .info-row-label { color: #555 !important; }
-    .info-row-value { color: #000 !important; }
+    .receipt-box { display: none !important; }
     #sig-print-area { display: block !important; }
   }
     /* ===== BOOKING CALENDAR ===== */
@@ -2270,7 +2290,7 @@ _printContract() {
   if(contractArea) {
     const clone = contractArea.cloneNode(true);
     clone.id = 'contract-print-area';
-    clone.style.cssText = 'position:absolute;top:0;left:0;width:190mm;min-height:297mm;z-index:99999;background:white;padding:8mm 10mm;font-family:Sarabun,sans-serif;font-size:8.5pt;line-height:1.45;color:black;box-sizing:border-box;overflow:hidden;';
+    clone.style.cssText = 'position:fixed;top:0;left:0;width:160mm;max-width:160mm;z-index:99999;background:white;padding:0;font-family:Sarabun,sans-serif;font-size:8pt;line-height:1.5;color:black;box-sizing:border-box;overflow:hidden;word-break:break-word;';
         document.querySelectorAll('#contract-print-area').forEach(el => {
       if(el !== contractArea) el.remove();
     });
