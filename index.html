@@ -2070,88 +2070,100 @@ const ui = {
       const grandTotal = b.total + dep + deliveryCost;
 
       this.showModal(s.contractTitle||'สัญญาเช่ารถยนต์', `
-      <div id="contract-print-area" style="font-family:'Sarabun',sans-serif; font-size:0.95rem; line-height:1.8;">
+      <div id="contract-print-area" style="font-family:'Sarabun',sans-serif; font-size:0.95rem; line-height:1.9; color:#111; max-width:680px; margin:0 auto;">
 
       <!-- หัว -->
-      <div style="text-align:center; margin-bottom:20px; padding-bottom:16px; border-bottom:3px double var(--primary);">
-        ${s.logoUrl ? `<img src="${s.logoUrl}" style="max-height:60px; margin:0 auto 8px; display:block;">` : ''}
-        <h2 style="font-size:1.5rem; font-family:'Prompt',sans-serif; color:var(--primary); margin-bottom:2px;">${s.storeName}</h2>
-        <div style="font-size:0.88rem; color:var(--text-muted);">โทร: ${s.phone}</div>
-        <div style="display:inline-block; margin-top:12px; background:var(--primary); color:white; padding:6px 28px; border-radius:99px; font-size:1.1rem; font-family:'Prompt',sans-serif; font-weight:700; letter-spacing:1px;">
+      <div style="text-align:center; margin-bottom:18px; padding-bottom:14px; border-bottom:2px solid #111;">
+        ${s.logoUrl ? `<img src="${s.logoUrl}" style="max-height:50px; margin:0 auto 6px; display:block;">` : ''}
+        <div style="font-size:1.05rem; font-weight:700; font-family:'Prompt',sans-serif;">${s.storeName}</div>
+        <div style="font-size:0.82rem; color:#555;">โทร: ${s.phone}</div>
+        <div style="font-size:1.15rem; font-weight:700; font-family:'Prompt',sans-serif; margin-top:10px; letter-spacing:1px;">
           ${s.contractTitle||'สัญญาเช่ารถยนต์'}
         </div>
-        ${s.contractHeader ? `<p style="margin-top:10px; font-size:0.88rem; color:var(--text-muted); font-style:italic;">${s.contractHeader}</p>` : ''}
+        ${s.contractHeader ? `<div style="margin-top:6px; font-size:0.82rem; color:#555;">${s.contractHeader}</div>` : ''}
       </div>
 
       <!-- เลขสัญญา + วันที่ -->
-      <div style="display:flex; justify-content:space-between; margin-bottom:16px; background:var(--bg-body); padding:10px 16px; border-radius:10px; border:1px solid var(--border);">
-        <div><span style="color:var(--text-muted); font-size:0.85rem;">เลขที่สัญญา</span><div class="font-bold text-primary" style="font-size:1.05rem;">${b.id}</div></div>
-        <div style="text-align:right;"><span style="color:var(--text-muted); font-size:0.85rem;">วันทำสัญญา</span><div class="font-bold">${new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}</div></div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:14px; font-size:0.88rem;">
+        <div><span style="color:#555;">เลขที่สัญญา: </span><span style="font-weight:700;">${b.id}</span></div>
+        <div><span style="color:#555;">วันที่: </span><span style="font-weight:700;">${new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}</span></div>
       </div>
 
-      <!-- ข้อมูลคู่สัญญา 2 คอลัมน์ -->
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
-        <div style="border:1px solid var(--border); border-radius:12px; padding:14px;">
-          <div style="font-weight:700; color:var(--primary); margin-bottom:8px; font-size:0.9rem; border-bottom:1px solid var(--border); padding-bottom:6px;"><i class="fa-solid fa-building"></i> ผู้ให้เช่า</div>
-          <div class="font-bold">${s.storeName}</div>
-          <div style="font-size:0.88rem; color:var(--text-muted);">โทร: ${s.phone}</div>
-          <div style="font-size:0.88rem; color:var(--text-muted);">ธนาคาร: ${s.bank||'-'} ${s.accNo||''}</div>
+      <!-- เส้นคั่น -->
+      <div style="border-top:1px solid #ccc; margin-bottom:12px;"></div>
+
+      <!-- ข้อมูลคู่สัญญา -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:14px; font-size:0.88rem;">
+        <div>
+          <div style="font-weight:700; margin-bottom:4px; border-bottom:1px solid #ddd; padding-bottom:3px;">ผู้ให้เช่า</div>
+          <div>${s.storeName}</div>
+          <div style="color:#555;">โทร: ${s.phone}</div>
+          <div style="color:#555;">${s.bank||''} ${s.accNo||''}</div>
         </div>
-        <div style="border:1px solid var(--border); border-radius:12px; padding:14px;">
-          <div style="font-weight:700; color:var(--primary); margin-bottom:8px; font-size:0.9rem; border-bottom:1px solid var(--border); padding-bottom:6px;"><i class="fa-solid fa-user"></i> ผู้เช่า</div>
-          <div class="font-bold">${u.name}</div>
-          <div style="font-size:0.88rem; color:var(--text-muted);">โทร: ${u.phone}</div>
+        <div>
+          <div style="font-weight:700; margin-bottom:4px; border-bottom:1px solid #ddd; padding-bottom:3px;">ผู้เช่า</div>
+          <div>${u.name}</div>
+          <div style="color:#555;">โทร: ${u.phone}</div>
         </div>
       </div>
 
       <!-- รายละเอียดรถ -->
-      <div style="border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:16px;">
-        <div style="font-weight:700; color:var(--primary); margin-bottom:10px; font-size:0.9rem; border-bottom:1px solid var(--border); padding-bottom:6px;"><i class="fa-solid fa-car"></i> รายละเอียดรถที่เช่า</div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.92rem;">
-          <div><span style="color:var(--text-muted);">รุ่น:</span> <span class="font-bold">${c.name}</span></div>
-          <div><span style="color:var(--text-muted);">ประเภท:</span> ${c.type}</div>
-          <div><span style="color:var(--text-muted);">ยี่ห้อ:</span> ${c.brand||'-'} ${c.model||''}</div>
-          <div><span style="color:var(--text-muted);">สีภายนอก:</span> ${c.colorExt||'-'}</div>
+      <div style="margin-bottom:12px; font-size:0.88rem;">
+        <div style="font-weight:700; margin-bottom:6px; border-bottom:1px solid #ddd; padding-bottom:3px;">รายละเอียดรถที่เช่า</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px;">
+          <div><span style="color:#555;">รุ่น: </span><span style="font-weight:700;">${c.name}</span></div>
+          <div><span style="color:#555;">ประเภท: </span>${c.type}</div>
+          <div><span style="color:#555;">ยี่ห้อ: </span>${c.brand||'-'} ${c.model||''}</div>
+          <div><span style="color:#555;">สีภายนอก: </span>${c.colorExt||'-'}</div>
         </div>
       </div>
 
       <!-- รายละเอียดการเช่า -->
-      <div style="border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:16px;">
-        <div style="font-weight:700; color:var(--primary); margin-bottom:10px; font-size:0.9rem; border-bottom:1px solid var(--border); padding-bottom:6px;"><i class="fa-solid fa-calendar"></i> รายละเอียดการเช่า</div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.92rem;">
-          <div><span style="color:var(--text-muted);">วันรับรถ:</span> <span class="font-bold">${utils.formatDate(b.dateFrom)}</span></div>
-          <div><span style="color:var(--text-muted);">วันคืนรถ:</span> <span class="font-bold">${utils.formatDate(b.dateTo)}</span></div>
-          <div><span style="color:var(--text-muted);">จำนวนวัน:</span> <span class="font-bold text-primary">${b.days} วัน</span></div>
-          <div><span style="color:var(--text-muted);">สถานที่รับ:</span> ${bPick}</div>
-          <div style="grid-column:1/-1;"><span style="color:var(--text-muted);">สถานที่คืน:</span> ${bDrop}</div>
+      <div style="margin-bottom:12px; font-size:0.88rem;">
+        <div style="font-weight:700; margin-bottom:6px; border-bottom:1px solid #ddd; padding-bottom:3px;">รายละเอียดการเช่า</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px;">
+          <div><span style="color:#555;">วันรับรถ: </span><span style="font-weight:700;">${utils.formatDate(b.dateFrom)}${b.timePick?' เวลา '+b.timePick+' น.':''}</span></div>
+          <div><span style="color:#555;">วันคืนรถ: </span><span style="font-weight:700;">${utils.formatDate(b.dateTo)}${b.timeDrop?' เวลา '+b.timeDrop+' น.':''}</span></div>
+          <div><span style="color:#555;">จำนวนวัน: </span><span style="font-weight:700;">${b.days} วัน</span></div>
+          <div><span style="color:#555;">สถานที่รับ: </span>${bPick}</div>
+          <div style="grid-column:1/-1;"><span style="color:#555;">สถานที่คืน: </span>${bDrop}</div>
         </div>
       </div>
 
       <!-- ตารางค่าใช้จ่าย -->
-      <div style="border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:16px;">
-        <div style="background:var(--primary); color:white; padding:10px 16px; font-weight:700; font-size:0.9rem;"><i class="fa-solid fa-file-invoice-dollar"></i> สรุปค่าใช้จ่าย</div>
-        <table style="width:100%; border-collapse:collapse; font-size:0.92rem;">
-          <tr style="border-bottom:1px solid var(--border);"><td style="padding:10px 16px; color:var(--text-muted);">ค่าเช่ารถ (${b.days} วัน)</td><td style="padding:10px 16px; text-align:right; font-weight:700;">฿${utils.formatMoney(b.total)}</td></tr>
-          ${dep > 0 ? `<tr style="border-bottom:1px solid var(--border);"><td style="padding:10px 16px; color:var(--text-muted);">เงินมัดจำ</td><td style="padding:10px 16px; text-align:right; font-weight:700; color:var(--warning);">฿${utils.formatMoney(dep)}</td></tr>` : ''}
-          ${deliveryCost > 0 ? `<tr style="border-bottom:1px solid var(--border);"><td style="padding:10px 16px; color:var(--text-muted);">ค่ารับ-ส่งรถ</td><td style="padding:10px 16px; text-align:right; font-weight:700; color:var(--info);">฿${utils.formatMoney(deliveryCost)}</td></tr>` : ''}
-          ${b.insurancePlanName ? `<tr style="border-bottom:1px solid var(--border);"><td style="padding:10px 16px; color:var(--text-muted);">ประกันเพิ่มเติม (${b.insurancePlanName})</td><td style="padding:10px 16px; text-align:right;">-</td></tr>` : ''}
-          <tr style="background:var(--primary-light);"><td style="padding:12px 16px; font-weight:700; font-size:1rem;">ยอดรวมทั้งหมด</td><td style="padding:12px 16px; text-align:right; font-weight:700; color:var(--primary); font-size:1.3rem; font-family:'Prompt',sans-serif;">฿${utils.formatMoney(grandTotal)}</td></tr>
+      <div style="margin-bottom:14px; font-size:0.88rem;">
+        <div style="font-weight:700; margin-bottom:6px; border-bottom:1px solid #ddd; padding-bottom:3px;">สรุปค่าใช้จ่าย</div>
+        <table style="width:100%; border-collapse:collapse;">
+          <tr style="border-bottom:1px solid #eee;">
+            <td style="padding:5px 4px; color:#555;">ค่าเช่ารถ (${b.days} วัน)</td>
+            <td style="padding:5px 4px; text-align:right; font-weight:700;">฿${utils.formatMoney(b.total)}</td>
+          </tr>
+          ${dep > 0 ? `<tr style="border-bottom:1px solid #eee;"><td style="padding:5px 4px; color:#555;">เงินมัดจำ</td><td style="padding:5px 4px; text-align:right; font-weight:700;">฿${utils.formatMoney(dep)}</td></tr>` : ''}
+          ${deliveryCost > 0 ? `<tr style="border-bottom:1px solid #eee;"><td style="padding:5px 4px; color:#555;">ค่ารับ-ส่งรถ</td><td style="padding:5px 4px; text-align:right; font-weight:700;">฿${utils.formatMoney(deliveryCost)}</td></tr>` : ''}
+          ${b.insurancePlanName ? `<tr style="border-bottom:1px solid #eee;"><td style="padding:5px 4px; color:#555;">ประกันเพิ่มเติม (${b.insurancePlanName})</td><td style="padding:5px 4px; text-align:right;">รวมแล้ว</td></tr>` : ''}
+          <tr style="border-top:2px solid #111;">
+            <td style="padding:7px 4px; font-weight:700;">ยอดรวมทั้งหมด</td>
+            <td style="padding:7px 4px; text-align:right; font-weight:700; font-size:1.1rem;">฿${utils.formatMoney(grandTotal)}</td>
+          </tr>
         </table>
       </div>
 
+      <!-- เส้นคั่น -->
+      <div style="border-top:1px solid #ccc; margin-bottom:12px;"></div>
+
       <!-- เงื่อนไข -->
-      <div style="border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:16px;">
-        <div style="background:var(--bg-body); padding:10px 16px; font-weight:700; font-size:0.9rem; color:var(--danger); border-bottom:1px solid var(--border);"><i class="fa-solid fa-triangle-exclamation"></i> เงื่อนไขและข้อตกลง</div>
-        <table style="width:100%; border-collapse:collapse; font-size:0.88rem; line-height:1.8;">
+      <div style="margin-bottom:14px; font-size:0.83rem; line-height:1.75;">
+        <div style="font-weight:700; margin-bottom:6px;">ข้อตกลงและเงื่อนไข</div>
+        <table style="width:100%; border-collapse:collapse;">
           ${terms}
         </table>
       </div>
 
       <!-- footer -->
-      ${s.contractFooter ? `<p style="text-align:center; font-size:0.82rem; color:var(--text-muted); font-style:italic; margin-bottom:16px;">${s.contractFooter}</p>` : ''}
+      ${s.contractFooter ? `<div style="text-align:center; font-size:0.78rem; color:#777; margin-bottom:14px; border-top:1px solid #ddd; padding-top:8px;">${s.contractFooter}</div>` : ''}
 
       <!-- ลายเซ็น (no-print) -->
-      <div class="receipt-box no-print">
+      <div class="receipt-box no-print" style="margin-top:12px;">
         <div class="font-bold mb-3 text-primary"><i class="fa-solid fa-signature"></i> ลายเซ็นดิจิทัล</div>
         <div class="grid" style="grid-template-columns:1fr 1fr; gap:16px;">
           <div>
@@ -2168,19 +2180,21 @@ const ui = {
       </div>
 
       <!-- ลายเซ็น print -->
-            <div id="sig-print-area" style="display:none;">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:24px; text-align:center;">
-          <div>
-            <img id="sig-renter-img" style="max-height:80px; display:block; margin:0 auto 4px;">
-            <div style="border-top:1.5px solid var(--text-main); padding-top:6px; font-size:0.85rem; color:var(--text-muted);">ลายมือชื่อผู้เช่า</div>
-            <div style="font-size:0.85rem;">( ${u.name} )</div>
-            <div style="font-size:0.8rem; color:#555; margin-top:4px;">วันที่ ............/............/............</div>
-          </div>
-          <div>
-            <img id="sig-owner-img" style="max-height:80px; display:block; margin:0 auto 4px;">
-            <div style="border-top:1.5px solid var(--text-main); padding-top:6px; font-size:0.85rem; color:var(--text-muted);">ลายมือชื่อผู้ให้เช่า</div>
-            <div style="font-size:0.85rem;">( ${s.storeName} )</div>
-            <div style="font-size:0.8rem; color:#555; margin-top:4px;">วันที่ ............/............/............</div>
+      <div id="sig-print-area" style="display:none; margin-top:20px;">
+        <div style="border-top:1px solid #ccc; padding-top:14px;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; text-align:center;">
+            <div>
+              <img id="sig-renter-img" style="max-height:70px; display:block; margin:0 auto 6px; max-width:100%;">
+              <div style="border-top:1px solid #333; padding-top:5px; font-size:0.82rem;">ลายมือชื่อผู้เช่า</div>
+              <div style="font-size:0.82rem; font-weight:700;">( ${u.name} )</div>
+              <div style="font-size:0.78rem; color:#555; margin-top:3px;">วันที่ ${new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}</div>
+            </div>
+            <div>
+              <img id="sig-owner-img" style="max-height:70px; display:block; margin:0 auto 6px; max-width:100%;">
+              <div style="border-top:1px solid #333; padding-top:5px; font-size:0.82rem;">ลายมือชื่อผู้ให้เช่า</div>
+              <div style="font-size:0.82rem; font-weight:700;">( ${s.storeName} )</div>
+              <div style="font-size:0.78rem; color:#555; margin-top:3px;">วันที่ ${new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}</div>
+            </div>
           </div>
         </div>
       </div>
