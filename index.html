@@ -488,8 +488,8 @@
       left: 0 !important;
       width: 160mm !important;
       max-width: 160mm !important;
-      padding: 0 !important;
-      margin: 0 !important;
+      padding: 8mm 10mm !important;
+      margin: 0 auto !important;
       background: white !important;
       color: black !important;
       font-family: 'Sarabun', sans-serif !important;
@@ -2079,8 +2079,8 @@ const ui = {
     showContractModal(bId) {
       const b = app.state.bookings.find(x => x.id === bId);
       if(!b) return utils.showToast('ไม่พบข้อมูลการจอง', 'error');
-      const u = app.state.users.find(x => x.id === b.userId);
-      const c = app.state.cars.find(x => x.id === b.carId);
+      const u = app.state.users.find(x => x.id === b.userId) || { name: '-', phone: '-' };
+      const c = app.state.cars.find(x => x.id === b.carId) || { name: '-', type: '-', brand: '-', model: '-', colorExt: '-' };
       const bPick = b.pickCustom ? (b.pickCustomLabel||'ระบุเอง') : (app.state.branches.find(br=>br.id===b.pickBranch)?.name||b.pickBranch);
       const bDrop = b.dropCustom ? (b.dropCustomLabel||'ระบุเอง') : (app.state.branches.find(br=>br.id===b.dropBranch)?.name||b.dropBranch);
       const dep = b.deposit || 0;
