@@ -480,11 +480,17 @@
     #main-modal, #main-modal * { visibility: visible !important; }
     .modal-overlay { display: flex !important; opacity: 1 !important; }
     .modal-content { transform: none !important; }
-    #contract-print-area {
+        #contract-print-area {
       position: fixed; top: 0; left: 0;
       width: 210mm; min-height: 297mm;
-      padding: 20mm 18mm; background: white; color: black;
-      font-family: 'Sarabun', sans-serif; font-size: 13pt; line-height: 1.9;
+      padding: 15mm 14mm; background: white; color: black;
+      font-family: 'Sarabun', sans-serif; font-size: 11pt; line-height: 1.7;
+    }
+    #contract-print-area [style*="grid-template-columns:1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+    #contract-print-area table {
+      font-size: 10pt !important;
     }
     .no-print { display: none !important; }
     .receipt-box { border: 1px solid #ccc !important; background: white !important; }
@@ -1463,10 +1469,11 @@ const views = {
         <div class="card mt-4">
           <h4 class="mb-3" style="padding-bottom:12px; border-bottom:1px solid var(--border);"><i class="fa-brands fa-telegram text-info"></i> การแจ้งเตือน Telegram</h4>
           <div class="input-group"><label>Chat ID (Group/Channel)</label><input type="text" id="tg-chatid" class="input-control" value="${app.state.settings.tgChatId||''}" placeholder="-1001234567890"></div>
-          <div class="flex gap-2">
+            <div class="flex gap-2">
             <button class="btn btn-primary btn-sm" onclick="logic.saveTelegramSettings()"><i class="fa-solid fa-save"></i> บันทึก Chat ID</button>
             <button class="tg-test-btn" onclick="logic.testTelegram()"><i class="fa-brands fa-telegram"></i> ทดสอบส่ง</button>
-                  </div>
+          </div>
+        </div>
         <div class="card mt-4">
           <h4 class="mb-3" style="padding-bottom:12px; border-bottom:1px solid var(--border);"><i class="fa-solid fa-file-contract text-primary"></i> แม่แบบสัญญาเช่า</h4>
           <div class="input-group"><label>ชื่อสัญญา (หัวเรื่อง)</label><input type="text" id="ct-title" class="input-control" value="${app.state.settings.contractTitle||'สัญญาเช่ารถยนต์'}"></div>
@@ -2172,6 +2179,9 @@ _printContract() {
     const clone = contractArea.cloneNode(true);
     clone.id = 'contract-print-area';
     clone.style.cssText = 'position:absolute;top:0;left:0;width:210mm;min-height:297mm;z-index:99999;background:white;padding:20mm 18mm;font-family:Sarabun,sans-serif;font-size:13pt;line-height:1.9;color:black;';
+        document.querySelectorAll('#contract-print-area').forEach(el => {
+      if(el !== contractArea) el.remove();
+    });
     document.body.appendChild(clone);
     setTimeout(() => { window.print(); clone.remove(); }, 300);
   } else {
