@@ -549,7 +549,7 @@
     #contract-print-area [style*="padding:10px"],
     #contract-print-area [style*="padding: 10px"] { padding: 4px 6px !important; }
     .no-print { display: none !important; }
-    .receipt-box { display: none !important; }
+    .receipt-box.no-print { display: none !important; }
     #sig-print-area { display: block !important; }
   }
     /* ===== BOOKING CALENDAR ===== */
@@ -2280,26 +2280,17 @@ _saveContractSignatures(bId) {
 
 _printContract() {
   const renterCanvas = document.getElementById('sig-renter');
-  const ownerCanvas = document.getElementById('sig-owner');
-  const renterImg = document.getElementById('sig-renter-img');
-  const ownerImg = document.getElementById('sig-owner-img');
-  const printArea = document.getElementById('sig-print-area');
+  const ownerCanvas  = document.getElementById('sig-owner');
+  const renterImg    = document.getElementById('sig-renter-img');
+  const ownerImg     = document.getElementById('sig-owner-img');
+  const printArea    = document.getElementById('sig-print-area');
   if(renterCanvas && renterImg) renterImg.src = renterCanvas.toDataURL('image/png');
-  if(ownerCanvas && ownerImg) ownerImg.src = ownerCanvas.toDataURL('image/png');
+  if(ownerCanvas  && ownerImg)  ownerImg.src  = ownerCanvas.toDataURL('image/png');
   if(printArea) printArea.style.display = 'block';
-  const contractArea = document.getElementById('contract-print-area');
-  if(contractArea) {
-    const clone = contractArea.cloneNode(true);
-    clone.id = 'contract-print-area';
-    clone.style.cssText = 'position:relative;width:100%;max-width:100%;background:white;padding:10mm 12mm;font-family:Sarabun,sans-serif;font-size:9pt;line-height:1.6;color:black;box-sizing:border-box;overflow:visible;word-break:break-word;';
-    document.querySelectorAll('#contract-print-area').forEach(el => {
-      if(el !== contractArea) el.remove();
-    });
-    document.body.appendChild(clone);
-    setTimeout(() => { window.print(); clone.remove(); }, 300);
-  } else {
-    setTimeout(() => { window.print(); }, 200);
-  }
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => { if(printArea) printArea.style.display = 'none'; }, 1500);
+  }, 300);
 },
 
   showInsuranceEditModal(carId) {
