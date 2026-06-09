@@ -2305,10 +2305,70 @@ _printContract() {
   if(renterCanvas && renterImg) renterImg.src = renterCanvas.toDataURL('image/png');
   if(ownerCanvas  && ownerImg)  ownerImg.src  = ownerCanvas.toDataURL('image/png');
   if(printArea) printArea.style.display = 'block';
-  setTimeout(() => {
-    window.print();
-    setTimeout(() => { if(printArea) printArea.style.display = 'none'; }, 1500);
-  }, 300);
+
+  const contractArea = document.getElementById('contract-print-area');
+  if(!contractArea) return;
+
+  // ดง HTML ของสัญญา
+  const contractHTML = contractArea.innerHTML;
+
+  // เปิดหน้าต่างใหม่แสดงเอกสารก่อนพิมพ์
+  const win = window.open('', '_blank', 'width=900,height=700');
+  win.document.write(`
+    <!DOCTYPE html>
+    <html lang="th">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>สัญญาเชารถยนต์</title>
+      <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@500;600;700;800&display=swap" rel="stylesheet">
+      <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+          font-family: 'Sarabun', sans-serif;
+          font-size: 10pt;
+          line-height: 1.7;
+          color: #111;
+          background: white;
+          padding: 15mm 15mm 15mm 15mm;
+        }
+        h1,h2,h3,h4 { font-family: 'Prompt', sans-serif; }
+        table { width: 100%; border-collapse: collapse; }
+        td { padding: 4px 6px; word-break: break-word; }
+        img { max-width: 100%; }
+        .no-print { display: none !important; }
+        .receipt-box.no-print { display: none !important; }
+        #sig-print-area { display: block !important; }
+        .receipt-box:not(.no-print) { display: block; }
+        @media print {
+          @page { size: A4 portrait; margin: 15mm; }
+          body { padding: 0; }
+          .no-print { display: none !important; }
+          #sig-print-area { display: block !important; }
+        }
+        .print-btn {
+          position: fixed; bottom: 20px; right: 20px;
+          background: #0F9D8D; color: white;
+          border: none; border-radius: 12px;
+          padding: 14px 28px; font-size: 1rem;
+          font-family: 'Sarabun', sans-serif;
+          font-weight: 700; cursor: pointer;
+          box-shadow: 0 4px 14px rgba(15,157,141,0.4);
+          z-index: 9999;
+        }
+        .print-btn:hover { background: #0a7d70; }
+        @media print { .print-btn { display: none; } }
+      </style>
+    </head>
+    <body>
+      ${contractHTML}
+      <button class="print-btn" onclick="window.print()">🖨️ พิมพ์เอกสาร</button>
+    </body>
+    </html>
+  `);
+  win.document.close();
+
+  if(printArea) printArea.style.display = 'none';
 },
 
   showInsuranceEditModal(carId) {
