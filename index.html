@@ -1895,16 +1895,34 @@ const ui = {
           <div class="input-group"><label>แนบสลิปโอนเงิน <span class="text-danger">*</span></label><input type="file" accept="image/*" class="input-control" onchange="logic.handleFileUpload(event, 'slip')"><img id="preview-slip" style="max-height:100px; display:none; margin-top:8px; border-radius:8px; border:1px solid var(--border); object-fit:cover;"></div>
       ${app.state.settings.storeMapUrl ? `
           <div class="card-flat p-3 mb-3" style="border-radius:14px; border-color:var(--info);">
-            <div class="font-bold mb-2" style="color:var(--info); font-size:0.9rem;"><i class="fa-solid fa-truck"></i> บริการรับ-ส่งรถถึงที่ (คิดตามระยะทาง)</div>
-            <div class="input-group mb-2">
-              <label style="font-size:0.88rem;">Google Maps URL ตำแหน่งของคุณ <span class="text-muted">(ถ้าต้องการให้ส่งถึงที่)</span></label>
-              <input type="url" id="bk-delivery-url" class="input-control" placeholder="https://maps.google.com/?q=..." style="font-size:0.88rem;" oninput="logic.estimateDeliveryCost(${c.id}, ${c.price})">
-            </div>
-            <div id="delivery-estimate-box" style="display:none; background:var(--primary-light); border-radius:10px; padding:10px 14px; font-size:0.9rem;">
-              <span class="text-muted">ระยะทางโดยประมาณ:</span> <span id="delivery-km-display" class="font-bold text-info">- กม.</span>
-              <span style="margin-left:12px; color:var(--text-muted);">ค่าส่ง:</span> <span id="delivery-cost-display" class="font-bold text-primary">฿0</span>
-            </div>
-          </div>` : ''}
+  <div class="font-bold mb-2" style="color:var(--info); font-size:0.9rem;"><i class="fa-solid fa-truck"></i> บริการรับ-ส่งรถถึงที่ (คิดตามระยะทาง)</div>
+  <div class="text-muted mb-2" style="font-size:0.82rem;">ปักหมุดตำแหน่งของคุณบนแผนที่ด้านล่าง แล้วกด "ใช้ตำแหน่งนี้"</div>
+  <div id="delivery-map-container" style="width:100%; height:260px; border-radius:10px; border:1.5px solid var(--border); overflow:hidden; margin-bottom:8px; background:#e8f4f8; display:flex; align-items:center; justify-content:center;">
+    <iframe
+      id="delivery-map-iframe"
+      width="100%" height="260"
+      style="border:none; display:block;"
+      referrerpolicy="no-referrer-when-downgrade"
+      src="https://www.google.com/maps/embed/v1/view?key=AIzaSyAyl0TZT5yNIWQmX3XhAnPkh7orWFLUImw&center=13.7563,100.5018&zoom=12&maptype=roadmap"
+      allowfullscreen>
+    </iframe>
+  </div>
+  <div class="flex gap-2 mb-2" style="flex-wrap:wrap;">
+    <input type="text" id="bk-delivery-search" class="input-control flex-1" placeholder="ค้นหาสถานที่ เช่น โรงแรม X ถ.สุขุมวิท" style="font-size:0.88rem; padding:9px 12px;">
+    <button class="btn btn-outline btn-sm" style="white-space:nowrap;" onclick="logic.searchDeliveryLocation(${c.id}, ${c.price})"><i class="fa-solid fa-search"></i> ค้นหา</button>
+  </div>
+  <div class="flex gap-2 mb-2">
+    <button class="btn btn-outline btn-sm flex-1" onclick="logic.useMyLocation(${c.id}, ${c.price})"><i class="fa-solid fa-location-crosshairs"></i> ใช้ตำแหน่งปัจจุบัน</button>
+  </div>
+  <input type="hidden" id="bk-delivery-lat" value="">
+  <input type="hidden" id="bk-delivery-lng" value="">
+  <input type="hidden" id="bk-delivery-url" value="">
+  <div id="delivery-estimate-box" style="display:none; background:var(--primary-light); border-radius:10px; padding:10px 14px; font-size:0.9rem;">
+    <div style="font-weight:600; margin-bottom:4px;" id="delivery-location-label"></div>
+    <span class="text-muted">ระยะทาง:</span> <span id="delivery-km-display" class="font-bold text-info">- กม.</span>
+    <span style="margin-left:12px; color:var(--text-muted);">ค่าส่ง:</span> <span id="delivery-cost-display" class="font-bold text-primary">฿0</span>
+  </div>
+</div>` : ''}
           <button class="btn btn-primary w-full btn-lg mt-2" onclick="logic.confirmBooking(${c.id}, ${c.price})"><i class="fa-solid fa-check-circle"></i> ยืนยันการจอง</button>
           <p class="text-center text-muted mt-2" style="font-size:0.82rem;"><i class="fa-solid fa-shield-halved text-success"></i> การจองจะมีผลหลังแอดมินตรวจสอบสลิป</p>
         </div>
@@ -3023,6 +3041,100 @@ const logic = {
     utils.showToast('บันทึกแม่แบบสัญญาสำเร็จ ✅', 'success');
   },
 
+  searchDeliveryLocation(carId, carPrice) {
+  const query = document.getElementById('bk-delivery-search')?.value.trim();
+  if(!query) return utils.showToast('กรุณากรอกชื่อสถานที่', 'warning');
+  const iframe = document.getElementById('delivery-map-iframe');
+  if(iframe) {
+    iframe.src = `https://www.google.com/maps/embed/v1/search?key=AIzaSyAyl0TZT5yNIWQmX3XhAnPkh7orWFLUImw&q=${encodeURIComponent(query)}&language=th`;
+  }
+  // ใช้ Geocoding API เพื่อดึงพิกัด
+  fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(query)}&key=AIzaSyAyl0TZT5yNIWQmX3XhAnPkh7orWFLUImw&language=th`)
+    .then(r => r.json())
+    .then(data => {
+      if(data.results && data.results.length > 0) {
+        const loc = data.results[0].geometry.location;
+        const label = data.results[0].formatted_address;
+        document.getElementById('bk-delivery-lat').value = loc.lat;
+        document.getElementById('bk-delivery-lng').value = loc.lng;
+        document.getElementById('bk-delivery-url').value = `https://www.google.com/maps?q=${loc.lat},${loc.lng}`;
+        const labelEl = document.getElementById('delivery-location-label');
+        if(labelEl) labelEl.textContent = '📍 ' + label;
+        logic.calcDeliveryFromLatLng(loc.lat, loc.lng, carId, carPrice);
+        utils.showToast('พบตำแหน่งแล้ว ✅', 'success');
+      } else {
+        utils.showToast('ไม่พบสถานที่ กรุณาลองใหม่', 'warning');
+      }
+    })
+    .catch(() => utils.showToast('เกิดข้อผิดพลาด กรุณาลองใหม่', 'error'));
+},
+
+useMyLocation(carId, carPrice) {
+  if(!navigator.geolocation) return utils.showToast('เบราว์เซอร์ไม่รองรับ GPS', 'error');
+  utils.showToast('กำลังหาตำแหน่งของคุณ...', 'info');
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      document.getElementById('bk-delivery-lat').value = lat;
+      document.getElementById('bk-delivery-lng').value = lng;
+      document.getElementById('bk-delivery-url').value = `https://www.google.com/maps?q=${lat},${lng}`;
+      const iframe = document.getElementById('delivery-map-iframe');
+      if(iframe) iframe.src = `https://www.google.com/maps/embed/v1/view?key=AIzaSyAyl0TZT5yNIWQmX3XhAnPkh7orWFLUImw&center=${lat},${lng}&zoom=15&maptype=roadmap`;
+      const labelEl = document.getElementById('delivery-location-label');
+      if(labelEl) labelEl.textContent = `📍 พิกัด: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+      logic.calcDeliveryFromLatLng(lat, lng, carId, carPrice);
+      utils.showToast('ได้ตำแหน่งแล้ว ✅', 'success');
+    },
+    () => utils.showToast('ไม่สามารถเข้าถึง GPS ได้ กรุณาอนุญาตก่อน', 'error')
+  );
+},
+
+calcDeliveryFromLatLng(lat, lng, carId, carPrice) {
+  const storeUrl = app.state.settings.storeMapUrl;
+  if(!storeUrl) return utils.showToast('แอดมินยังไม่ได้ตั้งค่าที่ตั้งร้าน', 'warning');
+  const extractLatLng = (url) => {
+    let m = url.match(/[?&]q=([^&]+)/);
+    if(m) {
+      const parts = decodeURIComponent(m[1]).split(',');
+      if(parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1]))
+        return { lat: parseFloat(parts[0]), lng: parseFloat(parts[1]) };
+    }
+    m = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if(m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+    return null;
+  };
+  const storePt = extractLatLng(storeUrl);
+  if(!storePt) return utils.showToast('URL ร้านไม่มีพิกัด กรุณาแก้ไขในตั้งค่า', 'warning');
+  const R = 6371;
+  const dLat = (lat - storePt.lat) * Math.PI / 180;
+  const dLng = (lng - storePt.lng) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(storePt.lat*Math.PI/180) * Math.cos(lat*Math.PI/180) * Math.sin(dLng/2)**2;
+  const km = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const roundKm = Math.round(km * 10) / 10;
+  const baseKm = app.state.settings.deliveryBaseKm || 0;
+  const pricePerKm = app.state.settings.deliveryPricePerKm || 10;
+  const cost = Math.ceil(Math.max(0, roundKm - baseKm) * pricePerKm);
+  document.getElementById('delivery-km-display').textContent = `${roundKm} กม.`;
+  document.getElementById('delivery-cost-display').textContent = `฿${utils.formatMoney(cost)}`;
+  document.getElementById('delivery-estimate-box').style.display = 'block';
+  const deliveryRow = document.getElementById('delivery-row');
+  const deliveryCostEl = document.getElementById('book-delivery-cost');
+  if(deliveryRow) deliveryRow.style.display = cost > 0 ? '' : 'none';
+  if(deliveryCostEl) deliveryCostEl.textContent = `฿${utils.formatMoney(cost)}`;
+  const netEl = document.getElementById('book-net');
+  if(netEl) {
+    const days = utils.calcDays(app.searchParams.dateFrom, app.searchParams.dateTo);
+    const carObj = app.state.cars.find(c => c.id === carId);
+    const baseTotal = utils.calcTieredPrice(carObj, days);
+    const discountEl = document.getElementById('book-discount');
+    const discountAmt = discountEl ? (parseFloat(discountEl.textContent.replace(/[^0-9.-]/g,'')) || 0) : 0;
+    netEl.textContent = `฿${utils.formatMoney(baseTotal - discountAmt + cost)}`;
+    netEl.dataset.net = baseTotal - discountAmt + cost;
+  }
+  app._deliveryCost = cost;
+  app._deliveryKm = roundKm;
+},
   estimateDeliveryCost(carId, carPrice) {
     const storeUrl = app.state.settings.storeMapUrl;
     const customerUrl = document.getElementById('bk-delivery-url')?.value.trim();
