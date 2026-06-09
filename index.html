@@ -1899,13 +1899,32 @@ const ui = {
   <div class="text-muted mb-2" style="font-size:0.82rem;">ปักหมุดตำแหน่งของคุณบนแผนที่ด้านล่าง แล้วกด "ใช้ตำแหน่งนี้"</div>
   <div id="delivery-map-container" style="width:100%; height:260px; border-radius:10px; border:1.5px solid var(--border); overflow:hidden; margin-bottom:8px; background:#e8f4f8; display:flex; align-items:center; justify-content:center;">
     <iframe
-      id="delivery-map-iframe"
-      width="100%" height="260"
-      style="border:none; display:block;"
-      referrerpolicy="no-referrer-when-downgrade"
-      src="https://www.google.com/maps/embed/v1/view?key=AIzaSyAyl0TZT5yNIWQmX3XhAnPkh7orWFLUImw&center=13.7563,100.5018&zoom=12&maptype=roadmap"
-      allowfullscreen>
-    </iframe>
+  id="delivery-map-iframe"
+  width="100%" height="260"
+  style="border:none; display:block;"
+  referrerpolicy="no-referrer-when-downgrade"
+  src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAyl0TZT5yNIWQmX3XhAnPkh7orWFLUImw&q=Bangkok,Thailand&zoom=11"
+  allowfullscreen>
+</iframe>
+  </div>
+    <div style="margin-bottom:8px;">
+    <a id="open-maps-pin-btn" 
+       href="https://maps.google.com" 
+       target="_blank"
+       class="btn btn-outline btn-sm w-full"
+       style="color:var(--info); border-color:var(--info);">
+      <i class="fa-solid fa-map-location-dot"></i> เปิด Google Maps เพื่อปักหมุด → คัดลอก URL มาวางด้านล่าง
+    </a>
+  </div>
+  <div class="input-group mb-2">
+    <label style="font-size:0.85rem; font-weight:600;">วาง Google Maps URL ที่ปักหมุดไว้</label>
+    <input type="url" id="bk-delivery-paste-url" class="input-control" 
+           placeholder="วาง URL จาก Google Maps เช่น https://maps.app.goo.gl/... หรือ https://maps.google.com/?q=..."
+           style="font-size:0.88rem; padding:9px 12px;"
+           oninput="logic.parseDeliveryUrl(this.value, ${c.id}, ${c.price})">
+    <small class="text-muted" style="font-size:0.8rem; margin-top:4px; display:block;">
+      วิธีปักหมุด: เปิด Google Maps → กดค้างที่ตำแหน่ง → กด "แชร์" → คัดลอกลิงก์
+    </small>
   </div>
   <div class="flex gap-2 mb-2" style="flex-wrap:wrap;">
     <input type="text" id="bk-delivery-search" class="input-control flex-1" placeholder="ค้นหาสถานที่ เช่น โรงแรม X ถ.สุขุมวิท" style="font-size:0.88rem; padding:9px 12px;">
@@ -2309,66 +2328,54 @@ _printContract() {
   const contractArea = document.getElementById('contract-print-area');
   if(!contractArea) return;
 
-  // ดง HTML ของสัญญา
-  const contractHTML = contractArea.innerHTML;
+  // สร้าง iframe ซ่อนไว้ในหน้าเดิม แล้วพิมพ์จาก iframe
+  const existIframe = document.getElementById('contract-print-iframe');
+  if(existIframe) existIframe.remove();
 
-  // เปิดหน้าต่างใหม่แสดงเอกสารก่อนพิมพ์
-  const win = window.open('', '_blank', 'width=900,height=700');
-  win.document.write(`
-    <!DOCTYPE html>
-    <html lang="th">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>สัญญาเชารถยนต์</title>
-      <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@500;600;700;800&display=swap" rel="stylesheet">
-      <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-          font-family: 'Sarabun', sans-serif;
-          font-size: 10pt;
-          line-height: 1.7;
-          color: #111;
-          background: white;
-          padding: 15mm 15mm 15mm 15mm;
-        }
-        h1,h2,h3,h4 { font-family: 'Prompt', sans-serif; }
-        table { width: 100%; border-collapse: collapse; }
-        td { padding: 4px 6px; word-break: break-word; }
-        img { max-width: 100%; }
-        .no-print { display: none !important; }
-        .receipt-box.no-print { display: none !important; }
-        #sig-print-area { display: block !important; }
-        .receipt-box:not(.no-print) { display: block; }
-        @media print {
-          @page { size: A4 portrait; margin: 15mm; }
-          body { padding: 0; }
-          .no-print { display: none !important; }
-          #sig-print-area { display: block !important; }
-        }
-        .print-btn {
-          position: fixed; bottom: 20px; right: 20px;
-          background: #0F9D8D; color: white;
-          border: none; border-radius: 12px;
-          padding: 14px 28px; font-size: 1rem;
-          font-family: 'Sarabun', sans-serif;
-          font-weight: 700; cursor: pointer;
-          box-shadow: 0 4px 14px rgba(15,157,141,0.4);
-          z-index: 9999;
-        }
-        .print-btn:hover { background: #0a7d70; }
-        @media print { .print-btn { display: none; } }
-      </style>
-    </head>
-    <body>
-      ${contractHTML}
-      <button class="print-btn" onclick="window.print()">🖨️ พิมพ์เอกสาร</button>
-    </body>
-    </html>
-  `);
-  win.document.close();
+  const iframe = document.createElement('iframe');
+  iframe.id = 'contract-print-iframe';
+  iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:210mm;height:297mm;border:none;visibility:hidden;';
+  document.body.appendChild(iframe);
 
-  if(printArea) printArea.style.display = 'none';
+  const iDoc = iframe.contentDocument || iframe.contentWindow.document;
+  iDoc.open();
+  iDoc.write(`<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>สัญญาเช่ารถยนต์</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Sarabun',sans-serif; font-size:9pt; line-height:1.65; color:#111; background:white; padding:12mm 14mm; }
+  h1,h2,h3,h4 { font-family:'Prompt',sans-serif; }
+  table { width:100%; border-collapse:collapse; }
+  td { padding:4px 5px; word-break:break-word; }
+  img { max-width:100%; }
+  .no-print { display:none !important; }
+  .receipt-box.no-print { display:none !important; }
+  .receipt-box:not(.no-print) { border:1px solid #ddd; border-radius:8px; padding:12px; margin-bottom:12px; }
+  #sig-print-area { display:block !important; }
+  @page { size:A4 portrait; margin:15mm; }
+</style>
+</head>
+<body>${contractArea.innerHTML}</body>
+</html>`);
+  iDoc.close();
+
+  // รอ font โหลดแล้วค่อยพิมพ์
+  setTimeout(() => {
+    try {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+    } catch(e) {
+      window.print();
+    }
+    setTimeout(() => {
+      iframe.remove();
+      if(printArea) printArea.style.display = 'none';
+    }, 2000);
+  }, 800);
 },
 
   showInsuranceEditModal(carId) {
@@ -3150,6 +3157,38 @@ useMyLocation(carId, carPrice) {
   );
 },
 
+  parseDeliveryUrl(url, carId, carPrice) {
+  if(!url || url.length < 10) return;
+  
+  // ลอง extract พิกัดจาก URL ตรงๆ
+  const extractLatLng = (u) => {
+    let m = u.match(/[?&]q=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+    if(m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+    m = u.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if(m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+    m = u.match(/ll=(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if(m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+    return null;
+  };
+
+  const pt = extractLatLng(url);
+  if(pt) {
+    // มีพิกัดใน URL โดยตรง
+    document.getElementById('bk-delivery-lat').value = pt.lat;
+    document.getElementById('bk-delivery-lng').value = pt.lng;
+    document.getElementById('bk-delivery-url').value = url;
+    const iframe = document.getElementById('delivery-map-iframe');
+    if(iframe) iframe.src = `https://www.google.com/maps/embed/v1/view?key=AIzaSyAyl0TZT5yNIWQmX3XhAnPkh7orWFLUImw&center=${pt.lat},${pt.lng}&zoom=15`;
+    const labelEl = document.getElementById('delivery-location-label');
+    if(labelEl) labelEl.textContent = `📍 พิกัด: ${pt.lat.toFixed(5)}, ${pt.lng.toFixed(5)}`;
+    logic.calcDeliveryFromLatLng(pt.lat, pt.lng, carId, carPrice);
+  } else if(url.includes('goo.gl') || url.includes('maps.app')) {
+    // Short URL — ใช้ search ด้วยชื่อแทน
+    const labelEl = document.getElementById('delivery-location-label');
+    if(labelEl) labelEl.textContent = '🔗 Short URL — กรุณาค้นหาด้วยชื่อสถานที่แทน';
+    utils.showToast('Short URL อ่านพิกัดไม่ได้ กรุณาค้นหาด้วยชื่อสถานที่ด้านบน', 'warning');
+  }
+},
 calcDeliveryFromLatLng(lat, lng, carId, carPrice) {
   const storeUrl = app.state.settings.storeMapUrl;
   if(!storeUrl) return utils.showToast('แอดมินยังไม่ได้ตั้งค่าที่ตั้งร้าน', 'warning');
